@@ -25,6 +25,7 @@ import Register from './pages/Register'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import AcceptInvite from './pages/AcceptInvite'
+import VerifyEmail from './pages/VerifyEmail'
 import NoClubAccess from './pages/NoClubAccess'
 import Unauthorized from './pages/Unauthorized'
 import TeamAccess from './pages/TeamAccess'
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/bienvenida" element={<Navigate to="/" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Register />} />
+        <Route path="/verificar-correo" element={<VerifyEmail />} />
         <Route path="/register" element={<Navigate to="/registro" replace />} />
         <Route path="/recuperar-contrasena" element={<ForgotPassword />} />
         <Route path="/forgot-password" element={<Navigate to="/recuperar-contrasena" replace />} />

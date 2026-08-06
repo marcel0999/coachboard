@@ -32,7 +32,35 @@ export async function getSupabaseSession() {
   return data.session
 }
 
+async function ensureClubFromPendingRegistration(session) {
+  const pendingClub = session.user.user_metadata?.pending_club_name
+  if (!pendingClub) return
+
+  const client = assertSupabase()
+  const userId = session.user.id
+
+  const { data: membershipRows, error: membershipError } = await client
+    .from('memberships')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .limit(1)
+
+  if (membershipError) throw membershipError
+  if (membershipRows?.length) return
+
+  const { error: rpcError } = await client.rpc('create_club_with_admin', {
+    p_club_name: pendingClub,
+    p_full_name: session.user.user_metadata?.full_name ?? '',
+    p_legacy_local_id: null,
+  })
+
+  if (rpcError) throw new Error(rpcError.message)
+}
+
 export async function fetchAuthContext(session) {
+  await ensureClubFromPendingRegistration(session)
+
   const client = assertSupabase()
   const userId = session.user.id
 
@@ -97,7 +125,10 @@ export async function signUpClubAdmin({ clubName, fullName, email, password }) {
     email: normalizedEmail,
     password,
     options: {
-      data: { full_name: fullName.trim() },
+      data: {
+        full_name: fullName.trim(),
+        pending_club_name: clubName.trim(),
+      },
     },
   })
 
@@ -111,14 +142,12 @@ export async function signUpClubAdmin({ clubName, fullName, email, password }) {
       password,
     })
     if (signInError) {
-      throw new Error(
-        'Cuenta creada. Confirmá tu correo o revisá la configuración de Supabase Auth.',
-      )
+      return { needsEmailVerification: true, email: normalizedEmail }
     }
     session = signInData.session
   }
 
-  const { data: clubId, error: rpcError } = await client.rpc('create_club_with_admin', {
+  const { error: rpcError } = await client.rpc('create_club_with_admin', {
     p_club_name: clubName.trim(),
     p_full_name: fullName.trim(),
     p_legacy_local_id: null,

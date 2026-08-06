@@ -4,7 +4,7 @@ import Spinner from '../ui/Spinner'
 
 /** Rutas públicas: redirige al Dashboard si ya hay sesión válida con club. */
 export default function GuestRoute() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, needsClubAccess, isLoading } = useAuth()
 
   if (isLoading) {
     return (
@@ -12,6 +12,10 @@ export default function GuestRoute() {
         <Spinner size="lg" label="Verificando sesión…" />
       </div>
     )
+  }
+
+  if (needsClubAccess) {
+    return <Navigate to="/sin-acceso-club" replace />
   }
 
   if (isAuthenticated) {

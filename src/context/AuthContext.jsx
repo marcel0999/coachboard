@@ -160,6 +160,7 @@ export function AuthProvider({ children }) {
     setAuthError(null)
     try {
       const result = await signUpClubAdmin({ clubName, fullName, email, password })
+      if (result?.needsEmailVerification) return result
       return applySession(result)
     } catch (error) {
       setAuthError(error.message)
