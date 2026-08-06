@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Button from '../ui/Button'
-import { getMonthGrid, getTrainingsForDay, toDateKey } from '../../utils/trainings'
+import { getMonthGrid, getTrainingsForDay, getTrainingDisplayName, toDateKey } from '../../utils/trainings'
 
 const MONTH_NAMES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -59,7 +59,7 @@ export default function MonthlyCalendar({ referenceDate, trainings, onPrev, onNe
                     onClick={() => onOpenTraining(training)}
                     className="block w-full truncate rounded-lg bg-slate-100 px-2 py-1 text-left text-[10px] font-medium text-text-primary hover:bg-accent/10"
                   >
-                    {training.time} · {training.category}
+                    {training.time} · {getTrainingDisplayName(training)}
                   </button>
                 ))}
                 {dayTrainings.length > 2 && (

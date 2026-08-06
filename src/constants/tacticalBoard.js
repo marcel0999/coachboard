@@ -55,10 +55,13 @@ export const DRAWING_TOOLS = [
   { id: 'mini-goal', label: 'Mini arco' },
   { id: 'mannequin', label: 'Maniquí' },
   { id: 'ladder', label: 'Escalera' },
+  { id: 'bib', label: 'Peto' },
   { id: 'eraser', label: 'Borrador' },
 ]
 
 export const DRAWING_COLORS = ['#ffffff', '#fbbf24', '#ef4444', '#3b82f6', '#22c55e', '#111827']
+
+export const DRAG_FROM_TOOLBAR = 'application/x-coachboard-tool'
 
 export const DEFAULT_TEAM = {
   name: 'Propio',

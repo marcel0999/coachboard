@@ -1,4 +1,4 @@
-export function FormField({ label, htmlFor, error, required, children, className = '' }) {
+export function FormField({ label, htmlFor, error, required, children, className = '', hint }) {
   return (
     <div className={className}>
       {label && (
@@ -7,14 +7,14 @@ export function FormField({ label, htmlFor, error, required, children, className
           {required && <span className="ml-0.5 text-red-500">*</span>}
         </label>
       )}
+      {hint && !error && <p className="mb-1.5 text-xs text-text-muted">{hint}</p>}
       {children}
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && <p className="mt-1.5 text-xs font-medium text-red-600">{error}</p>}
     </div>
   )
 }
 
-const inputClass =
-  'w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-text-primary outline-none transition placeholder:text-text-muted focus:border-accent focus:bg-white focus:ring-2 focus:ring-accent/20'
+const inputClass = 'cb-input'
 
 export function Input({ className = '', ...props }) {
   return <input className={`${inputClass} ${className}`} {...props} />
@@ -29,11 +29,17 @@ export function Select({ className = '', children, ...props }) {
 }
 
 export function Textarea({ className = '', rows = 3, ...props }) {
+  return <textarea rows={rows} className={`${inputClass} resize-none ${className}`} {...props} />
+}
+
+/** Input con icono a la izquierda — para auth y búsquedas */
+export function InputWithIcon({ icon: Icon, className = '', inputClassName = '', ...props }) {
   return (
-    <textarea
-      rows={rows}
-      className={`${inputClass} resize-none ${className}`}
-      {...props}
-    />
+    <div className={`relative ${className}`}>
+      {Icon && (
+        <Icon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+      )}
+      <input className={`${inputClass} ${Icon ? 'pl-10' : ''} ${inputClassName}`} {...props} />
+    </div>
   )
 }

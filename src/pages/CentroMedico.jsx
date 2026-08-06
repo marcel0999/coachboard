@@ -18,6 +18,7 @@ import {
   buildMedicalCenterDashboard,
 } from '../utils/medicalCenter'
 import { formatDate } from '../utils/playerFactory'
+import SectionHeader from '../components/ui/SectionHeader'
 import { getCategoryById, buildCategoryOptions } from '../utils/categories'
 
 export default function CentroMedico() {
@@ -90,7 +91,7 @@ export default function CentroMedico() {
   ]
 
   return (
-    <div>
+    <div className="cb-animate-in">
       <PageHeader
         title="Centro Médico"
         description={`Gestión documental y alertas médicas · ${categoryLabel}`}
@@ -106,42 +107,30 @@ export default function CentroMedico() {
       </Card>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <Card className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-100">
-            <FileCheck2 className="h-5 w-5 text-green-600" />
-          </div>
-          <div>
-            <p className="text-sm text-text-secondary">Documentación al día</p>
-            <p className="text-2xl font-bold text-text-primary">{dashboard.compliantPlayers}</p>
-          </div>
-        </Card>
-        <Card className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100">
-            <FileWarning className="h-5 w-5 text-amber-600" />
-          </div>
-          <div>
-            <p className="text-sm text-text-secondary">Próximos vencimientos</p>
-            <p className="text-2xl font-bold text-text-primary">{dashboard.expiringDocuments}</p>
-          </div>
-        </Card>
-        <Card className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-100">
-            <ShieldAlert className="h-5 w-5 text-red-600" />
-          </div>
-          <div>
-            <p className="text-sm text-text-secondary">Documentación vencida</p>
-            <p className="text-2xl font-bold text-text-primary">{dashboard.expiredDocuments}</p>
-          </div>
-        </Card>
-        <Card className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-100">
-            <HeartPulse className="h-5 w-5 text-red-600" />
-          </div>
-          <div>
-            <p className="text-sm text-text-secondary">Jugadores lesionados</p>
-            <p className="text-2xl font-bold text-text-primary">{dashboard.injuredPlayers}</p>
-          </div>
-        </Card>
+        <StatCard
+          label="Documentación al día"
+          value={dashboard.compliantPlayers}
+          icon={FileCheck2}
+          accent
+        />
+        <StatCard
+          label="Próximos vencimientos"
+          value={dashboard.expiringDocuments}
+          icon={FileWarning}
+          sublabel="Requieren atención"
+        />
+        <StatCard
+          label="Documentación vencida"
+          value={dashboard.expiredDocuments}
+          icon={ShieldAlert}
+          sublabel="Fuera de norma"
+        />
+        <StatCard
+          label="Jugadores lesionados"
+          value={dashboard.injuredPlayers}
+          icon={HeartPulse}
+          sublabel="Estado físico"
+        />
         <StatCard
           label="Próximo documento a vencer"
           value={dashboard.nextExpiry ? `${dashboard.nextExpiry.days} días` : '—'}
@@ -150,7 +139,6 @@ export default function CentroMedico() {
               ? `${getMedicalDocumentTypeLabel(dashboard.nextExpiry.type)} · ${formatDate(dashboard.nextExpiry.date)}`
               : 'Sin vencimientos próximos'
           }
-          accent
         />
       </div>
 
@@ -202,14 +190,11 @@ export default function CentroMedico() {
       </div>
 
       <Card>
-        <div className="mb-3 flex items-center gap-2">
-          <CalendarClock className="h-5 w-5 text-accent" />
-          <h2 className="text-base font-semibold text-text-primary">Control documental por categoría</h2>
-        </div>
-        <p className="text-sm text-text-secondary">
-          Los estados se calculan automáticamente por categoría: verde (+30 días), amarillo (11-30 días), rojo (10 días o menos / vencido).
-          Las alertas incluyen categoría, jugador, documento y días restantes. Hacé clic en un jugador para gestionar su ficha médica.
-        </p>
+        <SectionHeader
+          title="Control documental por categoría"
+          description="Los estados se calculan automáticamente: verde (+30 días), amarillo (11-30 días), rojo (10 días o menos / vencido). Hacé clic en un jugador para gestionar su ficha médica."
+          icon={CalendarClock}
+        />
       </Card>
 
       <PlayerMedicalModal

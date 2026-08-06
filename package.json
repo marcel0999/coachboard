@@ -8,9 +8,16 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "test:persistence": "node scripts/test-persistence.mjs"
+    "test:persistence": "node scripts/test-persistence.mjs",
+    "verify:supabase": "node scripts/verify-supabase.mjs",
+    "setup:supabase": "node scripts/setup-supabase.mjs",
+    "db:push": "node scripts/db-push.mjs",
+    "db:diff": "npx supabase db diff",
+    "supabase:login": "npx supabase login",
+    "supabase:link": "npx supabase link"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.468.0",
@@ -28,6 +35,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
+    "supabase": "^2.111.0",
     "tailwindcss": "^4.0.0",
     "vite": "^6.0.5"
   }

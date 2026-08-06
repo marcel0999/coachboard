@@ -1316,4 +1316,143 @@ export function syncBoardToTrainingBlock(board, block) {
   }
 }
 
+export function syncBoardToTrainingExercise(board, exercise) {
+  return {
+    ...exercise,
+    tacticalBoard: {
+      ...(exercise.tacticalBoard ?? {}),
+      ...createTacticalBoardSnapshot(board),
+    },
+  }
+}
+
+export const POINT_DRAWING_TYPES = [
+  'cone', 'ball', 'pole', 'hurdle', 'ring', 'mini-goal', 'mannequin', 'ladder', 'bib', 'text',
+]
+
+export const LINE_DRAWING_TYPES = ['arrow', 'arrow-curve', 'line', 'line-dashed', 'freehand']
+
+export const AREA_DRAWING_TYPES = ['circle', 'rectangle', 'zone']
+
+export function findMarkerInBoard(board, markerId) {
+  const own = board.markers.find((m) => m.id === markerId)
+  if (own) return { marker: own, list: 'markers' }
+  const rival = (board.rivalMarkers ?? []).find((m) => m.id === markerId)
+  if (rival) return { marker: rival, list: 'rivalMarkers' }
+  return null
+}
+
+export function moveMarkerInBoard(board, markerId, x, y) {
+  const found = findMarkerInBoard(board, markerId)
+  if (!found) return board
+  const nextX = clampPercent(x)
+  const nextY = clampPercent(y)
+  if (found.list === 'rivalMarkers') {
+    return {
+      ...board,
+      rivalMarkers: board.rivalMarkers.map((m) =>
+        m.id === markerId ? { ...m, x: nextX, y: nextY } : m,
+      ),
+    }
+  }
+  return {
+    ...board,
+    markers: moveMarker(board.markers, markerId, nextX, nextY),
+  }
+}
+
+export function swapMarkersInBoard(board, markerIdA, markerIdB) {
+  const a = findMarkerInBoard(board, markerIdA)
+  const b = findMarkerInBoard(board, markerIdB)
+  if (!a || !b || a.list !== b.list) return board
+  if (a.list === 'rivalMarkers') {
+    return { ...board, rivalMarkers: swapMarkers(board.rivalMarkers, markerIdA, markerIdB) }
+  }
+  return { ...board, markers: swapMarkers(board.markers, markerIdA, markerIdB) }
+}
+
+export function moveDrawingByDelta(drawings, drawingId, dx, dy) {
+  return drawings.map((drawing) => {
+    if (drawing.id !== drawingId) return drawing
+    const next = { ...drawing }
+    if (next.cx !== undefined) {
+      next.cx = clampPercent(next.cx + dx)
+      next.cy = clampPercent(next.cy + dy)
+    }
+    if (next.x !== undefined) {
+      next.x = clampPercent(next.x + dx)
+      next.y = clampPercent(next.y + dy)
+    }
+    if (next.x1 !== undefined) {
+      next.x1 = clampPercent(next.x1 + dx)
+      next.y1 = clampPercent(next.y1 + dy)
+      next.x2 = clampPercent(next.x2 + dx)
+      next.y2 = clampPercent(next.y2 + dy)
+    }
+    if (next.points?.length) {
+      next.points = next.points.map((p) => ({
+        x: clampPercent(p.x + dx),
+        y: clampPercent(p.y + dy),
+      }))
+    }
+    return next
+  })
+}
+
+export function moveDrawingToPoint(drawings, drawingId, x, y) {
+  return drawings.map((drawing) => {
+    if (drawing.id !== drawingId) return drawing
+    const next = { ...drawing }
+    if (next.cx !== undefined) {
+      next.cx = clampPercent(x)
+      next.cy = clampPercent(y)
+    } else if (next.x !== undefined && next.width !== undefined) {
+      next.x = clampPercent(x - next.width / 2)
+      next.y = clampPercent(y - next.height / 2)
+    } else if (next.x !== undefined) {
+      next.x = clampPercent(x)
+      next.y = clampPercent(y)
+    }
+    return next
+  })
+}
+
+export function deleteDrawingById(drawings, drawingId) {
+  return drawings.filter((d) => d.id !== drawingId)
+}
+
+export function updateDrawing(drawings, drawingId, updates) {
+  return drawings.map((d) => (d.id === drawingId ? { ...d, ...updates } : d))
+}
+
+export function reorderDrawing(drawings, drawingId, direction) {
+  const index = drawings.findIndex((d) => d.id === drawingId)
+  if (index < 0) return drawings
+  const next = [...drawings]
+  if (direction === 'front' && index < next.length - 1) {
+    const [item] = next.splice(index, 1)
+    next.push(item)
+  } else if (direction === 'back' && index > 0) {
+    const [item] = next.splice(index, 1)
+    next.unshift(item)
+  }
+  return next
+}
+
+export function getDrawingCenter(drawing) {
+  if (drawing.cx !== undefined) return { x: drawing.cx, y: drawing.cy }
+  if (drawing.x1 !== undefined) {
+    return { x: (drawing.x1 + drawing.x2) / 2, y: (drawing.y1 + drawing.y2) / 2 }
+  }
+  if (drawing.x !== undefined && drawing.width !== undefined) {
+    return { x: drawing.x + drawing.width / 2, y: drawing.y + drawing.height / 2 }
+  }
+  if (drawing.x !== undefined) return { x: drawing.x, y: drawing.y }
+  if (drawing.points?.length) {
+    const xs = drawing.points.map((p) => p.x)
+    const ys = drawing.points.map((p) => p.y)
+    return { x: xs.reduce((a, b) => a + b, 0) / xs.length, y: ys.reduce((a, b) => a + b, 0) / ys.length }
+  }
+  return { x: 50, y: 50 }
+}
 

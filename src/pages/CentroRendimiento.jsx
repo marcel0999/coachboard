@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
 import { Activity, Users } from 'lucide-react'
-import { Card } from '../components/ui/Card'
+import { StatCard, Card } from '../components/ui/Card'
 import PageHeader from '../components/ui/PageHeader'
 import SearchInput from '../components/ui/SearchInput'
 import FilterPills from '../components/ui/FilterPills'
 import SortSelect from '../components/ui/SortSelect'
+import EmptyState from '../components/ui/EmptyState'
 import PlayerPerformanceCard from '../components/rendimiento/PlayerPerformanceCard'
 import PlayerPerformanceModal from '../components/rendimiento/PlayerPerformanceModal'
 import CategorySelector from '../components/categories/CategorySelector'
@@ -62,7 +63,7 @@ export default function CentroRendimiento() {
   }, [profiles])
 
   return (
-    <div>
+    <div className="cb-animate-in">
       <PageHeader
         title="Centro de Rendimiento"
         description="Dashboard unificado con datos en tiempo real de todo el sistema"
@@ -78,27 +79,10 @@ export default function CentroRendimiento() {
       </Card>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
-            <Users className="h-5 w-5 text-slate-600" />
-          </div>
-          <div>
-            <p className="text-sm text-text-secondary">Jugadores</p>
-            <p className="text-2xl font-bold text-text-primary">{scopedPlayers.length}</p>
-          </div>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">Minutos totales</p>
-          <p className="mt-1 text-2xl font-bold text-text-primary">{overview.totalMinutes}</p>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">Goles totales</p>
-          <p className="mt-1 text-2xl font-bold text-accent">{overview.totalGoals}</p>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">Disponibilidad media</p>
-          <p className="mt-1 text-2xl font-bold text-text-primary">{overview.avgAvailability}%</p>
-        </Card>
+        <StatCard label="Jugadores" value={scopedPlayers.length} icon={Users} accent />
+        <StatCard label="Minutos totales" value={overview.totalMinutes} sublabel="Acumulado temporada" />
+        <StatCard label="Goles totales" value={overview.totalGoals} sublabel="Rendimiento ofensivo" />
+        <StatCard label="Disponibilidad media" value={`${overview.avgAvailability}%`} sublabel="Estado físico" />
       </div>
 
       <Card className="mb-6 space-y-4">
@@ -136,10 +120,11 @@ export default function CentroRendimiento() {
       </div>
 
       {filteredPlayers.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-slate-300 px-6 py-16 text-center">
-          <p className="text-base font-semibold text-text-primary">No se encontraron jugadores</p>
-          <p className="mt-1 text-sm text-text-secondary">Probá ajustando la búsqueda o los filtros.</p>
-        </div>
+        <EmptyState
+          icon={Activity}
+          title="No se encontraron jugadores"
+          description="Probá ajustando la búsqueda o los filtros."
+        />
       )}
 
       <PlayerPerformanceModal

@@ -1,6 +1,6 @@
 export const TRAINING_STATUSES = ['Programado', 'En curso', 'Finalizado']
 
-export const TRAINING_CATEGORIES = [
+export const TRAINING_SESSION_TYPES = [
   'Táctico',
   'Técnico',
   'Físico',
@@ -9,7 +9,13 @@ export const TRAINING_CATEGORIES = [
   'Pre-partido',
 ]
 
-export const LOAD_LEVELS = ['Baja', 'Media', 'Alta']
+/** @deprecated Use TRAINING_SESSION_TYPES — kept for backward compat */
+export const TRAINING_CATEGORIES = TRAINING_SESSION_TYPES
+
+export const INTENSITY_LEVELS = ['Baja', 'Media', 'Alta']
+
+/** @deprecated Use INTENSITY_LEVELS */
+export const LOAD_LEVELS = INTENSITY_LEVELS
 
 export const SESSION_BLOCKS = [
   { type: 'calentamiento', label: 'Calentamiento', defaultDuration: 15 },
@@ -22,7 +28,7 @@ export const SESSION_BLOCKS = [
 
 export const TRAINING_DETAIL_TABS = [
   { id: 'info', label: 'Información' },
-  { id: 'plan', label: 'Plan de sesión' },
+  { id: 'exercises', label: 'Ejercicios' },
   { id: 'players', label: 'Jugadores' },
   { id: 'load', label: 'Control de carga' },
   { id: 'summary', label: 'Resumen' },
@@ -30,7 +36,22 @@ export const TRAINING_DETAIL_TABS = [
 
 export const WEEKDAY_LABELS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
 
+export const EMPTY_SESSION_EXERCISE = {
+  name: '',
+  description: '',
+  objective: '',
+  durationMinutes: 15,
+  sets: '',
+  reps: '',
+  space: '',
+  materials: '',
+  order: 0,
+  librarySource: null,
+  tacticalBoard: null,
+}
+
 export const EMPTY_TRAINING = {
+  name: '',
   date: '',
   time: '',
   duration: 90,
@@ -38,10 +59,14 @@ export const EMPTY_TRAINING = {
   category: 'Mixto',
   categoryId: '',
   objective: '',
+  intensity: 'Media',
   load: 'Media',
+  playerCount: '',
   notes: '',
+  observations: '',
   status: 'Programado',
   blocks: [],
+  sessionExercises: [],
   players: {
     attendees: [],
     absent: [],

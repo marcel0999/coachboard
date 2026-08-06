@@ -15,6 +15,7 @@ import {
   migrateStaffLocalization,
 } from '../utils/localizationMigration'
 import { DEFAULT_CLUB_SETTINGS } from '../config/localization'
+import { migrateTrainingToV5 } from '../utils/trainings'
 import { CURRENT_SCHEMA_VERSION } from './storageKeys'
 import { createPreMigrationBackup } from './backup'
 
@@ -89,10 +90,9 @@ export function normalizeUserState(raw) {
       ...migrateEntityCategoryId(match, defaultCategoryId),
       staffSquad: ensureStaffSquad(match.staffSquad, staffIds),
     })),
-    trainings: trainings.map((training) => ({
-      ...migrateEntityCategoryId(training, defaultCategoryId),
-      staffIds: training.staffIds ?? [],
-    })),
+    trainings: trainings.map((training) =>
+      migrateTrainingToV5(migrateEntityCategoryId(training, defaultCategoryId)),
+    ),
     exercises,
     tacticalBoard: raw.tacticalBoard
       ? migrateTacticalBoardState(raw.tacticalBoard)
@@ -175,10 +175,22 @@ function migrationV3ToV4(state) {
   return next
 }
 
+function migrationV4ToV5(state) {
+  const next = { ...state }
+
+  next.trainings = readArray(next.trainings).map((training) => migrateTrainingToV5(training))
+
+  next.schemaVersion = 5
+  next.version = 5
+
+  return next
+}
+
 const MIGRATION_STEPS = [
   { from: 1, to: 2, run: migrationV1ToV2 },
   { from: 2, to: 3, run: migrationV2ToV3 },
   { from: 3, to: 4, run: migrationV3ToV4 },
+  { from: 4, to: 5, run: migrationV4ToV5 },
 ]
 
 function getSchemaVersion(state) {

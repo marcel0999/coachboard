@@ -6,6 +6,8 @@ import Button from '../components/ui/Button'
 import SearchInput from '../components/ui/SearchInput'
 import FilterPills from '../components/ui/FilterPills'
 import SortSelect from '../components/ui/SortSelect'
+import Badge from '../components/ui/Badge'
+import SectionHeader from '../components/ui/SectionHeader'
 import ConfirmModal from '../components/ui/ConfirmModal'
 import StaffTable from '../components/staff/StaffTable'
 import StaffFormModal from '../components/staff/StaffFormModal'
@@ -101,7 +103,7 @@ export default function StaffTecnico() {
   }
 
   return (
-    <div>
+    <div className="cb-animate-in">
       <PageHeader
         title="Staff Técnico"
         description="Gestión independiente del cuerpo técnico del club"
@@ -158,15 +160,12 @@ export default function StaffTecnico() {
 
       {roleCounts.length > 0 && (
         <Card className="mt-6">
-          <div className="mb-4 flex items-center gap-2">
-            <UserCog className="h-5 w-5 text-accent" />
-            <h2 className="text-base font-semibold text-text-primary">Distribución por cargo</h2>
-          </div>
+          <SectionHeader title="Distribución por cargo" icon={UserCog} />
           <div className="flex flex-wrap gap-2">
             {roleCounts.map(({ role, count }) => (
-              <span key={role} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-text-secondary">
+              <Badge key={role}>
                 {role}: {count}
-              </span>
+              </Badge>
             ))}
           </div>
         </Card>

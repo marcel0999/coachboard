@@ -1,7 +1,21 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 
 export default function Modal({ isOpen, onClose, title, description, children, size = 'lg' }) {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    if (isOpen) {
+      setVisible(true)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
   useEffect(() => {
     if (!isOpen) return undefined
 
@@ -9,16 +23,11 @@ export default function Modal({ isOpen, onClose, title, description, children, s
       if (event.key === 'Escape') onClose()
     }
 
-    document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.body.style.overflow = ''
-      window.removeEventListener('keydown', handleKeyDown)
-    }
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose])
 
-  if (!isOpen) return null
+  if (!isOpen && !visible) return null
 
   const sizeClass = {
     md: 'max-w-lg',
@@ -30,7 +39,8 @@ export default function Modal({ isOpen, onClose, title, description, children, s
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
       <div
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+        style={{ animation: 'cb-backdrop-in 200ms ease-out both' }}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -39,20 +49,19 @@ export default function Modal({ isOpen, onClose, title, description, children, s
         aria-modal="true"
         aria-labelledby="modal-title"
         className={`relative flex max-h-[92vh] w-full ${sizeClass} flex-col overflow-hidden rounded-2xl bg-white shadow-2xl`}
+        style={{ animation: 'cb-slide-up 280ms cubic-bezier(0.16, 1, 0.3, 1) both' }}
       >
-        <div className="flex items-start justify-between border-b border-slate-200 px-6 py-5">
+        <div className="flex items-start justify-between border-b border-slate-100 px-6 py-5">
           <div>
-            <h2 id="modal-title" className="text-lg font-semibold text-text-primary">
+            <h2 id="modal-title" className="font-display text-lg font-semibold text-text-primary">
               {title}
             </h2>
-            {description && (
-              <p className="mt-1 text-sm text-text-secondary">{description}</p>
-            )}
+            {description && <p className="mt-1 text-sm text-text-secondary">{description}</p>}
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-text-muted transition hover:bg-slate-100 hover:text-text-primary"
+            className="rounded-xl p-2 text-text-muted transition hover:bg-surface-muted hover:text-text-primary"
             aria-label="Cerrar"
           >
             <X className="h-5 w-5" />

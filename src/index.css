@@ -1,35 +1,178 @@
 @import "tailwindcss";
 
 @theme {
-  --color-sidebar: #0f172a;
-  --color-sidebar-hover: #1e293b;
-  --color-sidebar-active: #334155;
-  --color-sidebar-border: #1e293b;
-  --color-accent: #22c55e;
-  --color-accent-hover: #16a34a;
-  --color-surface: #f8fafc;
+  /* Brand */
+  --color-accent: #10b981;
+  --color-accent-hover: #059669;
+  --color-accent-subtle: #ecfdf5;
+  --color-accent-muted: #d1fae5;
+
+  /* Surfaces */
+  --color-surface: #f4f6f9;
+  --color-surface-elevated: #ffffff;
   --color-surface-card: #ffffff;
+  --color-surface-muted: #f8fafc;
+
+  /* Sidebar */
+  --color-sidebar: #0c1222;
+  --color-sidebar-hover: #151d32;
+  --color-sidebar-active: #1e293b;
+  --color-sidebar-border: #1a2338;
+
+  /* Text */
   --color-text-primary: #0f172a;
   --color-text-secondary: #64748b;
   --color-text-muted: #94a3b8;
+
+  /* Semantic */
+  --color-danger: #ef4444;
+  --color-danger-subtle: #fef2f2;
+  --color-warning: #f59e0b;
+  --color-warning-subtle: #fffbeb;
+  --color-success: #10b981;
+  --color-success-subtle: #ecfdf5;
+  --color-info: #3b82f6;
+  --color-info-subtle: #eff6ff;
+
+  /* Typography */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.04);
+  --shadow-accent: 0 8px 24px rgba(16, 185, 129, 0.28);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(15, 23, 42, 0.04);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 220ms;
+  --duration-slow: 320ms;
 }
 
 @layer base {
   * {
-    @apply border-slate-200;
+    @apply border-slate-200/80;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-surface text-text-primary font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-accent) 25%, transparent);
+    color: var(--color-text-primary);
   }
 }
 
-/* ── Pizarra Táctica — campo profesional ── */
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .text-display-lg {
+    font-family: var(--font-display);
+    @apply text-4xl font-bold tracking-tight sm:text-5xl;
+  }
+
+  .text-display-sm {
+    font-family: var(--font-display);
+    @apply text-2xl font-bold tracking-tight sm:text-[1.75rem];
+  }
+
+  .text-label {
+    @apply text-[11px] font-semibold uppercase tracking-wider text-text-muted;
+  }
+
+  .cb-card {
+    @apply rounded-2xl border border-slate-200/70 bg-surface-card;
+    box-shadow: var(--shadow-card);
+  }
+
+  .cb-card-hover {
+    @apply transition-all duration-200;
+  }
+
+  .cb-card-hover:hover {
+    box-shadow: var(--shadow-md);
+    @apply border-slate-200;
+  }
+
+  .cb-section-title {
+    @apply text-base font-semibold tracking-tight text-text-primary;
+  }
+
+  .cb-input {
+    @apply w-full rounded-xl border border-slate-200/80 bg-surface-muted px-3.5 py-2.5 text-sm text-text-primary outline-none transition placeholder:text-text-muted;
+  }
+
+  .cb-input:focus {
+    @apply border-accent bg-white ring-2 ring-accent/15;
+  }
+
+  .cb-glass {
+    @apply border border-white/20 bg-white/80 backdrop-blur-xl;
+  }
+
+  .cb-animate-in {
+    animation: cb-fade-in var(--duration-normal) var(--ease-out-expo) both;
+  }
+
+  .cb-animate-slide-up {
+    animation: cb-slide-up var(--duration-slow) var(--ease-out-expo) both;
+  }
+
+  .cb-stagger-1 { animation-delay: 50ms; }
+  .cb-stagger-2 { animation-delay: 100ms; }
+  .cb-stagger-3 { animation-delay: 150ms; }
+}
+
+@keyframes cb-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cb-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cb-slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes cb-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Pizarra Táctica ── */
 .pitch-surface {
   box-shadow:
-    0 4px 24px rgba(15, 23, 42, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 8px 32px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .pitch-grass-base {
@@ -73,10 +216,20 @@
 
 .formation-card:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  box-shadow: var(--shadow-md);
 }
 
 .formation-card.is-active {
   transform: scale(1.02);
-  box-shadow: 0 0 0 2px var(--color-accent), 0 4px 16px rgba(34, 197, 94, 0.2);
+  box-shadow: 0 0 0 2px var(--color-accent), 0 4px 16px rgba(16, 185, 129, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cb-animate-in,
+  .cb-animate-slide-up,
+  .pitch-marker-token,
+  .formation-card {
+    animation: none !important;
+    transition: none !important;
+  }
 }

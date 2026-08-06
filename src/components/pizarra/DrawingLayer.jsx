@@ -1,4 +1,7 @@
 import { generateRecordId } from '../../utils/playerFactory'
+import { POINT_DRAWING_TYPES } from '../../utils/tacticalBoardState'
+
+export { POINT_DRAWING_TYPES }
 
 function renderDrawing(drawing) {
   const key = drawing.id
@@ -206,12 +209,23 @@ function renderDrawing(drawing) {
           ))}
         </g>
       )
+    case 'bib':
+      return (
+        <polygon
+          key={key}
+          points={`${drawing.cx}%,${drawing.cy - 3}% ${drawing.cx - 3}%,${drawing.cy + 3}% ${drawing.cx + 3}%,${drawing.cy + 3}%`}
+          fill={drawing.color}
+          opacity="0.9"
+          stroke="#111"
+          strokeWidth="0.5"
+        />
+      )
     default:
       return null
   }
 }
 
-export default function DrawingLayer({ drawings, previewDrawing }) {
+export default function DrawingLayer({ drawings, previewDrawing, selectedDrawingId }) {
   const allDrawings = previewDrawing ? [...drawings, previewDrawing] : drawings
 
   return (
@@ -221,7 +235,16 @@ export default function DrawingLayer({ drawings, previewDrawing }) {
           <polygon points="0 0, 8 3, 0 6" fill="currentColor" />
         </marker>
       </defs>
-      {allDrawings.map(renderDrawing)}
+      {allDrawings.map((drawing) => {
+        const rendered = renderDrawing(drawing)
+        if (!rendered) return null
+        const isSelected = selectedDrawingId === drawing.id
+        return (
+          <g key={drawing.id} opacity={isSelected ? 1 : 1} style={isSelected ? { filter: 'drop-shadow(0 0 4px #fbbf24)' } : undefined}>
+            {rendered}
+          </g>
+        )
+      })}
     </svg>
   )
 }
@@ -251,7 +274,8 @@ export function createDrawing(type, start, end, color, text = '', extra = {}) {
     case 'mini-goal':
     case 'mannequin':
     case 'ladder':
-      return { ...base, cx: start.x, cy: start.y }
+    case 'bib':
+      return { ...base, cx: start.x, cy: start.y, size: extra.size ?? undefined, rotation: extra.rotation ?? 0 }
     case 'rectangle':
     case 'zone':
       return {
@@ -294,7 +318,7 @@ export function hitTestDrawing(drawings, point, threshold = 4) {
     if (drawing.type === 'text') {
       if (Math.hypot(point.x - drawing.x, point.y - drawing.y) < threshold) return drawing.id
     }
-    if (['cone', 'ball', 'pole', 'hurdle', 'mini-goal', 'mannequin', 'ladder'].includes(drawing.type)) {
+    if (['cone', 'ball', 'pole', 'hurdle', 'mini-goal', 'mannequin', 'ladder', 'bib'].includes(drawing.type)) {
       if (Math.hypot(point.x - drawing.cx, point.y - drawing.cy) < threshold) return drawing.id
     }
     if (drawing.type === 'freehand' && drawing.points?.length) {

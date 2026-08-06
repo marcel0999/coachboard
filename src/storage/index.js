@@ -1,107 +1,82 @@
-import { localStorageAdapter } from './adapters/localStorageAdapter'
+import { createSupabaseAdapter, getSupabaseLoadReport } from './adapters/supabaseAdapter'
 import { buildEmptyAppState } from './initialState'
 import { buildSeedAppState } from './seedData'
-import { diagnoseLocalStorage } from './diagnostics'
-import {
-  exportStateAsJson,
-  parseImportedBackup,
-  restoreBackup,
-  listBackups,
-  createPreMigrationBackup,
-} from './backup'
+import { exportStateAsJson, parseImportedBackup } from './backup'
 import { migrateState, MigrationError } from './migrations'
-import { hasUserData, markHasUserData, isTrulyFirstInstall } from './userDataFlag'
-import { STORAGE_KEY } from './storageKeys'
+import { isSupabaseConfigured } from '../lib/supabase'
 
-let activeAdapter = localStorageAdapter
+let activeAdapter = null
 let loadError = null
 
-export function setStorageAdapter(adapter) {
+export function configureStorageForClub(clubId) {
+  const adapter = createSupabaseAdapter(clubId)
   activeAdapter = adapter
+  return adapter
 }
 
-export function getStorageAdapter() {
-  return activeAdapter
+export async function configureStorageForClubAsync(clubId) {
+  return configureStorageForClub(clubId)
 }
 
 export function getStorageLoadError() {
   return loadError
 }
 
-/**
- * Guarda el estado del usuario e marca que existen datos reales.
- * Toda mutación del usuario debe pasar por esta función.
- */
 export function saveAppState(state) {
+  if (!activeAdapter) throw new Error('Storage no configurado. Iniciá sesión primero.')
   activeAdapter.save(state)
-  markHasUserData()
 }
 
-/**
- * Carga el último estado persistido.
- * REGLA: lo guardado es la verdad. Nunca se inyectan datos demo automáticamente.
- */
-export function loadAppState() {
+export async function saveAppStateAsync(state) {
+  if (!activeAdapter) throw new Error('Storage no configurado. Iniciá sesión primero.')
+  await activeAdapter.saveAsync(state)
+}
+
+export async function flushPendingSave() {
+  if (activeAdapter?.flushPendingSave) {
+    await activeAdapter.flushPendingSave()
+  }
+}
+
+export async function loadAppStateAsync() {
   loadError = null
 
+  if (!isSupabaseConfigured) {
+    loadError = new MigrationError(
+      'Supabase no está configurado. Definí VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.',
+    )
+    throw loadError
+  }
+
+  if (!activeAdapter?.loadAsync) {
+    loadError = new MigrationError('Storage remoto no inicializado.')
+    throw loadError
+  }
+
   try {
-    const stored = activeAdapter.load()
-    if (stored) {
-      return stored
-    }
+    return await activeAdapter.loadAsync()
   } catch (error) {
     loadError = error
-    console.error('[CoachBoard] loadAppState falló:', error)
-    diagnoseLocalStorage()
+    console.error('[CoachBoard] loadAppStateAsync falló:', error)
     throw error
   }
-
-  if (hasUserData()) {
-    const message =
-      'Existen datos de usuario (coachboard_has_user_data) pero no se encontró el estado guardado. ' +
-      'Restaurá un backup desde Configuración.'
-    loadError = new MigrationError(message)
-    throw loadError
-  }
-
-  if (!isTrulyFirstInstall()) {
-    const message = 'Instalación inconsistente: no hay estado guardado ni es primera apertura.'
-    loadError = new MigrationError(message)
-    throw loadError
-  }
-
-  const empty = buildEmptyAppState()
-  activeAdapter.save(empty)
-  console.info('[CoachBoard] Primera apertura — estado vacío inicializado (sin datos demo).')
-  return empty
 }
 
-/**
- * Demo manual exclusivamente desde Configuración, con backup previo.
- */
-export function loadSeedDemoData() {
-  const rawString = localStorage.getItem(STORAGE_KEY)
-  if (rawString !== null) {
-    try {
-      createPreMigrationBackup(JSON.parse(rawString), {
-        fromVersion: JSON.parse(rawString).schemaVersion ?? 1,
-        reason: 'before_manual_demo_load',
-      })
-    } catch {
-      /* backup best-effort */
-    }
+/** Solo desarrollo — nunca en producción */
+export async function loadSeedDemoData() {
+  if (!import.meta.env.DEV) {
+    throw new MigrationError('Los datos de demostración solo están disponibles en desarrollo.')
   }
-
   const seed = buildSeedAppState()
-  activeAdapter.save(seed)
-  markHasUserData()
+  await saveAppStateAsync(seed)
   return seed
 }
 
-export function importAppState(jsonString) {
+/** Importación manual explícita → escribe en Supabase */
+export async function importAppState(jsonString) {
   const raw = parseImportedBackup(jsonString)
   const { state } = migrateState(raw, { skipBackup: true })
-  saveAppState(state)
+  await saveAppStateAsync(state)
   return state
 }
 
@@ -109,41 +84,39 @@ export function exportAppStateBackup(state) {
   return exportStateAsJson(state)
 }
 
-export function restoreAppStateFromBackup(backupKey) {
-  const raw = restoreBackup(backupKey)
-  const { state } = migrateState(raw, { skipBackup: true })
-  saveAppState(state)
-  return state
-}
-
+/** Backups automáticos en localStorage deshabilitados — usar export JSON */
 export function getAvailableBackups() {
-  return listBackups()
+  return []
 }
 
-export function resetAppStateToEmpty() {
+export async function restoreAppStateFromBackup() {
+  throw new MigrationError(
+    'Los backups automáticos en localStorage están deshabilitados. Usá Importar JSON.',
+  )
+}
+
+export async function resetAppStateToEmpty() {
   const empty = buildEmptyAppState()
-  saveAppState(empty)
+  await saveAppStateAsync(empty)
   return empty
 }
 
-export function clearAppState() {
-  activeAdapter.clear()
+export function subscribeToRemoteState(onChange) {
+  return activeAdapter?.subscribe?.(onChange) ?? (() => {})
 }
 
-export { localStorageAdapter } from './adapters/localStorageAdapter'
+export function getLastLoadReport() {
+  return getSupabaseLoadReport()
+}
+
 export { buildEmptyAppState } from './initialState'
-export { buildSeedAppState } from './seedData'
-export { diagnoseLocalStorage } from './diagnostics'
-export { getLastLoadReport } from './adapters/localStorageAdapter'
 export { MigrationError } from './migrations'
-export { hasUserData, markHasUserData, isTrulyFirstInstall, USER_DATA_FLAG_KEY } from './userDataFlag'
+export { isSupabaseConfigured } from '../lib/supabase'
 
-/** @deprecated Usar resetAppStateToEmpty */
-export function resetAppState() {
-  return resetAppStateToEmpty()
+export function loadAppState() {
+  throw new Error('loadAppState() eliminado. Supabase es la única fuente de verdad.')
 }
 
-/** @deprecated Usar buildSeedAppState */
-export function buildInitialAppState() {
-  return buildSeedAppState()
+export function clearAppState() {
+  /* no-op */
 }

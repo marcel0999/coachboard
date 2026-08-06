@@ -1,11 +1,15 @@
 import { useMemo } from 'react'
 import { CalendarDays, Dumbbell, HeartPulse, Trophy, Users } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import { StatCard, Card } from '../components/ui/Card'
 import PageHeader from '../components/ui/PageHeader'
 import Badge from '../components/ui/Badge'
+import MetricTile from '../components/ui/MetricTile'
+import SectionHeader from '../components/ui/SectionHeader'
+import EmptyState from '../components/ui/EmptyState'
+import { ButtonLink } from '../components/ui/Button'
 import CategorySelector from '../components/categories/CategorySelector'
 import { useCategoryScope } from '../context/AppDataContext'
+import { useAuth } from '../context/AuthContext'
 import { getFullName } from '../utils/players'
 import { formatMatchDateTime } from '../utils/matches'
 import { getWeekDays } from '../utils/trainings'
@@ -22,6 +26,7 @@ function formatNextMatch(match) {
 }
 
 export default function Dashboard() {
+  const { club } = useAuth()
   const {
     categories,
     selectedCategoryId,
@@ -72,13 +77,14 @@ export default function Dashboard() {
   )
 
   return (
-    <div>
+    <div className="cb-animate-in">
       <PageHeader
         title="Dashboard"
-        description={`Resumen general del equipo · ${categoryLabel}`}
+        description={`${club?.name ?? 'Tu club'} · ${categoryLabel}`}
+        badge={<Badge variant="accent" dot>En vivo</Badge>}
       />
 
-      <Card className="mb-6">
+      <Card className="mb-6" hover={false}>
         <CategorySelector
           categories={categories}
           value={selectedCategoryId}
@@ -88,149 +94,131 @@ export default function Dashboard() {
       </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <StatCard label="Jugadores en plantel" value={stats.totalPlayers} sublabel={categoryLabel} />
-        <StatCard label="Staff técnico" value={scopedStaff.length} sublabel={`${staffWidget.active} activos · ${categoryLabel}`} accent />
-        <StatCard label="Disponibles" value={stats.available} sublabel="Listos para entrenar" />
+        <StatCard label="Jugadores" value={stats.totalPlayers} sublabel={categoryLabel} icon={Users} />
+        <StatCard
+          label="Staff técnico"
+          value={scopedStaff.length}
+          sublabel={`${staffWidget.active} activos`}
+          accent
+          icon={Users}
+        />
+        <StatCard label="Disponibles" value={stats.available} sublabel="Listos para entrenar" accent />
         <StatCard label="Lesionados" value={stats.injured} sublabel="En recuperación" />
-        <StatCard label="Entrenamientos / sem" value={stats.trainingSessions} sublabel="Planificados" />
+        <StatCard label="Entrenamientos / sem" value={stats.trainingSessions} sublabel="Esta semana" />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Card>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-text-primary">Alertas</h2>
-            <HeartPulse className="h-5 w-5 text-accent" />
-          </div>
+          <SectionHeader title="Alertas" icon={HeartPulse} />
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl bg-red-50 px-4 py-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-red-700">Vencidos</p>
-              <p className="mt-1 text-2xl font-bold text-red-800">{medicalWidget.expiredDocuments}</p>
-            </div>
-            <div className="rounded-xl bg-amber-50 px-4 py-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-amber-700">Por vencer (&lt; 30 días)</p>
-              <p className="mt-1 text-2xl font-bold text-amber-800">{medicalWidget.expiringDocuments}</p>
-            </div>
-            <div className="rounded-xl bg-red-50 px-4 py-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-red-700">Lesionados</p>
-              <p className="mt-1 text-2xl font-bold text-red-800">{medicalWidget.injuredPlayers}</p>
-            </div>
-            <div className="rounded-xl bg-slate-50 px-4 py-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-text-secondary">Próximo vencimiento</p>
-              <p className="mt-1 text-sm font-semibold text-text-primary">
-                {medicalWidget.nextExpiry
-                  ? `${medicalWidget.nextExpiry.days} días · ${getMedicalDocumentTypeLabel(medicalWidget.nextExpiry.type)}`
-                  : '—'}
-              </p>
-              {medicalWidget.nextExpiry && (
-                <p className="mt-1 text-xs text-text-muted">
-                  {formatDate(medicalWidget.nextExpiry.date)} · {getFullName(medicalWidget.nextExpiry.player)}
-                </p>
-              )}
-            </div>
+            <MetricTile label="Vencidos" value={medicalWidget.expiredDocuments} variant="danger" />
+            <MetricTile
+              label="Por vencer"
+              value={medicalWidget.expiringDocuments}
+              sublabel="< 30 días"
+              variant="warning"
+            />
+            <MetricTile label="Lesionados" value={medicalWidget.injuredPlayers} variant="danger" />
+            <MetricTile
+              label="Próximo vencimiento"
+              value={
+                medicalWidget.nextExpiry
+                  ? `${medicalWidget.nextExpiry.days} días`
+                  : '—'
+              }
+              sublabel={
+                medicalWidget.nextExpiry
+                  ? `${getMedicalDocumentTypeLabel(medicalWidget.nextExpiry.type)} · ${getFullName(medicalWidget.nextExpiry.player)}`
+                  : undefined
+              }
+            />
           </div>
-          {medicalWidget.topAlerts.length > 0 && (
-            <ul className="mt-4 space-y-2 border-t border-slate-100 pt-4">
-              {medicalWidget.topAlerts.slice(0, 3).map((alert) => (
-                <li key={alert.id} className="flex items-center justify-between gap-3 text-sm">
-                  <span className="text-text-secondary">{alert.title}</span>
-                  <Badge variant={alert.variant}>{alert.level === 'expired' ? 'Rojo' : alert.level === 'injured' || alert.level === 'suspended' ? 'Rojo' : 'Amarillo'}</Badge>
-                </li>
-              ))}
+          {(medicalWidget.topAlerts.length > 0 || staffWidget.topAlerts.length > 0) && (
+            <ul className="mt-5 space-y-2 border-t border-slate-100 pt-4">
+              {[...medicalWidget.topAlerts.slice(0, 3), ...staffWidget.topAlerts.slice(0, 2)].map(
+                (alert) => (
+                  <li key={alert.id} className="flex items-center justify-between gap-3 text-sm">
+                    <span className="text-text-secondary">{alert.title}</span>
+                    <Badge variant={alert.variant} dot>
+                      Alerta
+                    </Badge>
+                  </li>
+                ),
+              )}
             </ul>
           )}
-          {staffWidget.topAlerts.length > 0 && (
-            <ul className="mt-4 space-y-2 border-t border-slate-100 pt-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">Staff — licencias</p>
-              {staffWidget.topAlerts.slice(0, 2).map((alert) => (
-                <li key={alert.id} className="flex items-center justify-between gap-3 text-sm">
-                  <span className="text-text-secondary">{alert.title}</span>
-                  <Badge variant={alert.variant}>Alerta</Badge>
-                </li>
-              ))}
-            </ul>
-          )}
-          <Link
-            to="/medico"
-            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline"
-          >
-            Ver Centro Médico
-          </Link>
+          <ButtonLink to="/medico" variant="ghost" size="sm" className="mt-4 px-0">
+            Ver Centro Médico →
+          </ButtonLink>
         </Card>
 
         <Card>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-text-primary">Próximo partido</h2>
-            <Trophy className="h-5 w-5 text-accent" />
-          </div>
-          <p className="text-lg font-medium text-text-primary">{stats.nextMatch}</p>
-          <p className="mt-2 text-sm text-text-secondary">
+          <SectionHeader title="Próximo partido" icon={Trophy} />
+          <p className="font-display text-xl font-semibold text-text-primary">{stats.nextMatch}</p>
+          <p className="mt-2 text-sm leading-relaxed text-text-secondary">
             Revisá la alineación y la pizarra táctica antes del encuentro.
           </p>
-          <div className="mt-4 flex gap-3">
-            <Link
-              to="/plantel"
-              className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-hover"
-            >
+          <div className="mt-5 flex flex-wrap gap-3">
+            <ButtonLink to="/plantel">
               <Users className="h-4 w-4" />
               Ver plantel
-            </Link>
-            <Link
-              to="/pizarra"
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-text-primary transition hover:bg-slate-50"
-            >
+            </ButtonLink>
+            <ButtonLink to="/pizarra" variant="secondary">
               <CalendarDays className="h-4 w-4" />
               Pizarra
-            </Link>
+            </ButtonLink>
           </div>
         </Card>
 
         <Card>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-text-primary">Accesos rápidos</h2>
-            <Dumbbell className="h-5 w-5 text-accent" />
-          </div>
-          <ul className="space-y-3">
-            <li>
-              <Link to="/staff" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-slate-50">
-                <span className="text-text-primary">Staff Técnico</span>
-                <span className="text-text-muted">{staffWidget.expiredLicenses + staffWidget.expiringLicenses} alertas</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/medico" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-slate-50">
-                <span className="text-text-primary">Centro Médico</span>
-                <span className="text-text-muted">{medicalWidget.expiredDocuments} vencidos</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/plantel" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-slate-50">
-                <span className="text-text-primary">Estado del plantel</span>
-                <span className="text-text-muted">{stats.available} disponibles</span>
-              </Link>
-            </li>
+          <SectionHeader title="Accesos rápidos" icon={Dumbbell} />
+          <ul className="divide-y divide-slate-100">
+            {[
+              { to: '/staff', label: 'Staff Técnico', meta: `${staffWidget.expiredLicenses + staffWidget.expiringLicenses} alertas` },
+              { to: '/medico', label: 'Centro Médico', meta: `${medicalWidget.expiredDocuments} vencidos` },
+              { to: '/plantel', label: 'Estado del plantel', meta: `${stats.available} disponibles` },
+            ].map((item) => (
+              <li key={item.to}>
+                <ButtonLink
+                  to={item.to}
+                  variant="ghost"
+                  className="w-full justify-between rounded-xl px-3 py-3 font-normal hover:bg-surface-muted"
+                >
+                  <span className="font-medium text-text-primary">{item.label}</span>
+                  <span className="text-xs text-text-muted">{item.meta}</span>
+                </ButtonLink>
+              </li>
+            ))}
           </ul>
         </Card>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Card>
-          <h2 className="mb-4 text-base font-semibold text-text-primary">Jugadores destacados</h2>
+          <SectionHeader title="Jugadores destacados" />
           {recentPlayers.length === 0 ? (
-            <p className="text-sm text-text-secondary">No hay jugadores en el plantel.</p>
+            <EmptyState
+              icon={Users}
+              title="Sin jugadores"
+              description="Agregá jugadores al plantel para ver el resumen aquí."
+              action={<ButtonLink to="/plantel">Ir al plantel</ButtonLink>}
+            />
           ) : (
             <ul className="divide-y divide-slate-100">
               {recentPlayers.map((player) => (
-                <li key={player.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                <li key={player.id} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-muted font-display text-xs font-bold text-text-secondary">
                       {player.number}
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-text-primary">{getFullName(player)}</p>
+                      <p className="text-sm font-semibold text-text-primary">{getFullName(player)}</p>
                       <p className="text-xs text-text-secondary">{player.primaryPosition}</p>
                     </div>
                   </div>
-                  <span className="text-xs text-text-muted">{player.physicalStatus}</span>
+                  <Badge variant={player.physicalStatus === 'Disponible' ? 'success' : 'warning'} dot>
+                    {player.physicalStatus}
+                  </Badge>
                 </li>
               ))}
             </ul>
@@ -238,14 +226,25 @@ export default function Dashboard() {
         </Card>
 
         <Card>
-          <h2 className="mb-4 text-base font-semibold text-text-primary">Resumen de categoría</h2>
+          <SectionHeader title="Resumen de categoría" />
           <p className="text-sm text-text-secondary">
-            Vista activa: <span className="font-medium text-text-primary">{categoryLabel}</span>
+            Vista activa:{' '}
+            <span className="font-semibold text-text-primary">{categoryLabel}</span>
           </p>
-          <ul className="mt-4 space-y-2 text-sm text-text-secondary">
-            <li>{stats.totalPlayers} jugadores registrados</li>
-            <li>{scopedMatches.length} partidos en el historial</li>
-            <li>{scopedTrainings.length} entrenamientos planificados</li>
+          <ul className="mt-4 space-y-3">
+            {[
+              { label: 'Jugadores registrados', value: stats.totalPlayers },
+              { label: 'Partidos en historial', value: scopedMatches.length },
+              { label: 'Entrenamientos planificados', value: scopedTrainings.length },
+            ].map((row) => (
+              <li
+                key={row.label}
+                className="flex items-center justify-between rounded-xl bg-surface-muted/60 px-4 py-3 text-sm"
+              >
+                <span className="text-text-secondary">{row.label}</span>
+                <span className="font-display font-semibold text-text-primary">{row.value}</span>
+              </li>
+            ))}
           </ul>
         </Card>
       </div>

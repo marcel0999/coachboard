@@ -1,14 +1,17 @@
 import { useMemo, useState } from 'react'
 import { Calendar, CalendarDays, Plus } from 'lucide-react'
-import { Card } from '../components/ui/Card'
+import { StatCard, Card } from '../components/ui/Card'
 import PageHeader from '../components/ui/PageHeader'
 import Button from '../components/ui/Button'
+import FilterPills from '../components/ui/FilterPills'
+import SectionHeader from '../components/ui/SectionHeader'
 import ConfirmModal from '../components/ui/ConfirmModal'
 import WeeklyCalendar from '../components/entrenamientos/WeeklyCalendar'
 import MonthlyCalendar from '../components/entrenamientos/MonthlyCalendar'
 import TrainingDetailModal from '../components/entrenamientos/TrainingDetailModal'
 import { useAppData, useCategoryScope } from '../context/AppDataContext'
 import { createEmptyTraining } from '../data/initialTrainings'
+import { getTrainingDisplayName, toDateKey } from '../utils/trainings'
 import CategorySelector from '../components/categories/CategorySelector'
 
 export default function Entrenamientos() {
@@ -47,7 +50,8 @@ export default function Entrenamientos() {
   }
 
   const handleOpenCreate = (date = '') => {
-    setDraftTraining(createEmptyTraining(date, effectiveCategoryId))
+    const resolvedDate = date || toDateKey(referenceDate)
+    setDraftTraining(createEmptyTraining(resolvedDate, effectiveCategoryId))
     setIsCreating(true)
   }
 
@@ -83,10 +87,10 @@ export default function Entrenamientos() {
   }
 
   return (
-    <div>
+    <div className="cb-animate-in">
       <PageHeader
         title="Entrenamientos"
-        description="Planificación semanal integrada con plantel, partidos y ejercicios"
+        description="Sesiones creadas por el cuerpo técnico · cada entrenamiento con sus ejercicios y pizarras"
         action={
           <Button onClick={() => handleOpenCreate()}>
             <Plus className="h-4 w-4" />
@@ -105,47 +109,22 @@ export default function Entrenamientos() {
       </Card>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
-            <CalendarDays className="h-5 w-5 text-slate-600" />
-          </div>
-          <div>
-            <p className="text-sm text-text-secondary">Total sesiones</p>
-            <p className="text-2xl font-bold text-text-primary">{stats.total}</p>
-          </div>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">Programados</p>
-          <p className="mt-1 text-2xl font-bold text-text-primary">{stats.scheduled}</p>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">En curso</p>
-          <p className="mt-1 text-2xl font-bold text-amber-600">{stats.inProgress}</p>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">Finalizados</p>
-          <p className="mt-1 text-2xl font-bold text-accent">{stats.finished}</p>
-        </Card>
+        <StatCard label="Total sesiones" value={stats.total} icon={CalendarDays} accent />
+        <StatCard label="Programados" value={stats.scheduled} sublabel="Próximas sesiones" />
+        <StatCard label="En curso" value={stats.inProgress} sublabel="Sesiones activas" />
+        <StatCard label="Finalizados" value={stats.finished} sublabel="Historial completo" />
       </div>
 
       <Card className="mb-6">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex rounded-xl border border-slate-200 bg-slate-50 p-1">
-            <button
-              type="button"
-              onClick={() => setViewMode('week')}
-              className={`rounded-lg px-4 py-2 text-sm font-medium ${viewMode === 'week' ? 'bg-white text-text-primary shadow-sm' : 'text-text-secondary'}`}
-            >
-              Vista semanal
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('month')}
-              className={`rounded-lg px-4 py-2 text-sm font-medium ${viewMode === 'month' ? 'bg-white text-text-primary shadow-sm' : 'text-text-secondary'}`}
-            >
-              Vista mensual
-            </button>
-          </div>
+          <FilterPills
+            options={[
+              { value: 'week', label: 'Vista semanal' },
+              { value: 'month', label: 'Vista mensual' },
+            ]}
+            value={viewMode}
+            onChange={setViewMode}
+          />
           <Button variant="secondary" size="sm" onClick={() => setReferenceDate(new Date())}>
             <Calendar className="h-4 w-4" />
             Hoy
@@ -175,7 +154,7 @@ export default function Entrenamientos() {
       </Card>
 
       <Card>
-        <h3 className="mb-4 text-base font-semibold text-text-primary">Próximos entrenamientos</h3>
+        <SectionHeader title="Próximos entrenamientos" />
         <div className="space-y-2">
           {scopedTrainings
             .filter((t) => t.status !== 'Finalizado')
@@ -190,11 +169,15 @@ export default function Entrenamientos() {
                   onClick={() => handleOpenTraining(training)}
                   className="flex-1 text-left"
                 >
-                  <p className="font-medium text-text-primary">{training.date} · {training.time || '—'}</p>
-                  <p className="text-sm text-text-secondary">{training.category} — {training.objective || training.field}</p>
+                  <p className="font-medium text-text-primary">
+                    {getTrainingDisplayName(training)}
+                  </p>
+                  <p className="text-sm text-text-secondary">
+                    {training.date} · {training.time || '—'} · {training.category}
+                  </p>
                 </button>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-text-muted">{training.load}</span>
+                  <span className="text-xs text-text-muted">{training.intensity ?? training.load}</span>
                   <button
                     type="button"
                     onClick={() => setDeletingTraining(training)}

@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Button from '../ui/Button'
 import { WEEKDAY_LABELS } from '../../constants/trainings'
-import { getTrainingsForDay, toDateKey } from '../../utils/trainings'
+import { getTrainingsForDay, getTrainingDisplayName, toDateKey } from '../../utils/trainings'
 import { getLocaleTag } from '../../config/localization'
 
 function TrainingPill({ training, onClick }) {
@@ -18,8 +18,8 @@ function TrainingPill({ training, onClick }) {
       className={`w-full rounded-xl border px-3 py-2 text-left text-xs transition hover:shadow-sm ${statusClass}`}
     >
       <p className="font-semibold">{training.time || 'Sin hora'}</p>
-      <p className="mt-0.5 truncate">{training.category}</p>
-      <p className="mt-0.5 truncate text-text-muted">{training.objective || training.field}</p>
+      <p className="mt-0.5 truncate">{getTrainingDisplayName(training)}</p>
+      <p className="mt-0.5 truncate text-text-muted">{training.category}</p>
     </button>
   )
 }

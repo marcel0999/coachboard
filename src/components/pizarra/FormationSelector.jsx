@@ -12,7 +12,7 @@ function FormationMiniDiagram({ formationId }) {
           {Array.from({ length: count }).map((_, i) => (
             <span
               key={i}
-              className="h-1.5 w-1.5 rounded-full bg-emerald-500/80"
+              className="h-1.5 w-1.5 rounded-full bg-accent/80"
             />
           ))}
         </div>
@@ -34,7 +34,7 @@ export default function FormationSelector({ value, customFormations, onChange, c
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+        className="rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
       >
         {allOptions.map((option) => (
           <option key={option.value} value={option.value}>
@@ -49,7 +49,7 @@ export default function FormationSelector({ value, customFormations, onChange, c
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <LayoutGrid className="h-4 w-4 text-emerald-600" />
+        <LayoutGrid className="h-4 w-4 text-accent" />
         <h4 className="text-xs font-semibold uppercase tracking-wide text-text-muted">Formación</h4>
       </div>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-3">
@@ -61,8 +61,8 @@ export default function FormationSelector({ value, customFormations, onChange, c
             className={[
               'formation-card flex flex-col items-center rounded-xl border bg-white px-2 py-2.5',
               value === option.value
-                ? 'is-active border-emerald-500 bg-emerald-50/50'
-                : 'border-slate-200/80 hover:border-emerald-300',
+                ? 'is-active border-accent bg-accent-subtle/50'
+                : 'border-slate-200/80 hover:border-accent/40',
             ].join(' ')}
           >
             <FormationMiniDiagram formationId={option.value} />
@@ -81,8 +81,8 @@ export default function FormationSelector({ value, customFormations, onChange, c
               className={[
                 'formation-card rounded-lg border px-3 py-1.5 text-xs font-medium',
                 value === option.value
-                  ? 'is-active border-emerald-500 bg-emerald-50 text-emerald-800'
-                  : 'border-slate-200 bg-white text-text-secondary hover:border-emerald-300',
+                  ? 'is-active border-accent bg-accent-subtle text-accent'
+                  : 'border-slate-200 bg-white text-text-secondary hover:border-accent/40',
               ].join(' ')}
             >
               {option.label}
@@ -111,8 +111,8 @@ export function FormationSelectorBar({ value, customFormations, onChange }) {
           className={[
             'formation-card rounded-lg border px-3 py-1.5 text-xs font-bold',
             value === option.value
-              ? 'is-active border-emerald-500 bg-emerald-500 text-white'
-              : 'border-slate-200 bg-white text-text-secondary hover:border-emerald-400',
+              ? 'is-active border-accent bg-accent text-white'
+              : 'border-slate-200 bg-white text-text-secondary hover:border-accent/60',
           ].join(' ')}
         >
           {option.label}
@@ -124,7 +124,7 @@ export function FormationSelectorBar({ value, customFormations, onChange }) {
           onChange={(event) => {
             if (event.target.value) onChange(event.target.value)
           }}
-          className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs shadow-sm outline-none focus:border-emerald-500"
+          className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs shadow-sm outline-none focus:border-accent"
         >
           <option value="">Más…</option>
           {rest.map((option) => (

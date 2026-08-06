@@ -28,6 +28,7 @@ import TacticalBoardStaffPanel from '../components/pizarra/TacticalBoardStaffPan
 import { useAppData, useCategoryScope } from '../context/AppDataContext'
 import { BOARD_MODES, BOARD_TYPES, PITCH_TYPES } from '../constants/tacticalBoard'
 import { getFullName } from '../utils/players'
+import { getSessionExercises, getTrainingDisplayName } from '../utils/trainings'
 import {
   applyFormationToBoard,
   applySavedBoardToBoard,
@@ -36,6 +37,7 @@ import {
   createSavedBoardFromBoard,
   duplicateCustomFormation,
   duplicateDrawing,
+  deleteDrawingById,
   getActiveBoard,
   loadBoardFromMatch,
   movePlayerFromBenchToMarker,
@@ -45,6 +47,7 @@ import {
   renameCustomFormation,
   syncBoardToMatch,
   syncBoardToTrainingBlock,
+  syncBoardToTrainingExercise,
   undoDrawings,
   updateActiveBoard,
 } from '../utils/tacticalBoardState'
@@ -65,6 +68,7 @@ export default function PizarraTactica() {
   const matchIdParam = searchParams.get('matchId')
   const trainingIdParam = searchParams.get('trainingId')
   const blockIdParam = searchParams.get('blockId')
+  const exerciseIdParam = searchParams.get('exerciseId')
 
   const exportRef = useRef(null)
   const matchLoadedRef = useRef(null)
@@ -79,6 +83,10 @@ export default function PizarraTactica() {
     () => linkedTraining?.blocks?.find((block) => block.id === blockIdParam),
     [linkedTraining, blockIdParam],
   )
+  const linkedExercise = useMemo(() => {
+    if (!linkedTraining || !exerciseIdParam) return null
+    return getSessionExercises(linkedTraining).find((exercise) => exercise.id === exerciseIdParam) ?? null
+  }, [linkedTraining, exerciseIdParam])
 
   const boardCategoryId = activeBoard.categoryId ?? effectiveCategoryId ?? categories[0]?.id
   const categoryPlayers = useMemo(
@@ -153,29 +161,58 @@ export default function PizarraTactica() {
   }, [matchIdParam, matches, scopedPlayers, tacticalBoard.customFormations, updateTacticalBoard, setSelectedCategoryId])
 
   useEffect(() => {
-    if (!trainingIdParam || !blockIdParam || matchLoadedRef.current === `${trainingIdParam}-${blockIdParam}`) return
-    const training = trainings.find((item) => item.id === trainingIdParam)
-    const block = training?.blocks?.find((item) => item.id === blockIdParam)
-    if (!training || !block) return
+    const loadKey = exerciseIdParam
+      ? `${trainingIdParam}-${exerciseIdParam}`
+      : `${trainingIdParam}-${blockIdParam}`
 
-    matchLoadedRef.current = `${trainingIdParam}-${blockIdParam}`
+    if (!trainingIdParam || (!blockIdParam && !exerciseIdParam)) return
+    if (matchLoadedRef.current === loadKey) return
+
+    const training = trainings.find((item) => item.id === trainingIdParam)
+    if (!training) return
+
+    let sourceBoard = null
+    let sourceLabel = getTrainingDisplayName(training)
+    let linkedBlockId = null
+    let linkedExerciseId = null
+
+    if (exerciseIdParam) {
+      const exercise = getSessionExercises(training).find((item) => item.id === exerciseIdParam)
+      if (!exercise) return
+      sourceBoard = exercise.tacticalBoard
+      sourceLabel = `${sourceLabel} · ${exercise.name || 'Ejercicio'}`
+      linkedExerciseId = exercise.id
+    } else {
+      const block = training.blocks?.find((item) => item.id === blockIdParam)
+      if (!block) return
+      sourceBoard = block.tacticalBoard
+      sourceLabel = `${sourceLabel} · ${block.label}`
+      linkedBlockId = block.id
+    }
+
+    matchLoadedRef.current = loadKey
     const board = createBoard(
-      `${training.title ?? 'Entrenamiento'} · ${block.label}`,
-      block.tacticalBoard?.formation ?? '4-3-3',
+      sourceLabel,
+      sourceBoard?.formation ?? '4-3-3',
       tacticalBoard.customFormations,
       { categoryId: training.categoryId, boardType: 'exercise' },
     )
     board.linkedTrainingId = training.id
-    board.linkedBlockId = block.id
-    if (block.tacticalBoard?.markers?.length) {
-      board.markers = block.tacticalBoard.markers
-      board.benchPlayerIds = block.tacticalBoard.benchPlayerIds ?? []
-      board.drawings = block.tacticalBoard.drawings ?? []
-    } else if (block.tacticalBoard?.lineup) {
+    board.linkedBlockId = linkedBlockId
+    board.linkedExerciseId = linkedExerciseId
+
+    if (sourceBoard?.markers?.length) {
+      board.markers = sourceBoard.markers
+      board.benchPlayerIds = sourceBoard.benchPlayerIds ?? []
+      board.drawings = sourceBoard.drawings ?? []
+      board.mode = sourceBoard.mode ?? board.mode
+      board.pitchType = sourceBoard.pitchType ?? board.pitchType
+    } else if (sourceBoard?.lineup) {
       board.markers = board.markers.map((marker) => ({
         ...marker,
-        playerId: block.tacticalBoard.lineup[marker.slotId] ?? null,
+        playerId: sourceBoard.lineup[marker.slotId] ?? null,
       }))
+      board.drawings = sourceBoard.drawings ?? []
     }
 
     updateTacticalBoard((state) => ({
@@ -185,7 +222,15 @@ export default function PizarraTactica() {
       lastCategoryId: training.categoryId,
     }))
     setSelectedCategoryId(training.categoryId)
-  }, [trainingIdParam, blockIdParam, trainings, tacticalBoard.customFormations, updateTacticalBoard, setSelectedCategoryId])
+  }, [
+    trainingIdParam,
+    blockIdParam,
+    exerciseIdParam,
+    trainings,
+    tacticalBoard.customFormations,
+    updateTacticalBoard,
+    setSelectedCategoryId,
+  ])
 
   const persistCategory = (categoryId) => {
     setSelectedCategoryId(categoryId)
@@ -406,7 +451,24 @@ export default function PizarraTactica() {
   }
 
   const handleSaveToTraining = () => {
-    if (!linkedTraining || !linkedBlock) return
+    if (!linkedTraining) return
+
+    if (linkedExercise || exerciseIdParam || activeBoard.linkedExerciseId) {
+      const exerciseId = linkedExercise?.id ?? exerciseIdParam ?? activeBoard.linkedExerciseId
+      const nextTraining = {
+        ...linkedTraining,
+        sessionExercises: getSessionExercises(linkedTraining).map((exercise) =>
+          exercise.id === exerciseId
+            ? syncBoardToTrainingExercise(activeBoard, exercise)
+            : exercise,
+        ),
+      }
+      saveTraining(nextTraining)
+      showSaveMessage('Pizarra guardada en el ejercicio del entrenamiento')
+      return
+    }
+
+    if (!linkedBlock) return
     const nextTraining = {
       ...linkedTraining,
       blocks: linkedTraining.blocks.map((block) =>
@@ -424,6 +486,16 @@ export default function PizarraTactica() {
     }))
   }
 
+  const handleDeleteDrawing = () => {
+    if (!selectedDrawingId) return
+    updateBoard((board) => ({
+      ...board,
+      drawings: deleteDrawingById(board.drawings, selectedDrawingId),
+      history: { past: [...board.history.past, board.drawings.map((d) => ({ ...d }))].slice(-50), future: [] },
+    }))
+    setSelectedDrawingId(null)
+  }
+
   const handleDuplicateDrawing = () => {
     if (!selectedDrawingId) return
     updateBoard((board) => ({
@@ -435,7 +507,7 @@ export default function PizarraTactica() {
   const savedBoards = tacticalBoard.savedBoards ?? tacticalBoard.savedLineups ?? []
 
   return (
-    <div>
+    <div className="cb-animate-in">
       <PageHeader
         title="Pizarra Táctica"
         description="Formaciones, alineaciones, ejercicios y movimientos tácticos con jugadores reales"
@@ -454,7 +526,7 @@ export default function PizarraTactica() {
                 Guardar en partido
               </Button>
             )}
-            {linkedTraining && linkedBlock && (
+            {linkedTraining && (linkedBlock || linkedExercise) && (
               <Button variant="secondary" onClick={handleSaveToTraining}>
                 Guardar en entrenamiento
               </Button>
@@ -483,7 +555,12 @@ export default function PizarraTactica() {
             Vinculado al partido vs {linkedMatch.opponent} · {linkedMatch.competition}
           </p>
         )}
-        {linkedTraining && linkedBlock && (
+        {linkedTraining && linkedExercise && (
+          <p className="mt-3 text-sm text-accent">
+            Vinculado al entrenamiento · ejercicio {linkedExercise.name || 'sin nombre'}
+          </p>
+        )}
+        {linkedTraining && linkedBlock && !linkedExercise && (
           <p className="mt-3 text-sm text-accent">
             Vinculado al entrenamiento · bloque {linkedBlock.label}
           </p>
@@ -511,8 +588,8 @@ export default function PizarraTactica() {
             className={[
               'rounded-xl px-3.5 py-2 text-sm font-semibold shadow-sm transition-all',
               board.id === tacticalBoard.activeBoardId
-                ? 'bg-emerald-500 text-white shadow-emerald-500/25'
-                : 'bg-white text-text-secondary ring-1 ring-slate-200/80 hover:bg-slate-50 hover:ring-emerald-200',
+                ? 'bg-accent text-white shadow-accent/25'
+                : 'bg-white text-text-secondary ring-1 ring-slate-200/80 hover:bg-slate-50 hover:ring-accent/30',
             ].join(' ')}
           >
             {board.name}
@@ -521,7 +598,7 @@ export default function PizarraTactica() {
         <button
           type="button"
           onClick={() => setNewBoardModalOpen(true)}
-          className="inline-flex items-center gap-1 rounded-xl bg-white px-3.5 py-2 text-sm font-semibold text-emerald-600 shadow-sm ring-1 ring-slate-200/80 transition hover:bg-emerald-50 hover:ring-emerald-300"
+          className="inline-flex items-center gap-1 rounded-xl bg-white px-3.5 py-2 text-sm font-semibold text-accent shadow-sm ring-1 ring-slate-200/80 transition hover:bg-accent-subtle hover:ring-accent/40"
         >
           <Plus className="h-4 w-4" />
           Nueva pizarra
@@ -541,7 +618,7 @@ export default function PizarraTactica() {
               onClick={() => handleModeChange(option.id)}
               className={
                 activeBoard.mode === option.id
-                  ? 'rounded-lg bg-white px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm'
+                  ? 'rounded-lg bg-white px-4 py-2 text-sm font-semibold text-accent shadow-sm'
                   : 'rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition hover:text-text-primary'
               }
             >
@@ -568,7 +645,7 @@ export default function PizarraTactica() {
         <select
           value={activeBoard.pitchType ?? 'full-vertical'}
           onChange={(event) => updateBoard((board) => ({ ...board, pitchType: event.target.value }))}
-          className="rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15"
+          className="rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
         >
           {PITCH_TYPES.map((type) => (
             <option key={type.id} value={type.id}>
@@ -580,7 +657,7 @@ export default function PizarraTactica() {
         <select
           value={activeBoard.boardType ?? 'lineup'}
           onChange={(event) => updateBoard((board) => ({ ...board, boardType: event.target.value }))}
-          className="rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15"
+          className="rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
         >
           {BOARD_TYPES.map((type) => (
             <option key={type.id} value={type.id}>
@@ -610,6 +687,8 @@ export default function PizarraTactica() {
         onUndo={() => updateBoard((board) => undoDrawings(board))}
         onRedo={() => updateBoard((board) => redoDrawings(board))}
         onDuplicate={handleDuplicateDrawing}
+        onDeleteSelected={handleDeleteDrawing}
+        canDelete={Boolean(selectedDrawingId)}
         canDuplicate={Boolean(selectedDrawingId)}
         onClear={() => {
           if (!window.confirm('¿Limpiar todos los dibujos de esta pizarra?')) return
@@ -619,7 +698,7 @@ export default function PizarraTactica() {
         canRedo={activeBoard.history.future.length > 0}
       />
 
-      <div className="mt-4 grid gap-4 xl:grid-cols-[260px_minmax(0,1fr)_300px] xl:gap-5">
+      <div className="mt-4 grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)_280px] xl:grid-cols-[240px_minmax(0,1fr)_300px] xl:gap-5">
         <PlayerSquadPanel
           players={categoryPlayers}
           usedPlayerIds={usedPlayerIds}
@@ -691,7 +770,7 @@ export default function PizarraTactica() {
                   className={[
                     'shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition',
                     sidebarTab === tab
-                      ? 'bg-white text-emerald-700 shadow-sm ring-1 ring-slate-200/80'
+                      ? 'bg-white text-accent shadow-sm ring-1 ring-slate-200/80'
                       : 'text-text-muted hover:bg-white/60 hover:text-text-primary',
                   ].join(' ')}
                 >
@@ -763,16 +842,16 @@ export default function PizarraTactica() {
                       >
                         <button
                           type="button"
-                          className="font-semibold text-text-primary hover:text-emerald-600"
+                          className="font-semibold text-text-primary hover:text-accent"
                           onClick={() => handleFormationChange(formation.id)}
                         >
                           {formation.name}
                         </button>
                         <div className="flex gap-2">
-                          <button type="button" className="text-xs text-emerald-600 hover:underline" onClick={() => handleRenameFormation(formation.id)}>
+                          <button type="button" className="text-xs text-accent hover:underline" onClick={() => handleRenameFormation(formation.id)}>
                             Renombrar
                           </button>
-                          <button type="button" className="text-xs text-emerald-600 hover:underline" onClick={() => handleDuplicateFormation(formation.id)}>
+                          <button type="button" className="text-xs text-accent hover:underline" onClick={() => handleDuplicateFormation(formation.id)}>
                             <Copy className="inline h-3 w-3" /> Duplicar
                           </button>
                           <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => handleDeleteCustomFormation(formation.id)}>
@@ -789,13 +868,13 @@ export default function PizarraTactica() {
             {sidebarTab === 'players' && (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-xl border border-slate-200/80 bg-gradient-to-br from-emerald-50/80 to-white p-3">
+                  <div className="rounded-xl border border-slate-200/80 bg-gradient-to-br from-accent-subtle/80 to-white p-3">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Categoría</p>
                     <p className="mt-1 text-sm font-semibold text-text-primary">{currentCategory?.name ?? '—'}</p>
                   </div>
                   <div className="rounded-xl border border-slate-200/80 bg-gradient-to-br from-slate-50 to-white p-3">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted">En pizarra</p>
-                    <p className="mt-1 text-sm font-semibold text-emerald-700">{usedPlayerIds.size} / {categoryPlayers.length}</p>
+                    <p className="mt-1 text-sm font-semibold text-accent">{usedPlayerIds.size} / {categoryPlayers.length}</p>
                   </div>
                 </div>
 
@@ -807,7 +886,7 @@ export default function PizarraTactica() {
                       .map((marker) => (
                         <li key={marker.id} className="flex items-center justify-between rounded-xl border border-slate-200/80 bg-white px-2.5 py-2 text-sm shadow-sm">
                           <span className="truncate font-medium">{getFullName(playerMap[marker.playerId])}</span>
-                          <button type="button" className="shrink-0 text-xs font-medium text-emerald-600 hover:underline" onClick={() => handleDropToBench(marker.playerId)}>
+                          <button type="button" className="shrink-0 text-xs font-medium text-accent hover:underline" onClick={() => handleDropToBench(marker.playerId)}>
                             Al banco
                           </button>
                         </li>

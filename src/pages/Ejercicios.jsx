@@ -1,7 +1,11 @@
-import { Clock, Filter, Plus } from 'lucide-react'
+import { Clock, Plus } from 'lucide-react'
 import Badge from '../components/ui/Badge'
+import Button from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import PageHeader from '../components/ui/PageHeader'
+import SearchInput from '../components/ui/SearchInput'
+import SectionHeader from '../components/ui/SectionHeader'
+import { FormField, Select } from '../components/ui/FormField'
 import CategorySelector from '../components/categories/CategorySelector'
 import { useAppData, useCategoryScope } from '../context/AppDataContext'
 
@@ -21,18 +25,15 @@ export default function Ejercicios() {
   const { categories, selectedCategoryId, setSelectedCategoryId } = useCategoryScope()
 
   return (
-    <div>
+    <div className="cb-animate-in">
       <PageHeader
         title="Ejercicios"
         description="Biblioteca compartida con el módulo de Entrenamientos"
         action={
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-hover"
-          >
+          <Button>
             <Plus className="h-4 w-4" />
             Nuevo ejercicio
-          </button>
+          </Button>
         }
       />
 
@@ -49,28 +50,26 @@ export default function Ejercicios() {
       </Card>
 
       <Card className="mb-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-            <input
-              type="search"
-              placeholder="Buscar ejercicios..."
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-accent focus:bg-white focus:ring-2 focus:ring-accent/20"
-            />
+        <SectionHeader title="Biblioteca de ejercicios" />
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <div className="flex-1">
+            <SearchInput placeholder="Buscar ejercicios…" />
           </div>
-          <select className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20">
-            <option value="">Todas las categorías</option>
-            <option value="posesion">Posesión</option>
-            <option value="transicion">Transición</option>
-            <option value="tactica">Táctica</option>
-            <option value="finalizacion">Finalización</option>
-          </select>
+          <FormField label="Tipo" className="sm:w-48">
+            <Select defaultValue="">
+              <option value="">Todas las categorías</option>
+              <option value="posesion">Posesión</option>
+              <option value="transicion">Transición</option>
+              <option value="tactica">Táctica</option>
+              <option value="finalizacion">Finalización</option>
+            </Select>
+          </FormField>
         </div>
       </Card>
 
       <div className="grid gap-4 md:grid-cols-2">
         {exercises.map((exercise) => (
-          <Card key={exercise.id} className="flex flex-col">
+          <Card key={exercise.id} hover className="flex flex-col">
             <div className="mb-3 flex items-start gap-4">
               <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-xl ${exercise.imageColor} text-xl font-bold text-white`}>
                 {exercise.category[0]}

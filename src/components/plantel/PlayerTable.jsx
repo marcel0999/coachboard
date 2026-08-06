@@ -1,4 +1,6 @@
 import { Pencil, Trash2, Users } from 'lucide-react'
+import EmptyState from '../ui/EmptyState'
+import DataTable from '../ui/DataTable'
 import Badge, { statusToVariant } from '../ui/Badge'
 import PlayerAvatar from './PlayerAvatar'
 import { calculateAge, getFullName } from '../../utils/players'
@@ -6,21 +8,16 @@ import { calculateAge, getFullName } from '../../utils/players'
 export default function PlayerTable({ players, onView, onEdit, onDelete }) {
   if (players.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
-          <Users className="h-7 w-7 text-text-muted" />
-        </div>
-        <h3 className="text-base font-semibold text-text-primary">No se encontraron jugadores</h3>
-        <p className="mt-1 max-w-sm text-sm text-text-secondary">
-          Probá ajustando la búsqueda o los filtros, o agregá un nuevo jugador al plantel.
-        </p>
-      </div>
+      <EmptyState
+        icon={Users}
+        title="No se encontraron jugadores"
+        description="Probá ajustando la búsqueda o los filtros, o agregá un nuevo jugador al plantel."
+      />
     )
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="overflow-x-auto">
+    <DataTable>
         <table className="w-full min-w-[900px] text-left text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50/80">
@@ -99,7 +96,6 @@ export default function PlayerTable({ players, onView, onEdit, onDelete }) {
             })}
           </tbody>
         </table>
-      </div>
-    </div>
+    </DataTable>
   )
 }

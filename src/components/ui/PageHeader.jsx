@@ -1,21 +1,16 @@
-export default function PageHeader({ title, description, action }) {
+export default function PageHeader({ title, description, action, badge }) {
   return (
-    <>
-      {/* Mobile / tablet: título + acción */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between lg:hidden">
-        <div>
-          <h1 className="text-xl font-bold text-text-primary">{title}</h1>
-          {description && <p className="mt-1 text-sm text-text-secondary">{description}</p>}
+    <div className="cb-animate-slide-up mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-display-sm text-text-primary">{title}</h1>
+          {badge}
         </div>
-        {action}
+        {description && (
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text-secondary">{description}</p>
+        )}
       </div>
-
-      {/* Desktop: acción visible arriba a la derecha (PageHeader completo está oculto en lg+) */}
-      {action && (
-        <div className="mb-6 hidden items-center justify-end lg:flex">
-          {action}
-        </div>
-      )}
-    </>
+      {action && <div className="flex shrink-0 flex-wrap items-center gap-2">{action}</div>}
+    </div>
   )
 }

@@ -1,6 +1,7 @@
-import { LayoutDashboard, Users, ClipboardList, Dumbbell, Trophy, CalendarDays, Activity, HeartPulse, UserCog, Settings } from 'lucide-react'
+import { LayoutDashboard, Users, ClipboardList, BookOpen, Trophy, CalendarDays, Activity, HeartPulse, UserCog, Settings, ShieldCheck } from 'lucide-react'
 
 const ICON_MAP = {
+  '/dashboard': LayoutDashboard,
   '/': LayoutDashboard,
   '/plantel': Users,
   '/partidos': Trophy,
@@ -9,8 +10,10 @@ const ICON_MAP = {
   '/medico': HeartPulse,
   '/staff': UserCog,
   '/pizarra': ClipboardList,
-  '/ejercicios': Dumbbell,
+  '/biblioteca': BookOpen,
+  '/ejercicios': BookOpen,
   '/configuracion': Settings,
+  '/equipo/accesos': ShieldCheck,
 }
 
 export function getNavIcon(path) {

@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
 import { Plus, UserCog, Users } from 'lucide-react'
-import { Card } from '../components/ui/Card'
+import { StatCard, Card } from '../components/ui/Card'
 import PageHeader from '../components/ui/PageHeader'
 import Button from '../components/ui/Button'
+import Badge from '../components/ui/Badge'
+import SectionHeader from '../components/ui/SectionHeader'
 import SearchInput from '../components/ui/SearchInput'
 import FilterPills from '../components/ui/FilterPills'
 import SortSelect from '../components/ui/SortSelect'
@@ -120,7 +122,7 @@ export default function Plantel() {
   }
 
   return (
-    <div>
+    <div className="cb-animate-in">
       <PageHeader
         title="Plantel"
         description="Gestión completa de jugadores del equipo por categoría"
@@ -142,45 +144,25 @@ export default function Plantel() {
       </Card>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
-            <Users className="h-5 w-5 text-slate-600" />
-          </div>
-          <div>
-            <p className="text-sm text-text-secondary">Total · {currentCategory?.name}</p>
-            <p className="text-2xl font-bold text-text-primary">{stats.total}</p>
-          </div>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">Disponibles</p>
-          <p className="mt-1 text-2xl font-bold text-accent">{stats.available}</p>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">Lesionados</p>
-          <p className="mt-1 text-2xl font-bold text-red-600">{stats.injured}</p>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">Suspendidos</p>
-          <p className="mt-1 text-2xl font-bold text-amber-600">{stats.suspended}</p>
-        </Card>
+        <StatCard
+          label={`Total · ${currentCategory?.name ?? 'Categoría'}`}
+          value={stats.total}
+          icon={Users}
+          accent
+        />
+        <StatCard label="Disponibles" value={stats.available} sublabel="Listos para convocar" />
+        <StatCard label="Lesionados" value={stats.injured} sublabel="Fuera de actividad" />
+        <StatCard label="Suspendidos" value={stats.suspended} sublabel="Sanción disciplinaria" />
       </div>
 
       {categoryStaff.length > 0 && (
         <Card className="mb-6">
-          <div className="mb-3 flex items-center gap-2">
-            <UserCog className="h-5 w-5 text-accent" />
-            <h2 className="text-base font-semibold text-text-primary">
-              Cuerpo técnico · {currentCategory?.name}
-            </h2>
-          </div>
+          <SectionHeader title={`Cuerpo técnico · ${currentCategory?.name}`} icon={UserCog} />
           <div className="flex flex-wrap gap-2">
             {categoryStaff.map((member) => (
-              <span
-                key={member.id}
-                className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-text-secondary"
-              >
+              <Badge key={member.id}>
                 {member.name} · {member.role}
-              </span>
+              </Badge>
             ))}
           </div>
         </Card>

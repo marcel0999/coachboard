@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Calendar, Plus } from 'lucide-react'
-import { Card } from '../components/ui/Card'
+import { StatCard, Card } from '../components/ui/Card'
 import PageHeader from '../components/ui/PageHeader'
 import Button from '../components/ui/Button'
 import SearchInput from '../components/ui/SearchInput'
@@ -87,7 +87,7 @@ export default function Partidos() {
   }
 
   return (
-    <div>
+    <div className="cb-animate-in">
       <PageHeader
         title="Partidos"
         description="Gestión completa de encuentros, convocatorias y estadísticas"
@@ -109,27 +109,10 @@ export default function Partidos() {
       </Card>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
-            <Calendar className="h-5 w-5 text-slate-600" />
-          </div>
-          <div>
-            <p className="text-sm text-text-secondary">Total</p>
-            <p className="text-2xl font-bold text-text-primary">{stats.total}</p>
-          </div>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">Programados</p>
-          <p className="mt-1 text-2xl font-bold text-text-primary">{stats.scheduled}</p>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">En juego</p>
-          <p className="mt-1 text-2xl font-bold text-amber-600">{stats.live}</p>
-        </Card>
-        <Card>
-          <p className="text-sm text-text-secondary">Finalizados</p>
-          <p className="mt-1 text-2xl font-bold text-accent">{stats.finished}</p>
-        </Card>
+        <StatCard label="Total partidos" value={stats.total} icon={Calendar} accent />
+        <StatCard label="Programados" value={stats.scheduled} sublabel="Próximos encuentros" />
+        <StatCard label="En juego" value={stats.live} sublabel="Partidos activos" />
+        <StatCard label="Finalizados" value={stats.finished} sublabel="Historial completo" />
       </div>
 
       <Card className="mb-6 space-y-4">

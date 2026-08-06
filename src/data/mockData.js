@@ -1,6 +1,6 @@
 export const NAV_ITEMS = [
   {
-    to: '/',
+    to: '/dashboard',
     label: 'Dashboard',
     end: true,
   },
@@ -40,8 +40,8 @@ export const NAV_ITEMS = [
     end: false,
   },
   {
-    to: '/ejercicios',
-    label: 'Ejercicios',
+    to: '/biblioteca',
+    label: 'Biblioteca',
     end: false,
   },
   {

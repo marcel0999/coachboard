@@ -1,15 +1,15 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  loadAppState,
-  saveAppState,
+  loadAppStateAsync,
+  saveAppStateAsync,
+  flushPendingSave,
   loadSeedDemoData,
   importAppState,
   exportAppStateBackup,
-  restoreAppStateFromBackup,
-  getAvailableBackups,
-  diagnoseLocalStorage,
   getLastLoadReport,
   buildEmptyAppState,
+  subscribeToRemoteState,
+  isSupabaseConfigured,
 } from '../storage'
 import { enrichPlayer } from '../utils/playerFactory'
 import {
@@ -135,23 +135,58 @@ function reconcilePlayerCategory(prev, playerId, oldCategoryId, newCategoryId) {
 
 export function AppDataProvider({ children }) {
   const [storageError, setStorageError] = useState(null)
-  const [loadReport, setLoadReport] = useState(() => getLastLoadReport())
+  const [loadReport, setLoadReport] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [state, setState] = useState(null)
+  const [saveError, setSaveError] = useState(null)
+  const applyingRemoteRef = useRef(false)
 
-  const [state, setState] = useState(() => {
-    try {
-      const loaded = loadAppState()
-      setLoadReport(getLastLoadReport())
-      return loaded
-    } catch (error) {
-      console.error('[CoachBoard] Error al inicializar datos:', error)
-      setStorageError(error)
-      return null
+  useEffect(() => {
+    let cancelled = false
+
+    async function bootstrap() {
+      setIsLoading(true)
+      try {
+        const loaded = await loadAppStateAsync()
+        if (!cancelled) {
+          setState(loaded)
+          setStorageError(null)
+          setLoadReport(getLastLoadReport())
+        }
+      } catch (error) {
+        console.error('[CoachBoard] Error al inicializar datos:', error)
+        if (!cancelled) {
+          setStorageError(error)
+          setState(null)
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
     }
-  })
 
-  const reloadFromStorage = useCallback(() => {
+    bootstrap()
+
+    return () => {
+      cancelled = true
+      void flushPendingSave()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isSupabaseConfigured || !state) return undefined
+
+    const unsubscribe = subscribeToRemoteState((remoteState) => {
+      applyingRemoteRef.current = true
+      setState(remoteState)
+      applyingRemoteRef.current = false
+    })
+
+    return unsubscribe
+  }, [state?.schemaVersion])
+
+  const reloadFromStorage = useCallback(async () => {
     try {
-      const loaded = loadAppState()
+      const loaded = await loadAppStateAsync()
       setState(loaded)
       setStorageError(null)
       setLoadReport(getLastLoadReport())
@@ -166,7 +201,14 @@ export function AppDataProvider({ children }) {
     setState((prev) => {
       if (!prev) return prev
       const next = typeof updater === 'function' ? updater(prev) : updater
-      saveAppState(next)
+      if (!applyingRemoteRef.current) {
+        void saveAppStateAsync(next)
+          .then(() => setSaveError(null))
+          .catch((error) => {
+            console.error('[CoachBoard] Error al guardar en Supabase:', error)
+            setSaveError(error?.message ?? 'Error al guardar en Supabase')
+          })
+      }
       return next
     })
   }, [])
@@ -593,32 +635,20 @@ export function AppDataProvider({ children }) {
     [state],
   )
 
-  const importBackupJson = useCallback(
-    (jsonString) => {
-      const imported = importAppState(jsonString)
-      setState(imported)
-      setStorageError(null)
-      setLoadReport(getLastLoadReport())
-      return imported
-    },
-    [],
-  )
+  const importBackupJson = useCallback(async (jsonString) => {
+    const imported = await importAppState(jsonString)
+    setState(imported)
+    setStorageError(null)
+    setSaveError(null)
+    setLoadReport(getLastLoadReport())
+    return imported
+  }, [])
 
-  const restoreBackup = useCallback(
-    (backupKey) => {
-      const restored = restoreAppStateFromBackup(backupKey)
-      setState(restored)
-      setStorageError(null)
-      setLoadReport(getLastLoadReport())
-      return restored
-    },
-    [],
-  )
-
-  const loadDemoData = useCallback(() => {
-    const seed = loadSeedDemoData()
+  const loadDemoData = useCallback(async () => {
+    const seed = await loadSeedDemoData()
     setState(seed)
     setStorageError(null)
+    setSaveError(null)
     return seed
   }, [])
 
@@ -638,19 +668,30 @@ export function AppDataProvider({ children }) {
     return exportAppStateBackup(state)
   }, [state])
 
-  const runDiagnostics = useCallback(() => diagnoseLocalStorage(), [])
+  const runDiagnostics = useCallback(() => {
+    console.info('[CoachBoard] Fuente de datos: Supabase PostgreSQL')
+    console.info('[CoachBoard] Club ID:', getLastLoadReport()?.clubId ?? '—')
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface">
+        <div className="text-center">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-accent/30 border-t-accent" />
+          <p className="mt-4 text-sm text-text-secondary">Cargando datos del club…</p>
+        </div>
+      </div>
+    )
+  }
 
   if (storageError || !state) {
-    const backups = getAvailableBackups()
-
     return (
       <AppDataContext.Provider
         value={{
           storageError,
+          saveError,
           loadReport,
-          backups,
           reloadFromStorage,
-          restoreBackup,
           importBackupJson,
           runDiagnostics,
           state: state ?? buildEmptyAppState(),
@@ -667,21 +708,19 @@ export function AppDataProvider({ children }) {
       >
         <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
           <div className="max-w-lg rounded-2xl border border-red-200 bg-white p-6 shadow-sm">
-            <h1 className="text-lg font-bold text-red-700">Error al cargar tus datos</h1>
+            <h1 className="text-lg font-bold text-red-700">Error al conectar con Supabase</h1>
             <p className="mt-2 text-sm text-text-secondary">
-              CoachBoard no pudo leer la persistencia. Tus datos anteriores no fueron sobrescritos
-              automáticamente. Podés intentar restaurar desde un backup o ir a Configuración.
+              No se pudieron cargar los datos del club. Verificá tu conexión a internet y las
+              variables VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.
             </p>
             <p className="mt-2 text-xs text-text-muted">{storageError?.message}</p>
-            {backups.length > 0 && (
-              <button
-                type="button"
-                className="mt-4 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white"
-                onClick={() => restoreBackup(backups[0].key)}
-              >
-                Restaurar último backup ({backups[0].key})
-              </button>
-            )}
+            <button
+              type="button"
+              className="mt-4 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white"
+              onClick={() => reloadFromStorage()}
+            >
+              Reintentar carga desde Supabase
+            </button>
           </div>
         </div>
       </AppDataContext.Provider>
@@ -721,10 +760,9 @@ export function AppDataProvider({ children }) {
       updateClubSettings,
       syncStatsFromMatches,
       storageError,
+      saveError,
       loadReport,
-      backups: getAvailableBackups(),
       reloadFromStorage,
-      restoreBackup,
       importBackupJson,
       exportBackup,
       loadDemoData,
@@ -755,9 +793,9 @@ export function AppDataProvider({ children }) {
       updateClubSettings,
       syncStatsFromMatches,
       storageError,
+      saveError,
       loadReport,
       reloadFromStorage,
-      restoreBackup,
       importBackupJson,
       exportBackup,
       loadDemoData,

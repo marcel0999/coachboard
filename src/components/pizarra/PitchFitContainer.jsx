@@ -10,7 +10,7 @@ const PITCH_ASPECT = {
   whiteboard: 68 / 105,
 }
 
-/** Escala el campo para que quepa completo en pantalla (~15–20 % más compacto). */
+/** Escala el campo para que quepa completo en pantalla (~12 % más grande que antes). */
 export default function PitchFitContainer({ pitchType = 'full-vertical', children, className = '' }) {
   const wrapperRef = useRef(null)
   const [size, setSize] = useState({ width: 0, height: 0 })
@@ -27,8 +27,8 @@ export default function PitchFitContainer({ pitchType = 'full-vertical', childre
 
       const parentW = parent.clientWidth
       const viewportH = window.innerHeight
-      const maxH = Math.min(viewportH * 0.52, 480)
-      const maxW = parentW * 0.84
+      const maxH = Math.min(viewportH * 0.58, 552)
+      const maxW = parentW * 0.92
 
       let width = maxW
       let height = width / ratio
