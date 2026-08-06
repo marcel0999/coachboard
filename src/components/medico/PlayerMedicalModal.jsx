@@ -1,5 +1,6 @@
 import Modal from '../ui/Modal'
-import Badge, { statusToVariant } from '../ui/Badge'
+import Badge from '../ui/Badge'
+import { statusToVariant } from '../../utils/badgeVariants'
 import PlayerAvatar from '../plantel/PlayerAvatar'
 import ViewErrorBoundary from '../ui/ViewErrorBoundary'
 import PlayerMedicalTab from './PlayerMedicalTab'

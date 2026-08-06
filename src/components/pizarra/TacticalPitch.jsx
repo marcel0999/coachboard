@@ -1,7 +1,9 @@
 import { useCallback, useRef, useState } from 'react'
 import PitchMarker from './PitchMarker'
 import PitchSurface from './PitchSurface'
-import DrawingLayer, { createDrawing, hitTestDrawing, POINT_DRAWING_TYPES } from './DrawingLayer'
+import DrawingLayer from './DrawingLayer'
+import { createDrawing, hitTestDrawing } from '../../utils/pizarraDrawingUtils'
+import { POINT_DRAWING_TYPES } from '../../utils/tacticalBoardState'
 import EquipmentOverlay from './EquipmentOverlay'
 import DrawingContextMenu from './DrawingContextMenu'
 import { generateRecordId } from '../../utils/playerFactory'
@@ -482,17 +484,4 @@ export default function TacticalPitch({
       )}
     </div>
   )
-}
-
-export function createFreeMarkerAt(point, playerId, playerLabel) {
-  return {
-    id: generateRecordId('marker'),
-    slotId: null,
-    label: playerLabel,
-    x: point.x,
-    y: point.y,
-    playerId,
-    onPitch: true,
-    team: 'own',
-  }
 }

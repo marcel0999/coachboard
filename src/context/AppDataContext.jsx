@@ -172,8 +172,11 @@ export function AppDataProvider({ children }) {
     }
   }, [])
 
+  const isStateReady = Boolean(state)
+  const schemaVersion = state?.schemaVersion
+
   useEffect(() => {
-    if (!isSupabaseConfigured || !state) return undefined
+    if (!isSupabaseConfigured || !isStateReady) return undefined
 
     const unsubscribe = subscribeToRemoteState((remoteState) => {
       applyingRemoteRef.current = true
@@ -182,7 +185,7 @@ export function AppDataProvider({ children }) {
     })
 
     return unsubscribe
-  }, [state?.schemaVersion])
+  }, [isStateReady, schemaVersion])
 
   const reloadFromStorage = useCallback(async () => {
     try {
@@ -673,75 +676,44 @@ export function AppDataProvider({ children }) {
     console.info('[CoachBoard] Club ID:', getLastLoadReport()?.clubId ?? '—')
   }, [])
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-surface">
-        <div className="text-center">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-accent/30 border-t-accent" />
-          <p className="mt-4 text-sm text-text-secondary">Cargando datos del club…</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (storageError || !state) {
-    return (
-      <AppDataContext.Provider
-        value={{
-          storageError,
-          saveError,
-          loadReport,
-          reloadFromStorage,
-          importBackupJson,
-          runDiagnostics,
-          state: state ?? buildEmptyAppState(),
-          players: [],
-          staff: [],
-          matches: [],
-          trainings: [],
-          exercises: [],
-          categories: [],
-          tacticalBoard: createDefaultTacticalBoardState(),
-          selectedCategoryId: CATEGORY_FILTER_ALL,
-          effectiveCategoryId: null,
-        }}
-      >
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-          <div className="max-w-lg rounded-2xl border border-red-200 bg-white p-6 shadow-sm">
-            <h1 className="text-lg font-bold text-red-700">Error al conectar con Supabase</h1>
-            <p className="mt-2 text-sm text-text-secondary">
-              No se pudieron cargar los datos del club. Verificá tu conexión a internet y las
-              variables VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.
-            </p>
-            <p className="mt-2 text-xs text-text-muted">{storageError?.message}</p>
-            <button
-              type="button"
-              className="mt-4 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white"
-              onClick={() => reloadFromStorage()}
-            >
-              Reintentar carga desde Supabase
-            </button>
-          </div>
-        </div>
-      </AppDataContext.Provider>
-    )
-  }
-
-  const value = useMemo(
+  const errorValue = useMemo(
     () => ({
-      categories: state.categories,
-      clubSettings: state.clubSettings ?? DEFAULT_CLUB_SETTINGS,
-      selectedCategoryId: state.selectedCategoryId,
+      storageError,
+      saveError,
+      loadReport,
+      reloadFromStorage,
+      importBackupJson,
+      runDiagnostics,
+      state: state ?? buildEmptyAppState(),
+      players: [],
+      staff: [],
+      matches: [],
+      trainings: [],
+      exercises: [],
+      categories: [],
+      tacticalBoard: createDefaultTacticalBoardState(),
+      selectedCategoryId: CATEGORY_FILTER_ALL,
+      effectiveCategoryId: null,
+    }),
+    [storageError, saveError, loadReport, reloadFromStorage, importBackupJson, runDiagnostics, state],
+  )
+
+  const value = useMemo(() => {
+    const safeState = state ?? buildEmptyAppState()
+    return {
+      categories: safeState.categories,
+      clubSettings: safeState.clubSettings ?? DEFAULT_CLUB_SETTINGS,
+      selectedCategoryId: safeState.selectedCategoryId,
       effectiveCategoryId,
       setSelectedCategoryId,
       saveCategory,
       deleteCategory,
-      players: state.players,
-      staff: state.staff,
-      matches: state.matches,
-      trainings: state.trainings,
-      exercises: state.exercises,
-      tacticalBoard: state.tacticalBoard,
+      players: safeState.players,
+      staff: safeState.staff,
+      matches: safeState.matches,
+      trainings: safeState.trainings,
+      exercises: safeState.exercises,
+      tacticalBoard: safeState.tacticalBoard,
       savePlayer,
       updatePlayer,
       deletePlayer,
@@ -768,8 +740,8 @@ export function AppDataProvider({ children }) {
       loadDemoData,
       clearUserData,
       runDiagnostics,
-    }),
-    [
+    }
+  }, [
       state,
       effectiveCategoryId,
       setSelectedCategoryId,
@@ -803,6 +775,41 @@ export function AppDataProvider({ children }) {
       runDiagnostics,
     ],
   )
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface">
+        <div className="text-center">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-accent/30 border-t-accent" />
+          <p className="mt-4 text-sm text-text-secondary">Cargando datos del club…</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (storageError || !state) {
+    return (
+      <AppDataContext.Provider value={errorValue}>
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+          <div className="max-w-lg rounded-2xl border border-red-200 bg-white p-6 shadow-sm">
+            <h1 className="text-lg font-bold text-red-700">Error al conectar con Supabase</h1>
+            <p className="mt-2 text-sm text-text-secondary">
+              No se pudieron cargar los datos del club. Verificá tu conexión a internet y las
+              variables VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.
+            </p>
+            <p className="mt-2 text-xs text-text-muted">{storageError?.message}</p>
+            <button
+              type="button"
+              className="mt-4 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white"
+              onClick={() => reloadFromStorage()}
+            >
+              Reintentar carga desde Supabase
+            </button>
+          </div>
+        </div>
+      </AppDataContext.Provider>
+    )
+  }
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>
 }

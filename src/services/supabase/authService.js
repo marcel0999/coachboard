@@ -1,5 +1,6 @@
 import { INVITE_EXPIRY_DAYS, USER_ROLES } from '../../constants/auth'
 import { assertSupabase, isSupabaseConfigured } from '../../lib/supabase'
+import { getActiveClubId, setActiveClubId } from '../../utils/activeClubStorage'
 
 function mapClub(row) {
   if (!row) return null
@@ -58,7 +59,7 @@ async function ensureClubFromPendingRegistration(session) {
   if (rpcError) throw new Error(rpcError.message)
 }
 
-export async function fetchAuthContext(session) {
+export async function fetchAuthContext(session, preferredClubId = null) {
   await ensureClubFromPendingRegistration(session)
 
   const client = assertSupabase()
@@ -78,14 +79,18 @@ export async function fetchAuthContext(session) {
     .eq('user_id', userId)
     .eq('status', 'active')
     .order('joined_at', { ascending: true })
-    .limit(1)
 
   if (membershipError) throw membershipError
 
-  const membershipRow = membershipRows?.[0]
+  const storedClubId = preferredClubId ?? getActiveClubId(userId)
+  const membershipRow =
+    membershipRows?.find((row) => row.club_id === storedClubId) ?? membershipRows?.[0]
+
   if (!membershipRow) {
     throw new Error('Tu cuenta no tiene acceso a ningún club.')
   }
+
+  setActiveClubId(userId, membershipRow.club_id)
 
   const clubRow = membershipRow.clubs
 

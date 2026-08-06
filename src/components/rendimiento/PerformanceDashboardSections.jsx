@@ -1,5 +1,6 @@
 import PlayerAvatar from '../plantel/PlayerAvatar'
-import Badge, { statusToVariant } from '../ui/Badge'
+import Badge from '../ui/Badge'
+import { statusToVariant } from '../../utils/badgeVariants'
 import InfoRow from '../ui/InfoRow'
 import { Card, StatCard } from '../ui/Card'
 import BarChart, { DualBarChart } from './BarChart'

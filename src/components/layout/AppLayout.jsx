@@ -70,8 +70,3 @@ export default function AppLayout() {
     </div>
   )
 }
-
-export function usePageMeta() {
-  const { pathname } = useLocation()
-  return PAGE_META[pathname] ?? { title: 'CoachBoard', description: '' }
-}

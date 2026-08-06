@@ -1,4 +1,5 @@
-import Badge, { statusToVariant } from '../../ui/Badge'
+import Badge from '../../ui/Badge'
+import { statusToVariant } from '../../../utils/badgeVariants'
 import InfoRow from '../../ui/InfoRow'
 import PlayerAvatar from '../PlayerAvatar'
 import { calculateAge, getFullName } from '../../../utils/players'

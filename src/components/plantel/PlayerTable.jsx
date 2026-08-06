@@ -1,7 +1,8 @@
 import { Pencil, Trash2, Users } from 'lucide-react'
 import EmptyState from '../ui/EmptyState'
 import DataTable from '../ui/DataTable'
-import Badge, { statusToVariant } from '../ui/Badge'
+import Badge from '../ui/Badge'
+import { statusToVariant } from '../../utils/badgeVariants'
 import PlayerAvatar from './PlayerAvatar'
 import { calculateAge, getFullName } from '../../utils/players'
 

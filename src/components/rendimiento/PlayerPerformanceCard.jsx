@@ -1,5 +1,6 @@
 import PlayerAvatar from '../plantel/PlayerAvatar'
-import Badge, { statusToVariant } from '../ui/Badge'
+import Badge from '../ui/Badge'
+import { statusToVariant } from '../../utils/badgeVariants'
 import { getFullName } from '../../utils/players'
 
 export default function PlayerPerformanceCard({ player, profile, onClick }) {

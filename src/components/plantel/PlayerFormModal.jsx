@@ -58,7 +58,7 @@ export default function PlayerFormModal({ isOpen, onClose, onSave, player, categ
       )
       setErrors({})
     }
-  }, [isOpen, player, fallbackCategoryId])
+  }, [isOpen, player, fallbackCategoryId, defaultNationality])
 
   const updateField = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }))

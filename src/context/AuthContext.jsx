@@ -18,6 +18,7 @@ import {
   updateSupabaseMemberPermissions,
 } from '../services/supabase/authService'
 import { canInviteMembers, canManageTeam, resolvePermissions } from '../utils/permissions'
+import { clearActiveClubId } from '../utils/activeClubStorage'
 
 const AuthContext = createContext(null)
 
@@ -188,11 +189,13 @@ export function AuthProvider({ children }) {
   }, [applySession])
 
   const logout = useCallback(async () => {
+    const userId = authState?.user?.id
     await signOutSupabase()
+    if (userId) clearActiveClubId(userId)
     setAuthState(null)
     setHasSupabaseSession(false)
     setAuthError(null)
-  }, [])
+  }, [authState?.user?.id])
 
   const resetPassword = useCallback(async (email) => {
     setAuthError(null)
@@ -258,6 +261,16 @@ export function AuthProvider({ children }) {
     return { members, invitations }
   }, [authState])
 
+  const switchClub = useCallback(async (clubId) => {
+    if (!clubId || clubId === authState?.club?.id) return authState
+    setAuthError(null)
+    const session = await getSupabaseSession()
+    if (!session) throw new Error('Sesión no válida.')
+    const hydrated = await fetchAuthContext(session, clubId)
+    setAuthState(hydrated)
+    return hydrated
+  }, [authState])
+
   const value = useMemo(
     () => ({
       isAuthenticated: hasValidClubAccess(authState),
@@ -288,6 +301,7 @@ export function AuthProvider({ children }) {
       inviteMember,
       setMemberPermissions,
       refreshTeam,
+      switchClub,
     }),
     [
       authState,
@@ -304,6 +318,7 @@ export function AuthProvider({ children }) {
       inviteMember,
       setMemberPermissions,
       refreshTeam,
+      switchClub,
     ],
   )
 
