@@ -60,8 +60,8 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout
-      title="Crear club"
-      subtitle="Registrá tu club y tu cuenta de administrador. Solo usuarios autenticados pueden acceder al Dashboard."
+      title="Crear cuenta"
+      subtitle="Creá tu cuenta de CoachBoard para gestionar tu equipo, club o trabajo como entrenador."
       footer={
         <>
           ¿Ya tenés cuenta?{' '}
@@ -74,7 +74,7 @@ export default function RegisterPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && <Alert variant="danger">{error}</Alert>}
 
-        <FormField label="Nombre del club" htmlFor="clubName" required>
+        <FormField label="Nombre de usuario o club" htmlFor="clubName" required>
           <InputWithIcon
             id="clubName"
             icon={Building2}
@@ -82,7 +82,7 @@ export default function RegisterPage() {
             required
             value={clubName}
             onChange={(e) => setClubName(e.target.value)}
-            placeholder="Club Atlético Central"
+            placeholder="Ej: Club Atlético Central o Marcel Nasser"
           />
         </FormField>
 
@@ -156,7 +156,7 @@ export default function RegisterPage() {
         </label>
 
         <Button type="submit" disabled={submitting} size="lg" className="mt-2 w-full">
-          {submitting ? 'Creando club…' : 'Crear club y continuar'}
+          {submitting ? 'Creando cuenta…' : 'Crear cuenta y continuar'}
         </Button>
       </form>
     </AuthLayout>
