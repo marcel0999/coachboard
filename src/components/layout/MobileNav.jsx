@@ -1,5 +1,6 @@
 import { Menu, X } from 'lucide-react'
 import Logo from './Logo'
+import Sidebar from './Sidebar'
 
 export default function MobileHeader({ isOpen, onToggle, title = 'CoachBoard' }) {
   return (
