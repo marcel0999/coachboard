@@ -68,7 +68,7 @@ export default function DrawingToolbar({
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <div className="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+    <div className="rounded-2xl border border-border/60 bg-surface-elevated shadow-sm">
       <button
         type="button"
         className="flex w-full items-center justify-between px-3 py-2 text-sm font-semibold text-text-primary md:hidden"
@@ -98,7 +98,7 @@ export default function DrawingToolbar({
               'inline-flex items-center gap-1 rounded-lg px-2.5 py-2 text-xs font-medium transition-all sm:px-3 sm:text-sm',
               activeTool === tool.id
                 ? 'bg-accent text-white shadow-sm shadow-accent/25'
-                : 'text-text-secondary hover:bg-slate-50 hover:text-text-primary',
+                : 'text-text-secondary hover:bg-surface-muted hover:text-text-primary',
             ].join(' ')}
           >
             {Icon && <Icon className="h-4 w-4 shrink-0" />}
@@ -131,7 +131,7 @@ export default function DrawingToolbar({
           type="button"
           onClick={onDuplicate}
           disabled={!canDuplicate}
-          className="rounded-lg p-2 text-text-secondary transition hover:bg-slate-50 disabled:opacity-40"
+          className="rounded-lg p-2 text-text-secondary transition hover:bg-surface-muted disabled:opacity-40"
           title="Duplicar seleccionado"
         >
           <Copy className="h-4 w-4" />
@@ -140,18 +140,18 @@ export default function DrawingToolbar({
           type="button"
           onClick={onDeleteSelected}
           disabled={!canDelete}
-          className="rounded-lg p-2 text-red-600 transition hover:bg-red-50 disabled:opacity-40"
+          className="rounded-lg p-2 text-red-400 transition hover:bg-danger-subtle disabled:opacity-40"
           title="Eliminar seleccionado"
         >
           <Trash2 className="h-4 w-4" />
         </button>
-        <button type="button" onClick={onUndo} disabled={!canUndo} className="rounded-lg p-2 text-text-secondary transition hover:bg-slate-50 disabled:opacity-40" title="Deshacer">
+        <button type="button" onClick={onUndo} disabled={!canUndo} className="rounded-lg p-2 text-text-secondary transition hover:bg-surface-muted disabled:opacity-40" title="Deshacer">
           <Undo2 className="h-4 w-4" />
         </button>
-        <button type="button" onClick={onRedo} disabled={!canRedo} className="rounded-lg p-2 text-text-secondary transition hover:bg-slate-50 disabled:opacity-40" title="Rehacer">
+        <button type="button" onClick={onRedo} disabled={!canRedo} className="rounded-lg p-2 text-text-secondary transition hover:bg-surface-muted disabled:opacity-40" title="Rehacer">
           <Redo2 className="h-4 w-4" />
         </button>
-        <button type="button" onClick={onClear} className="rounded-lg p-2 text-red-600 transition hover:bg-red-50" title="Limpiar dibujos">
+        <button type="button" onClick={onClear} className="rounded-lg p-2 text-red-400 transition hover:bg-danger-subtle" title="Limpiar dibujos">
           <Trash2 className="h-4 w-4" />
         </button>
       </div>

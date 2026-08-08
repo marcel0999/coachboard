@@ -76,7 +76,7 @@ export default function NoClubAccess() {
 
         {user?.email && (
 
-          <div className="flex items-center gap-2 rounded-xl border border-slate-200/80 bg-surface-muted/50 px-4 py-3 text-sm">
+          <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-surface-muted/50 px-4 py-3 text-sm">
 
             <Mail className="h-4 w-4 text-text-muted" />
 

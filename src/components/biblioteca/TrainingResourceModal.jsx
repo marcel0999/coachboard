@@ -57,7 +57,7 @@ export default function TrainingResourceModal({ isOpen, onClose, resource, onSav
       size="2xl"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
 
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField label="Nombre" className="sm:col-span-2" required>
@@ -111,7 +111,7 @@ export default function TrainingResourceModal({ isOpen, onClose, resource, onSav
         </FormField>
 
         {!readOnly && (
-          <div className="flex justify-end gap-2 border-t border-slate-100 pt-4">
+          <div className="flex justify-end gap-2 border-t border-border-subtle pt-4">
             <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
             <Button type="submit" disabled={saving}>{saving ? 'Guardando…' : 'Guardar entrenamiento'}</Button>
           </div>

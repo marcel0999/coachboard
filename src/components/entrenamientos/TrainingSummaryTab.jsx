@@ -32,7 +32,7 @@ export default function TrainingSummaryTab({ training, exercises, onChange, onFi
         {summary.exercisesUsed.length > 0 ? (
           <ul className="flex flex-wrap gap-2">
             {summary.exercisesUsed.map((title) => (
-              <li key={title} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-text-primary">
+              <li key={title} className="rounded-full bg-surface-muted px-3 py-1 text-xs font-medium text-text-primary">
                 {title}
               </li>
             ))}

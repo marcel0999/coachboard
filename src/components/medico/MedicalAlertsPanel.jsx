@@ -45,9 +45,9 @@ export default function MedicalAlertsPanel({ alerts, filter = 'all', limit }) {
             return (
               <li
                 key={alert.id}
-                className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3"
+                className="flex items-start gap-3 rounded-xl border border-border-subtle bg-surface-muted/70 px-4 py-3"
               >
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white">
+                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated">
                   <Icon className={`h-4 w-4 ${alert.variant === 'danger' ? 'text-red-500' : alert.variant === 'warning' ? 'text-amber-500' : 'text-green-500'}`} />
                 </div>
                 <div className="min-w-0 flex-1">

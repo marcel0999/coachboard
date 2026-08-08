@@ -143,7 +143,7 @@ export default function RegisterPage() {
           withIcon={false}
         />
 
-        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200/80 bg-surface-muted/40 p-4">
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border/60 bg-surface-muted/40 p-4">
           <input
             type="checkbox"
             checked={acceptedTerms}

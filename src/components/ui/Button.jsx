@@ -4,11 +4,11 @@ const VARIANTS = {
   primary:
     'bg-accent text-white hover:bg-accent-hover shadow-sm hover:shadow-accent active:scale-[0.98]',
   secondary:
-    'border border-slate-200/80 bg-white text-text-primary hover:bg-surface-muted hover:border-slate-300 shadow-xs active:scale-[0.98]',
+    'border border-border/80 bg-surface-elevated text-text-primary hover:bg-surface-muted hover:border-border shadow-xs active:scale-[0.98]',
   danger: 'bg-red-600 text-white hover:bg-red-700 shadow-sm active:scale-[0.98]',
-  ghost: 'text-text-secondary hover:bg-slate-100/80 hover:text-text-primary active:scale-[0.98]',
+  ghost: 'text-text-secondary hover:bg-surface-muted hover:text-text-primary active:scale-[0.98]',
   outline:
-    'border border-accent/30 bg-accent-subtle/50 text-accent hover:bg-accent-subtle active:scale-[0.98]',
+    'border border-accent/30 bg-accent-subtle text-accent hover:bg-accent-muted active:scale-[0.98]',
 }
 
 const SIZES = {
@@ -30,7 +30,7 @@ export default function Button({
       type={type}
       className={[
         'inline-flex items-center justify-center font-semibold transition-all duration-200',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus-visible:ring-offset-2',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
         'disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100',
         VARIANTS[variant] ?? VARIANTS.primary,
         SIZES[size] ?? SIZES.md,
@@ -56,7 +56,7 @@ export function ButtonLink({
       to={to}
       className={[
         'inline-flex items-center justify-center font-semibold transition-all duration-200',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus-visible:ring-offset-2',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
         VARIANTS[variant] ?? VARIANTS.primary,
         SIZES[size] ?? SIZES.md,
         className,

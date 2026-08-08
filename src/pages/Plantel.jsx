@@ -125,16 +125,16 @@ export default function Plantel() {
     <div className="cb-animate-in">
       <PageHeader
         title="Plantel"
-        description="Gestión completa de jugadores del equipo por categoría"
+        description={`Gestión de jugadores · ${currentCategory?.name ?? 'Categoría'}`}
         action={
-          <Button onClick={handleOpenCreate}>
+          <Button onClick={handleOpenCreate} className="hidden lg:inline-flex">
             <Plus className="h-4 w-4" />
             Nuevo jugador
           </Button>
         }
       />
 
-      <Card className="mb-6">
+      <Card className="mb-5">
         <CategorySelector
           categories={categories}
           value={plantelCategoryId}
@@ -143,62 +143,79 @@ export default function Plantel() {
         />
       </Card>
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-5 grid gap-3 grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label={`Total · ${currentCategory?.name ?? 'Categoría'}`}
+          label={`Total · ${currentCategory?.name ?? 'Cat.'}`}
           value={stats.total}
           icon={Users}
           accent
         />
-        <StatCard label="Disponibles" value={stats.available} sublabel="Listos para convocar" />
-        <StatCard label="Lesionados" value={stats.injured} sublabel="Fuera de actividad" />
-        <StatCard label="Suspendidos" value={stats.suspended} sublabel="Sanción disciplinaria" />
+        <StatCard label="Disponibles" value={stats.available} sublabel="Listos" />
+        <StatCard label="Lesionados" value={stats.injured} sublabel="Fuera" />
+        <StatCard label="Suspendidos" value={stats.suspended} sublabel="Sanción" />
       </div>
 
-      {categoryStaff.length > 0 && (
-        <Card className="mb-6">
-          <SectionHeader title={`Cuerpo técnico · ${currentCategory?.name}`} icon={UserCog} />
-          <div className="flex flex-wrap gap-2">
-            {categoryStaff.map((member) => (
-              <Badge key={member.id}>
-                {member.name} · {member.role}
-              </Badge>
-            ))}
+      <div className="grid gap-5 xl:grid-cols-[280px_minmax(0,1fr)] xl:gap-6">
+        <aside className="space-y-4">
+          <Card className="space-y-4">
+            <Button onClick={handleOpenCreate} className="w-full lg:hidden">
+              <Plus className="h-4 w-4" />
+              Nuevo jugador
+            </Button>
+            <Button onClick={handleOpenCreate} className="hidden w-full lg:inline-flex">
+              <Plus className="h-4 w-4" />
+              Agregar jugador
+            </Button>
+
+            <SearchInput
+              value={search}
+              onChange={setSearch}
+              placeholder="Buscar jugador..."
+            />
+
+            <div className="space-y-3">
+              <p className="text-label">Estado</p>
+              <FilterPills options={FILTER_OPTIONS} value={statusFilter} onChange={setStatusFilter} size="sm" />
+            </div>
+
+            <SortSelect value={sortBy} onChange={setSortBy} options={SORT_OPTIONS} />
+          </Card>
+
+          {categoryStaff.length > 0 && (
+            <Card>
+              <SectionHeader title="Cuerpo técnico" icon={UserCog} className="mb-3" />
+              <div className="flex flex-wrap gap-2">
+                {categoryStaff.map((member) => (
+                  <Badge key={member.id}>
+                    {member.name} · {member.role}
+                  </Badge>
+                ))}
+              </div>
+            </Card>
+          )}
+        </aside>
+
+        <div className="min-w-0">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="text-sm text-text-secondary">
+              <span className="font-medium text-text-primary">{filteredPlayers.length}</span>
+              {' / '}
+              <span className="font-medium text-text-primary">{categoryPlayers.length}</span>
+              {' jugadores'}
+            </p>
+            <Button onClick={handleOpenCreate} size="sm" className="lg:hidden">
+              <Plus className="h-4 w-4" />
+            </Button>
           </div>
-        </Card>
-      )}
 
-      <Card className="mb-6 space-y-4">
-        <SearchInput
-          value={search}
-          onChange={setSearch}
-          placeholder="Buscar por nombre, dorsal, posición o email..."
-        />
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <FilterPills options={FILTER_OPTIONS} value={statusFilter} onChange={setStatusFilter} />
-          <SortSelect value={sortBy} onChange={setSortBy} options={SORT_OPTIONS} />
+          <PlayerTable
+            players={filteredPlayers}
+            onView={(player) => setViewingPlayerId(player.id)}
+            onEdit={handleOpenEdit}
+            onDelete={setDeletingPlayer}
+          />
         </div>
-      </Card>
-
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-text-secondary">
-          Mostrando{' '}
-          <span className="font-medium text-text-primary">{filteredPlayers.length}</span> de{' '}
-          <span className="font-medium text-text-primary">{categoryPlayers.length}</span> jugadores
-          <span className="hidden sm:inline text-text-muted"> · Clic en fila para ver ficha</span>
-        </p>
-        <Button onClick={handleOpenCreate} className="hidden sm:inline-flex lg:hidden">
-          <Plus className="h-4 w-4" />
-          Nuevo jugador
-        </Button>
       </div>
-
-      <PlayerTable
-        players={filteredPlayers}
-        onView={(player) => setViewingPlayerId(player.id)}
-        onEdit={handleOpenEdit}
-        onDelete={setDeletingPlayer}
-      />
 
       <PlayerFormModal
         isOpen={isFormOpen}

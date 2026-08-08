@@ -45,7 +45,7 @@ export default function StaffDocumentsPanel({ member, onUpdate }) {
       </div>
 
       {member.licenseExpiry && (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div className="rounded-xl border border-border bg-surface-muted p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-text-primary">Licencia de entrenador</p>
@@ -70,7 +70,7 @@ export default function StaffDocumentsPanel({ member, onUpdate }) {
           {documents.map((document) => {
             const status = getDocumentExpiryStatus(document.expiresAt)
             return (
-              <div key={document.id} className="rounded-xl border border-slate-200 bg-white p-4">
+              <div key={document.id} className="rounded-xl border border-border bg-surface-elevated p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-text-primary">
@@ -97,7 +97,7 @@ export default function StaffDocumentsPanel({ member, onUpdate }) {
                   <button type="button" onClick={() => setEditingDocument(document)} className="text-sm text-accent hover:underline">
                     <Pencil className="inline h-3.5 w-3.5" /> Editar
                   </button>
-                  <button type="button" onClick={() => setDeletingDocument(document)} className="text-sm text-red-600 hover:underline">
+                  <button type="button" onClick={() => setDeletingDocument(document)} className="text-sm text-red-400 hover:underline">
                     <Trash2 className="inline h-3.5 w-3.5" /> Eliminar
                   </button>
                 </div>

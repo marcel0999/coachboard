@@ -68,7 +68,7 @@ export default function ExportPreviewModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Vista previa de exportación" size="xl">
       <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-        <div className="overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div className="overflow-auto rounded-xl border border-border bg-surface-muted p-4">
           <div ref={previewRef} className="min-h-[200px] origin-top-left" />
         </div>
 
@@ -101,7 +101,7 @@ export default function ExportPreviewModal({
             onChange={(event) => setObservations(event.target.value)}
             rows={3}
             placeholder="Observaciones..."
-            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="w-full rounded-xl border border-border px-3 py-2 text-sm"
           />
 
           <div className="flex flex-wrap gap-2">

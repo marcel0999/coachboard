@@ -22,7 +22,7 @@ export default function DrawingContextMenu({
     <>
       <div className="fixed inset-0 z-40" onPointerDown={onClose} />
       <div
-        className="absolute z-50 flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-2 shadow-lg"
+        className="absolute z-50 flex flex-col gap-1 rounded-xl border border-border bg-surface-elevated p-2 shadow-lg"
         style={{ left: position.x, top: position.y, transform: 'translate(-50%, -120%)' }}
         onPointerDown={(e) => e.stopPropagation()}
       >
@@ -31,7 +31,7 @@ export default function DrawingContextMenu({
             type="button"
             title="Duplicar"
             onClick={onDuplicate}
-            className="rounded-lg p-2 text-text-secondary transition hover:bg-slate-100"
+            className="rounded-lg p-2 text-text-secondary transition hover:bg-surface-muted"
           >
             <Copy className="h-4 w-4" />
           </button>
@@ -39,7 +39,7 @@ export default function DrawingContextMenu({
             type="button"
             title="Eliminar"
             onClick={onDelete}
-            className="rounded-lg p-2 text-red-600 transition hover:bg-red-50"
+            className="rounded-lg p-2 text-red-400 transition hover:bg-danger-subtle"
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -48,7 +48,7 @@ export default function DrawingContextMenu({
               type="button"
               title="Girar 45°"
               onClick={onRotate}
-              className="rounded-lg p-2 text-text-secondary transition hover:bg-slate-100"
+              className="rounded-lg p-2 text-text-secondary transition hover:bg-surface-muted"
             >
               <RotateCw className="h-4 w-4" />
             </button>
@@ -58,7 +58,7 @@ export default function DrawingContextMenu({
               type="button"
               title="Cambiar tamaño"
               onClick={onResize}
-              className="rounded-lg px-2 py-1.5 text-xs font-medium text-text-secondary transition hover:bg-slate-100"
+              className="rounded-lg px-2 py-1.5 text-xs font-medium text-text-secondary transition hover:bg-surface-muted"
             >
               Tamaño
             </button>
@@ -67,7 +67,7 @@ export default function DrawingContextMenu({
             type="button"
             title="Traer al frente"
             onClick={onBringFront}
-            className="rounded-lg p-2 text-text-secondary transition hover:bg-slate-100"
+            className="rounded-lg p-2 text-text-secondary transition hover:bg-surface-muted"
           >
             <Layers className="h-4 w-4" />
           </button>
@@ -75,12 +75,12 @@ export default function DrawingContextMenu({
             type="button"
             title="Enviar atrás"
             onClick={() => onSendBack?.()}
-            className="rounded-lg p-2 text-text-secondary transition hover:bg-slate-100"
+            className="rounded-lg p-2 text-text-secondary transition hover:bg-surface-muted"
           >
             <Layers className="h-4 w-4 rotate-180" />
           </button>
         </div>
-        <div className="flex items-center gap-1 border-t border-slate-100 pt-1">
+        <div className="flex items-center gap-1 border-t border-border-subtle pt-1">
           {DRAWING_COLORS.map((color) => (
             <button
               key={color}

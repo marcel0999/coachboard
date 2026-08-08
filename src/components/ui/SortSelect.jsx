@@ -8,7 +8,7 @@ export default function SortSelect({ value, onChange, options }) {
       <Select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="min-w-[140px] bg-white"
+        className="min-w-[140px]"
         aria-label="Ordenar por"
       >
         {options.map((option) => (

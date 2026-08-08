@@ -116,7 +116,7 @@ export default function MatchEventsTab({ match, players, onChange }) {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSave} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <form onSubmit={handleSave} className="rounded-2xl border border-border bg-surface-muted p-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <FormField label="Tipo de evento">
               <Select value={form.type} onChange={(e) => setForm({ ...EMPTY_EVENT, type: e.target.value })}>
@@ -206,9 +206,9 @@ export default function MatchEventsTab({ match, players, onChange }) {
 
       <div className="space-y-2">
         {[...match.events].sort((a, b) => a.minute - b.minute).map((event) => (
-          <div key={event.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3">
+          <div key={event.id} className="flex items-center justify-between rounded-xl border border-border bg-surface-elevated px-4 py-3">
             <div className="flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-700">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-muted text-xs font-bold text-text-primary">
                 {event.minute}'
               </span>
               <div>
@@ -222,7 +222,7 @@ export default function MatchEventsTab({ match, players, onChange }) {
             <button
               type="button"
               onClick={() => setDeletingEvent(event)}
-              className="rounded-lg p-2 text-red-600 hover:bg-red-50"
+              className="rounded-lg p-2 text-red-400 hover:bg-danger-subtle"
             >
               <Trash2 className="h-4 w-4" />
             </button>

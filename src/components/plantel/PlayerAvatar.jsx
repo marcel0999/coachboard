@@ -28,14 +28,14 @@ export default function PlayerAvatar({ player, size = 'md' }) {
       <img
         src={player.photo}
         alt={player.firstName}
-        className={`${sizeClass} shrink-0 rounded-full object-cover ring-2 ring-white shadow-sm`}
+        className={`${sizeClass} shrink-0 rounded-full object-cover ring-2 ring-border shadow-sm`}
       />
     )
   }
 
   return (
     <div
-      className={`${sizeClass} ${getColorClass(player.id)} flex shrink-0 items-center justify-center rounded-full font-semibold text-white ring-2 ring-white shadow-sm`}
+      className={`${sizeClass} ${getColorClass(player.id)} flex shrink-0 items-center justify-center rounded-full font-semibold text-white ring-2 ring-border shadow-sm`}
       aria-hidden="true"
     >
       {getInitials(player)}

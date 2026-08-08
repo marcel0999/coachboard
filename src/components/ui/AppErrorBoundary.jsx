@@ -29,7 +29,7 @@ export default class AppErrorBoundary extends Component {
     if (this.state.hasError) {
       return (
         <div className="flex min-h-screen items-center justify-center bg-surface px-6">
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-surface-elevated p-8 text-center shadow-sm">
             <h1 className="text-lg font-bold text-text-primary">
               CoachBoard encontró un problema al cargar esta sección.
             </h1>

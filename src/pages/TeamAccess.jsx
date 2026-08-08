@@ -68,9 +68,9 @@ function PermissionEditor({ membership, onSave }) {
 
   return (
     <div className="space-y-3">
-      <div className="overflow-x-auto rounded-xl border border-slate-200">
+      <div className="overflow-x-auto rounded-xl border border-border">
         <table className="min-w-full text-sm">
-          <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-text-secondary">
+          <thead className="bg-surface-muted text-left text-xs uppercase tracking-wide text-text-secondary">
             <tr>
               <th className="px-4 py-3">Módulo</th>
               <th className="px-4 py-3 text-center">Ver</th>
@@ -79,7 +79,7 @@ function PermissionEditor({ membership, onSave }) {
           </thead>
           <tbody>
             {modules.map(([key, meta]) => (
-              <tr key={key} className="border-t border-slate-100">
+              <tr key={key} className="border-t border-border-subtle">
                 <td className="px-4 py-3 font-medium text-text-primary">{meta.label}</td>
                 <td className="px-4 py-3 text-center">
                   <input
@@ -243,7 +243,7 @@ export default function TeamAccess() {
             {sortedMembers.map(({ user, membership }) => (
               <li
                 key={membership.id}
-                className="rounded-xl border border-slate-200/80 bg-surface-secondary/40 p-5"
+                className="rounded-xl border border-border/60 bg-surface-secondary/40 p-5"
               >
                 <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                   <div>
@@ -278,7 +278,7 @@ export default function TeamAccess() {
             {invitations.map((invite) => (
               <li
                 key={invite.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200/80 px-4 py-3"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/60 px-4 py-3"
               >
                 <div>
                   <p className="font-medium text-text-primary">{invite.email}</p>

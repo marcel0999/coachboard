@@ -50,7 +50,7 @@ export default function LibraryResourceCard({
             e.stopPropagation()
             onToggleFavorite(resource.id)
           }}
-          className="absolute right-3 top-3 rounded-full bg-white/90 p-2 shadow-sm transition hover:scale-105"
+          className="absolute right-3 top-3 rounded-full bg-surface-elevated/90 p-2 shadow-sm transition hover:scale-105"
           aria-label={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
         >
           <Heart
@@ -93,7 +93,7 @@ export default function LibraryResourceCard({
           )}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
+        <div className="mt-4 flex flex-wrap gap-2 border-t border-border-subtle pt-3">
           <Button size="sm" onClick={() => onCopy(resource)}>
             <Copy className="h-3.5 w-3.5" />
             {resource.contentType === CONTENT_TYPES.TRAINING ? 'Copiar a Entrenamientos' : 'Agregar a sesión'}

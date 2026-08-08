@@ -790,8 +790,8 @@ export function AppDataProvider({ children }) {
   if (storageError || !state) {
     return (
       <AppDataContext.Provider value={errorValue}>
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-          <div className="max-w-lg rounded-2xl border border-red-200 bg-white p-6 shadow-sm">
+        <div className="flex min-h-screen items-center justify-center bg-surface-muted p-6">
+          <div className="max-w-lg rounded-2xl border border-red-200 bg-surface-elevated p-6 shadow-sm">
             <h1 className="text-lg font-bold text-red-700">Error al conectar con Supabase</h1>
             <p className="mt-2 text-sm text-text-secondary">
               No se pudieron cargar los datos del club. Verificá tu conexión a internet y las

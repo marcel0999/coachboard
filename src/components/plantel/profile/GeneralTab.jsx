@@ -12,7 +12,7 @@ export default function GeneralTab({ player }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:flex-row sm:items-start">
+      <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-surface-muted p-6 sm:flex-row sm:items-start">
         <PlayerAvatar player={player} size="lg" />
         <div className="flex-1 text-center sm:text-left">
           <h3 className="text-xl font-bold text-text-primary">{getFullName(player)}</h3>
@@ -84,7 +84,7 @@ export default function GeneralTab({ player }) {
           <h4 className="mb-3 text-sm font-semibold uppercase tracking-wide text-text-secondary">
             Observaciones
           </h4>
-          <p className="rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3 text-sm leading-relaxed text-text-primary">
+          <p className="rounded-xl border border-border-subtle bg-surface-muted/60 px-4 py-3 text-sm leading-relaxed text-text-primary">
             {player.notes}
           </p>
         </section>

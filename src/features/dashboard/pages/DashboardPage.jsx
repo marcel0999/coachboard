@@ -40,7 +40,7 @@ export default function DashboardPage() {
     : getCategoryById(categories, selectedCategoryId)?.name ?? 'Categoría'
 
   return (
-    <div className="cb-animate-in space-y-6">
+    <div className="cb-animate-in space-y-5">
       <PageHeader
         title="Dashboard"
         description={`Resumen de ${club?.name ?? 'tu club'} · ${categoryLabel}`}

@@ -198,7 +198,7 @@ export default function CategoryManageModal({
         </div>
 
         {(editingCategory || form.name || !sortedCategories.length) && (
-          <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <div className="mb-6 rounded-2xl border border-border bg-surface-muted p-4">
             <h3 className="mb-4 text-sm font-semibold text-text-primary">
               {editingCategory ? `Editar ${editingCategory.name}` : 'Nueva categoría'}
             </h3>
@@ -229,7 +229,7 @@ export default function CategoryManageModal({
             return (
               <div
                 key={category.id}
-                className="flex flex-col gap-3 rounded-xl border border-slate-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-3 rounded-xl border border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex items-center gap-3">
                   <span

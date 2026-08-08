@@ -44,7 +44,7 @@ export default function BoardLibraryPanel({
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Buscar pizarras..."
-          className="w-full rounded-xl border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="w-full rounded-xl border border-border py-2 pl-9 pr-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
       </div>
 
@@ -52,7 +52,7 @@ export default function BoardLibraryPanel({
         <select
           value={categoryFilter}
           onChange={(event) => setCategoryFilter(event.target.value)}
-          className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+          className="rounded-xl border border-border px-3 py-2 text-sm"
         >
           <option value="all">Todas las categorías</option>
           {categories.map((category) => (
@@ -64,7 +64,7 @@ export default function BoardLibraryPanel({
         <select
           value={typeFilter}
           onChange={(event) => setTypeFilter(event.target.value)}
-          className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+          className="rounded-xl border border-border px-3 py-2 text-sm"
         >
           <option value="all">Todos los tipos</option>
           {BOARD_TYPES.map((type) => (
@@ -83,7 +83,7 @@ export default function BoardLibraryPanel({
             const category = categories.find((item) => item.id === board.categoryId)
             const typeLabel = BOARD_TYPES.find((item) => item.id === board.boardType)?.label ?? board.boardType
             return (
-              <li key={board.id} className="rounded-xl border border-slate-200 px-3 py-2">
+              <li key={board.id} className="rounded-xl border border-border px-3 py-2">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-text-primary">{board.name}</p>
@@ -114,7 +114,7 @@ export default function BoardLibraryPanel({
                       onClick={() => {
                         if (window.confirm(`¿Eliminar "${board.name}"?`)) onDelete(board.id)
                       }}
-                      className="rounded p-1 text-text-muted hover:text-red-600"
+                      className="rounded p-1 text-text-muted hover:text-red-400"
                       title="Eliminar"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -137,7 +137,7 @@ export function SaveBoardForm({ name, boardType, onNameChange, onTypeChange }) {
       <select
         value={boardType}
         onChange={(event) => onTypeChange(event.target.value)}
-        className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+        className="w-full rounded-xl border border-border px-3 py-2.5 text-sm"
       >
         {BOARD_TYPES.map((type) => (
           <option key={type.id} value={type.id}>

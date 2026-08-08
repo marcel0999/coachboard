@@ -8,8 +8,8 @@ function TrainingPill({ training, onClick }) {
   const statusClass = {
     Finalizado: 'border-accent/30 bg-accent/10 text-accent',
     'En curso': 'border-amber-200 bg-amber-50 text-amber-700',
-    Programado: 'border-slate-200 bg-white text-text-primary',
-  }[training.status] ?? 'border-slate-200 bg-white'
+    Programado: 'border-border bg-surface-elevated text-text-primary',
+  }[training.status] ?? 'border-border bg-surface-elevated'
 
   return (
     <button
@@ -59,7 +59,7 @@ export default function WeeklyCalendar({ referenceDate, trainings, onPrev, onNex
           return (
             <div
               key={toDateKey(day)}
-              className={`min-h-[220px] rounded-2xl border p-3 ${isToday ? 'border-accent/40 bg-accent/5' : 'border-slate-200 bg-white'}`}
+              className={`min-h-[220px] rounded-2xl border p-3 ${isToday ? 'border-accent/40 bg-accent/5' : 'border-border bg-surface-elevated'}`}
             >
               <div className="mb-3 flex items-start justify-between">
                 <div>
@@ -82,7 +82,7 @@ export default function WeeklyCalendar({ referenceDate, trainings, onPrev, onNex
                   <button
                     type="button"
                     onClick={() => onSelectDay(toDateKey(day))}
-                    className="w-full rounded-xl border border-dashed border-slate-200 py-6 text-xs text-text-muted hover:border-accent/40 hover:text-accent"
+                    className="w-full rounded-xl border border-dashed border-border py-6 text-xs text-text-muted hover:border-accent/40 hover:text-accent"
                   >
                     Sin entrenamientos
                   </button>

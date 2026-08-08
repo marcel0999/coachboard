@@ -15,7 +15,7 @@ export default function LibrarySectionNav({ activeSection, onChange }) {
               'flex shrink-0 items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all',
               isActive
                 ? 'bg-accent text-white shadow-sm shadow-accent/20'
-                : 'bg-white text-text-secondary ring-1 ring-slate-200/70 hover:text-text-primary hover:ring-slate-300',
+                : 'bg-surface-elevated text-text-secondary ring-1 ring-slate-200/70 hover:text-text-primary hover:ring-slate-300',
               !section.available && !isActive ? 'opacity-80' : '',
             ].join(' ')}
           >

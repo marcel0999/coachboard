@@ -31,7 +31,7 @@ export default function UpcomingSection({ stats, formatMatchDateTime }) {
       ) : (
         <div className="space-y-5">
           {stats.nextMatch && (
-            <div className="rounded-xl border border-slate-200/80 bg-surface-muted/40 p-4">
+            <div className="rounded-xl border border-border/60 bg-surface-muted/40 p-4">
               <p className="text-label text-accent">Próximo partido</p>
               <p className="mt-1 font-display text-lg font-semibold text-text-primary">
                 vs {stats.nextMatch.opponent}

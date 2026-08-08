@@ -1,7 +1,7 @@
 export default function BarChart({ data, valueSuffix = '', height = 160, color = 'bg-accent' }) {
   if (!data.length) {
     return (
-      <div className="flex h-[160px] items-center justify-center rounded-xl border border-dashed border-slate-200 text-sm text-text-muted">
+      <div className="flex h-[160px] items-center justify-center rounded-xl border border-dashed border-border text-sm text-text-muted">
         Sin datos disponibles
       </div>
     )
@@ -10,7 +10,7 @@ export default function BarChart({ data, valueSuffix = '', height = 160, color =
   const max = Math.max(...data.map((item) => item.value), 1)
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4">
+    <div className="rounded-xl border border-border bg-surface-elevated p-4">
       <div className="flex items-end gap-2" style={{ height }}>
         {data.map((item) => {
           const barHeight = `${Math.max((item.value / max) * 100, 4)}%`
@@ -40,7 +40,7 @@ export default function BarChart({ data, valueSuffix = '', height = 160, color =
 export function DualBarChart({ data, height = 160 }) {
   if (!data.length) {
     return (
-      <div className="flex h-[160px] items-center justify-center rounded-xl border border-dashed border-slate-200 text-sm text-text-muted">
+      <div className="flex h-[160px] items-center justify-center rounded-xl border border-dashed border-border text-sm text-text-muted">
         Sin datos disponibles
       </div>
     )
@@ -49,7 +49,7 @@ export function DualBarChart({ data, height = 160 }) {
   const max = Math.max(...data.map((item) => item.value), 1)
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4">
+    <div className="rounded-xl border border-border bg-surface-elevated p-4">
       <div className="flex items-end gap-1 overflow-x-auto" style={{ height }}>
         {data.map((item) => {
           const barHeight = `${Math.max((item.value / max) * 100, 4)}%`

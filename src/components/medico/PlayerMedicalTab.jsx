@@ -46,7 +46,7 @@ export default function PlayerMedicalTab({ player, categories = [], onUpdate }) 
   return (
     <div className="space-y-4">
       {!hasAnyDocument && (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-surface-muted px-4 py-8 text-center">
           <p className="text-sm font-medium text-text-primary">No hay documentación médica cargada</p>
           <p className="mt-1 text-sm text-text-secondary">
             Agregá carné del deportista, ficha médica u otros documentos obligatorios.
@@ -81,7 +81,7 @@ export default function PlayerMedicalTab({ player, categories = [], onUpdate }) 
         {documentStatuses.map(({ value, label, document, status }) => (
           <div
             key={value}
-            className="rounded-2xl border border-slate-200 bg-white p-4"
+            className="rounded-2xl border border-border bg-surface-elevated p-4"
           >
             <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
@@ -115,7 +115,7 @@ export default function PlayerMedicalTab({ player, categories = [], onUpdate }) 
                   <button
                     type="button"
                     onClick={() => setDeletingDocument(document)}
-                    className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50"
+                    className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-red-400 hover:bg-danger-subtle"
                   >
                     <Trash2 className="h-4 w-4" />
                     Eliminar

@@ -9,7 +9,7 @@ export default function DataTable({ children, className = '' }) {
 export function DataTableHead({ children }) {
   return (
     <thead>
-      <tr className="border-b border-slate-200/80 bg-surface-muted/80">{children}</tr>
+      <tr className="border-b border-border-subtle bg-surface-muted/60">{children}</tr>
     </thead>
   )
 }
@@ -20,7 +20,7 @@ export function DataTableHeaderCell({ children, align = 'left', className = '' }
 
   return (
     <th
-      className={`px-5 py-3.5 text-xs font-semibold uppercase tracking-wide text-text-muted ${alignClass} ${className}`}
+      className={`px-5 py-3 text-xs font-semibold uppercase tracking-wide text-text-muted ${alignClass} ${className}`}
     >
       {children}
     </th>

@@ -119,7 +119,7 @@ export default function PitchSurface({ pitchType = 'full-vertical', children, cl
     <div
       className={[
         'pitch-surface relative h-full w-full touch-none overflow-hidden rounded-xl',
-        whiteboard ? 'bg-slate-50' : '',
+        whiteboard ? 'bg-surface-muted' : '',
         className,
       ].join(' ')}
       style={{ aspectRatio: config.aspect.replace('/', ' / ') }}

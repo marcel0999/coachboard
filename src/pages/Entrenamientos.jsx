@@ -162,7 +162,7 @@ export default function Entrenamientos() {
             .map((training) => (
               <div
                 key={training.id}
-                className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 transition hover:bg-slate-50"
+                className="flex w-full items-center justify-between rounded-xl border border-border px-4 py-3 transition hover:bg-surface-muted"
               >
                 <button
                   type="button"
@@ -181,7 +181,7 @@ export default function Entrenamientos() {
                   <button
                     type="button"
                     onClick={() => setDeletingTraining(training)}
-                    className="text-xs text-red-600 hover:underline"
+                    className="text-xs text-red-400 hover:underline"
                   >
                     Eliminar
                   </button>

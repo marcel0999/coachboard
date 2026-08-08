@@ -3,23 +3,23 @@ import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react'
 const VARIANTS = {
   success: {
     icon: CheckCircle2,
-    className: 'border-emerald-200/80 bg-emerald-50/80 text-emerald-800',
-    iconClass: 'text-emerald-600',
+    className: 'border-emerald-500/20 bg-success-subtle text-emerald-300',
+    iconClass: 'text-emerald-400',
   },
   warning: {
     icon: AlertTriangle,
-    className: 'border-amber-200/80 bg-amber-50/80 text-amber-900',
-    iconClass: 'text-amber-600',
+    className: 'border-amber-500/20 bg-warning-subtle text-amber-200',
+    iconClass: 'text-amber-400',
   },
   danger: {
     icon: XCircle,
-    className: 'border-red-200/80 bg-red-50/80 text-red-800',
-    iconClass: 'text-red-600',
+    className: 'border-red-500/20 bg-danger-subtle text-red-300',
+    iconClass: 'text-red-400',
   },
   info: {
     icon: Info,
-    className: 'border-blue-200/80 bg-blue-50/80 text-blue-900',
-    iconClass: 'text-blue-600',
+    className: 'border-blue-500/20 bg-info-subtle text-blue-200',
+    iconClass: 'text-blue-400',
   },
 }
 

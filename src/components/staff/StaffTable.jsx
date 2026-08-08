@@ -25,10 +25,10 @@ export default function StaffTable({ staff, categories = [], onCreate, onView, o
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-border bg-surface-elevated shadow-sm">
       <div className="overflow-x-auto">
         <table className="min-w-[1100px] w-full text-left text-sm">
-          <thead className="bg-slate-50/80 text-xs uppercase tracking-wide text-text-secondary">
+          <thead className="bg-surface-muted/80 text-xs uppercase tracking-wide text-text-secondary">
             <tr>
               <th className="px-4 py-3 font-semibold">Integrante</th>
               <th className="px-4 py-3 font-semibold">Cargo</th>
@@ -38,9 +38,9 @@ export default function StaffTable({ staff, categories = [], onCreate, onView, o
               <th className="px-4 py-3 font-semibold text-right">Acciones</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-border-subtle">
             {staff.map((member) => (
-              <tr key={member.id} className="transition hover:bg-slate-50/70">
+              <tr key={member.id} className="transition hover:bg-surface-muted/70">
                 <td className="px-4 py-4">
                   <button type="button" onClick={() => onView?.(member)} className="flex items-center gap-3 text-left">
                     <StaffAvatar member={member} size="sm" />
@@ -90,7 +90,7 @@ export default function StaffTable({ staff, categories = [], onCreate, onView, o
                     <button
                       type="button"
                       onClick={() => onView?.(member)}
-                      className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-text-secondary hover:bg-slate-100"
+                      className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-text-secondary hover:bg-surface-muted"
                     >
                       <Eye className="h-3.5 w-3.5" />
                       Ver
@@ -106,7 +106,7 @@ export default function StaffTable({ staff, categories = [], onCreate, onView, o
                     <button
                       type="button"
                       onClick={() => onDelete(member)}
-                      className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50"
+                      className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-red-400 hover:bg-danger-subtle"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       Eliminar

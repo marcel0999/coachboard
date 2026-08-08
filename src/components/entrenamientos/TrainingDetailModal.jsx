@@ -179,7 +179,7 @@ export default function TrainingDetailModal({
         )}
       </div>
 
-      <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+      <div className="mt-6 flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
         <Button variant="secondary" onClick={onClose}>Cancelar</Button>
         <Button onClick={handleSave} disabled={!canSave}>
           <Save className="h-4 w-4" />

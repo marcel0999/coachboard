@@ -55,7 +55,7 @@ export default function PlayerMedicalModal({
       description={`Ficha médica · ${category?.name ?? 'Sin categoría'} · Dorsal ${player.number ?? '—'}`}
       size="2xl"
     >
-      <div className="mb-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <div className="mb-5 rounded-2xl border border-border bg-surface-muted p-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
           <PlayerAvatar player={player} size="lg" />
           <div className="min-w-0 flex-1 space-y-3">

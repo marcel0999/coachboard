@@ -1,9 +1,9 @@
 const VARIANTS = {
-  default: 'bg-slate-100/90 text-slate-700 ring-slate-200/60',
-  success: 'bg-emerald-50 text-emerald-700 ring-emerald-200/60',
-  warning: 'bg-amber-50 text-amber-800 ring-amber-200/60',
-  danger: 'bg-red-50 text-red-700 ring-red-200/60',
-  accent: 'bg-accent-subtle text-accent ring-emerald-200/60',
+  default: 'bg-surface-muted text-text-secondary ring-border/60',
+  success: 'bg-success-subtle text-emerald-400 ring-emerald-500/20',
+  warning: 'bg-warning-subtle text-amber-400 ring-amber-500/20',
+  danger: 'bg-danger-subtle text-red-400 ring-red-500/20',
+  accent: 'bg-accent-subtle text-accent ring-emerald-500/20',
 }
 
 export default function Badge({ children, variant = 'default', dot = false }) {
@@ -20,7 +20,9 @@ export default function Badge({ children, variant = 'default', dot = false }) {
                 ? 'bg-red-500'
                 : variant === 'warning'
                   ? 'bg-amber-500'
-                  : 'bg-slate-400'
+                  : variant === 'accent'
+                    ? 'bg-accent'
+                    : 'bg-text-muted'
           }`}
         />
       )}

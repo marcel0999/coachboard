@@ -1,6 +1,6 @@
 export default function Tabs({ tabs, activeTab, onChange }) {
   return (
-    <div className="border-b border-slate-200">
+    <div className="border-b border-border">
       <nav className="-mb-px flex gap-1 overflow-x-auto" aria-label="Pestañas">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id

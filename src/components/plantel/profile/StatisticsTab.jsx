@@ -4,7 +4,7 @@ import { Card } from '../../ui/Card'
 function StatCard({ icon: Icon, label, value, accent = false }) {
   return (
     <Card className="flex items-center gap-4">
-      <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${accent ? 'bg-accent/10' : 'bg-slate-100'}`}>
+      <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${accent ? 'bg-accent/10' : 'bg-surface-muted'}`}>
         <Icon className={`h-5 w-5 ${accent ? 'text-accent' : 'text-slate-600'}`} />
       </div>
       <div>

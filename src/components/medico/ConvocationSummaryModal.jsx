@@ -91,7 +91,7 @@ export default function ConvocationSummaryModal({
         </section>
       </div>
 
-      <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+      <div className="mt-6 flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
         <Button variant="secondary" onClick={onClose}>Volver</Button>
         <Button onClick={onConfirm}>Confirmar convocatoria</Button>
       </div>

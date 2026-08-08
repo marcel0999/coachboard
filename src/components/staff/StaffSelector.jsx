@@ -12,7 +12,7 @@ function StaffChip({ member, draggable = true }) {
         event.dataTransfer.setData('staffId', member.id)
         event.dataTransfer.effectAllowed = 'move'
       }}
-      className="flex cursor-grab items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm active:cursor-grabbing"
+      className="flex cursor-grab items-center gap-2 rounded-xl border border-border bg-surface-elevated px-3 py-2 text-sm shadow-sm active:cursor-grabbing"
     >
       <StaffAvatar member={member} size="sm" />
       <div className="min-w-0">
@@ -40,7 +40,7 @@ function StaffColumn({ title, subtitle, staffIds, staffMap, onDrop, accent = fal
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       className={`min-h-[220px] rounded-2xl border-2 border-dashed p-4 ${
-        accent ? 'border-accent/40 bg-accent/5' : 'border-slate-200 bg-slate-50/50'
+        accent ? 'border-accent/40 bg-accent/5' : 'border-border bg-surface-muted/50'
       }`}
     >
       <div className="mb-3">
@@ -118,7 +118,7 @@ export function StaffPanel({ staff, title = 'Cuerpo técnico' }) {
       <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
       <ul className="space-y-2">
         {staff.map((member) => (
-          <li key={member.id} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2">
+          <li key={member.id} className="flex items-center gap-3 rounded-xl border border-border bg-surface-elevated px-3 py-2">
             <StaffAvatar member={member} size="sm" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-text-primary">{getStaffFullName(member)}</p>
@@ -152,7 +152,7 @@ export function StaffAssignmentList({ staff, selectedIds, onChange }) {
           <label
             key={member.id}
             className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 transition ${
-              checked ? 'border-accent bg-accent/5' : 'border-slate-200 bg-white hover:bg-slate-50'
+              checked ? 'border-accent bg-accent/5' : 'border-border bg-surface-elevated hover:bg-surface-muted'
             }`}
           >
             <input

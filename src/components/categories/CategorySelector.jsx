@@ -25,7 +25,7 @@ export default function CategorySelector({
               className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                 isActive
                   ? 'border-transparent text-white shadow-sm'
-                  : 'border-slate-200 bg-white text-text-secondary hover:border-slate-300 hover:bg-slate-50'
+                  : 'border-border/70 bg-surface-muted text-text-secondary hover:border-border hover:bg-surface-elevated'
               }`}
               style={
                 isActive
@@ -34,7 +34,7 @@ export default function CategorySelector({
               }
             >
               <span
-                className="h-2.5 w-2.5 rounded-full ring-1 ring-white/40"
+                className="h-2.5 w-2.5 rounded-full ring-1 ring-white/30"
                 style={{ backgroundColor: option.color }}
               />
               {option.label}

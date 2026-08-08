@@ -569,7 +569,7 @@ export default function PizarraTactica() {
       </Card>
 
       {saveMessage && (
-        <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+        <div className="mb-4 rounded-xl border border-emerald-500/20 bg-success-subtle px-4 py-3 text-sm text-emerald-300">
           {saveMessage}
         </div>
       )}
@@ -590,7 +590,7 @@ export default function PizarraTactica() {
               'rounded-xl px-3.5 py-2 text-sm font-semibold shadow-sm transition-all',
               board.id === tacticalBoard.activeBoardId
                 ? 'bg-accent text-white shadow-accent/25'
-                : 'bg-white text-text-secondary ring-1 ring-slate-200/80 hover:bg-slate-50 hover:ring-accent/30',
+                : 'bg-surface-elevated text-text-secondary ring-1 ring-border/60 hover:bg-surface-muted hover:ring-accent/30',
             ].join(' ')}
           >
             {board.name}
@@ -599,15 +599,15 @@ export default function PizarraTactica() {
         <button
           type="button"
           onClick={() => setNewBoardModalOpen(true)}
-          className="inline-flex items-center gap-1 rounded-xl bg-white px-3.5 py-2 text-sm font-semibold text-accent shadow-sm ring-1 ring-slate-200/80 transition hover:bg-accent-subtle hover:ring-accent/40"
+          className="inline-flex items-center gap-1 rounded-xl bg-surface-elevated px-3.5 py-2 text-sm font-semibold text-accent shadow-sm ring-1 ring-border/60 transition hover:bg-accent-subtle hover:ring-accent/40"
         >
           <Plus className="h-4 w-4" />
           Nueva pizarra
         </button>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm">
-        <div className="flex rounded-xl bg-slate-100/80 p-1">
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-border/60 bg-surface-card p-3 shadow-sm">
+        <div className="flex rounded-xl bg-surface-muted p-1">
           {[
             { id: BOARD_MODES.SQUAD, label: 'Plantel' },
             { id: BOARD_MODES.POSITIONS, label: 'Posiciones' },
@@ -619,7 +619,7 @@ export default function PizarraTactica() {
               onClick={() => handleModeChange(option.id)}
               className={
                 activeBoard.mode === option.id
-                  ? 'rounded-lg bg-white px-4 py-2 text-sm font-semibold text-accent shadow-sm'
+                  ? 'rounded-lg bg-surface-elevated px-4 py-2 text-sm font-semibold text-accent shadow-sm'
                   : 'rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition hover:text-text-primary'
               }
             >
@@ -646,7 +646,7 @@ export default function PizarraTactica() {
         <select
           value={activeBoard.pitchType ?? 'full-vertical'}
           onChange={(event) => updateBoard((board) => ({ ...board, pitchType: event.target.value }))}
-          className="rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
+          className="rounded-xl border border-border/60 bg-surface-muted px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
         >
           {PITCH_TYPES.map((type) => (
             <option key={type.id} value={type.id}>
@@ -658,7 +658,7 @@ export default function PizarraTactica() {
         <select
           value={activeBoard.boardType ?? 'lineup'}
           onChange={(event) => updateBoard((board) => ({ ...board, boardType: event.target.value }))}
-          className="rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
+          className="rounded-xl border border-border/60 bg-surface-muted px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
         >
           {BOARD_TYPES.map((type) => (
             <option key={type.id} value={type.id}>
@@ -667,14 +667,14 @@ export default function PizarraTactica() {
           ))}
         </select>
 
-        <div className="flex items-center gap-1 rounded-xl bg-slate-100/80 p-1">
-          <button type="button" onClick={() => handleZoom(-0.1)} className="rounded-lg p-2 transition hover:bg-white" title="Alejar">
+        <div className="flex items-center gap-1 rounded-xl bg-surface-muted p-1">
+          <button type="button" onClick={() => handleZoom(-0.1)} className="rounded-lg p-2 transition hover:bg-surface-elevated" title="Alejar">
             <ZoomOut className="h-4 w-4 text-text-secondary" />
           </button>
           <span className="min-w-[3rem] text-center text-xs font-medium text-text-muted">
             {Math.round((activeBoard.zoom ?? 1) * 100)}%
           </span>
-          <button type="button" onClick={() => handleZoom(0.1)} className="rounded-lg p-2 transition hover:bg-white" title="Acercar">
+          <button type="button" onClick={() => handleZoom(0.1)} className="rounded-lg p-2 transition hover:bg-surface-elevated" title="Acercar">
             <ZoomIn className="h-4 w-4 text-text-secondary" />
           </button>
         </div>
@@ -699,70 +699,16 @@ export default function PizarraTactica() {
         canRedo={activeBoard.history.future.length > 0}
       />
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)_280px] xl:grid-cols-[240px_minmax(0,1fr)_300px] xl:gap-5">
+      <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(280px,320px)_minmax(0,1fr)] xl:gap-5">
+        <aside className="space-y-3 lg:max-h-[calc(100vh-14rem)] lg:overflow-y-auto">
         <PlayerSquadPanel
           players={categoryPlayers}
           usedPlayerIds={usedPlayerIds}
           onRemoveFromBoard={handleRemoveFromBoard}
         />
 
-        <div className="flex min-w-0 flex-col gap-3">
-          <Card className="overflow-hidden border-slate-200/80 p-3 shadow-sm sm:p-4">
-            <PitchFitContainer pitchType={activeBoard.pitchType ?? 'full-vertical'}>
-              <div
-                ref={exportRef}
-                className="h-full w-full"
-                style={{
-                  transform: `scale(${activeBoard.zoom ?? 1})`,
-                  transformOrigin: 'center center',
-                  transition: 'transform 0.15s ease-out',
-                }}
-              >
-                <TacticalPitch
-                  board={activeBoard}
-                  mode={activeBoard.mode}
-                  playerMap={playerMap}
-                  activeTool={activeTool}
-                  drawColor={drawColor}
-                  onBoardChange={updateBoard}
-                  onDropPlayerOnMarker={handleDropPlayerOnMarker}
-                  onDropPlayerOnPitch={handleDropPlayerOnPitch}
-                  onDrawingSelect={setSelectedDrawingId}
-                />
-              </div>
-            </PitchFitContainer>
-          </Card>
-
-          <SubstituteBench
-            players={categoryPlayers}
-            benchPlayerIds={benchPlayerIds}
-            substitutions={activeBoard.substitutions ?? []}
-            playerMap={playerMap}
-            onDropToBench={handleDropToBench}
-            onRemoveFromBench={handleRemoveFromBoard}
-          />
-
-          {activeBoard.staffIds?.length > 0 && (
-            <Card>
-              <h3 className="mb-2 text-sm font-semibold text-text-primary">Staff seleccionado</h3>
-              <ul className="space-y-1 text-sm text-text-secondary">
-                {activeBoard.staffIds.map((staffId) => {
-                  const member = scopedStaff.find((item) => item.id === staffId)
-                  if (!member) return null
-                  return (
-                    <li key={staffId}>
-                      {member.name} · {activeBoard.staffRoles?.[staffId] ?? member.role}
-                    </li>
-                  )
-                })}
-              </ul>
-            </Card>
-          )}
-        </div>
-
-        <div className="space-y-3">
-          <Card className="overflow-hidden border-slate-200/80 shadow-sm">
-            <div className="flex gap-1 overflow-x-auto border-b border-slate-100 bg-slate-50/50 p-2">
+          <Card className="overflow-hidden border-border/60 shadow-sm">
+            <div className="flex gap-1 overflow-x-auto border-b border-border-subtle bg-surface-muted/50 p-2">
               {['players', 'teams', 'staff', 'library', 'formations'].map((tab) => (
                 <button
                   key={tab}
@@ -771,8 +717,8 @@ export default function PizarraTactica() {
                   className={[
                     'shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition',
                     sidebarTab === tab
-                      ? 'bg-white text-accent shadow-sm ring-1 ring-slate-200/80'
-                      : 'text-text-muted hover:bg-white/60 hover:text-text-primary',
+                      ? 'bg-surface-elevated text-accent shadow-sm ring-1 ring-border/60'
+                      : 'text-text-muted hover:bg-surface-elevated/60 hover:text-text-primary',
                   ].join(' ')}
                 >
                   {tab === 'players' ? 'Info' : tab === 'library' ? 'Biblioteca' : tab === 'formations' ? 'Formaciones' : tab === 'teams' ? 'Equipos' : 'Staff'}
@@ -839,7 +785,7 @@ export default function PizarraTactica() {
                     {Object.values(tacticalBoard.customFormations).map((formation) => (
                       <li
                         key={formation.id}
-                        className="flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 px-3 py-2 text-sm"
+                        className="flex items-center justify-between rounded-xl border border-border/60 bg-surface-muted/50 px-3 py-2 text-sm"
                       >
                         <button
                           type="button"
@@ -855,7 +801,7 @@ export default function PizarraTactica() {
                           <button type="button" className="text-xs text-accent hover:underline" onClick={() => handleDuplicateFormation(formation.id)}>
                             <Copy className="inline h-3 w-3" /> Duplicar
                           </button>
-                          <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => handleDeleteCustomFormation(formation.id)}>
+                          <button type="button" className="text-xs text-red-400 hover:underline" onClick={() => handleDeleteCustomFormation(formation.id)}>
                             Eliminar
                           </button>
                         </div>
@@ -869,11 +815,11 @@ export default function PizarraTactica() {
             {sidebarTab === 'players' && (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-xl border border-slate-200/80 bg-gradient-to-br from-accent-subtle/80 to-white p-3">
+                  <div className="rounded-xl border border-border/60 bg-accent-subtle/50 p-3">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Categoría</p>
                     <p className="mt-1 text-sm font-semibold text-text-primary">{currentCategory?.name ?? '—'}</p>
                   </div>
-                  <div className="rounded-xl border border-slate-200/80 bg-gradient-to-br from-slate-50 to-white p-3">
+                  <div className="rounded-xl border border-border/60 bg-surface-muted/50 p-3">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted">En pizarra</p>
                     <p className="mt-1 text-sm font-semibold text-accent">{usedPlayerIds.size} / {categoryPlayers.length}</p>
                   </div>
@@ -885,7 +831,7 @@ export default function PizarraTactica() {
                     {activeBoard.markers
                       .filter((marker) => marker.playerId)
                       .map((marker) => (
-                        <li key={marker.id} className="flex items-center justify-between rounded-xl border border-slate-200/80 bg-white px-2.5 py-2 text-sm shadow-sm">
+                        <li key={marker.id} className="flex items-center justify-between rounded-xl border border-border/60 bg-surface-elevated px-2.5 py-2 text-sm shadow-sm">
                           <span className="truncate font-medium">{getFullName(playerMap[marker.playerId])}</span>
                           <button type="button" className="shrink-0 text-xs font-medium text-accent hover:underline" onClick={() => handleDropToBench(marker.playerId)}>
                             Al banco
@@ -902,10 +848,10 @@ export default function PizarraTactica() {
                   <h4 className="mb-2 text-[10px] font-bold uppercase tracking-wider text-text-muted">Pizarras abiertas</h4>
                   <ul className="space-y-1.5">
                     {tacticalBoard.boards.map((board) => (
-                      <li key={board.id} className="flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 px-3 py-2 text-sm">
+                      <li key={board.id} className="flex items-center justify-between rounded-xl border border-border/60 bg-surface-muted/50 px-3 py-2 text-sm">
                         <span className="font-medium">{board.name}</span>
                         {tacticalBoard.boards.length > 1 && (
-                          <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => handleDeleteBoard(board.id)}>
+                          <button type="button" className="text-xs text-red-400 hover:underline" onClick={() => handleDeleteBoard(board.id)}>
                             Eliminar
                           </button>
                         )}
@@ -917,6 +863,60 @@ export default function PizarraTactica() {
             )}
             </div>
           </Card>
+        </aside>
+
+        <div className="flex min-w-0 flex-col gap-3">
+          <Card className="overflow-hidden border-border/60 p-2 shadow-sm sm:p-3 lg:min-h-[min(72vh,720px)]">
+            <PitchFitContainer pitchType={activeBoard.pitchType ?? 'full-vertical'}>
+              <div
+                ref={exportRef}
+                className="h-full w-full"
+                style={{
+                  transform: `scale(${activeBoard.zoom ?? 1})`,
+                  transformOrigin: 'center center',
+                  transition: 'transform 0.15s ease-out',
+                }}
+              >
+                <TacticalPitch
+                  board={activeBoard}
+                  mode={activeBoard.mode}
+                  playerMap={playerMap}
+                  activeTool={activeTool}
+                  drawColor={drawColor}
+                  onBoardChange={updateBoard}
+                  onDropPlayerOnMarker={handleDropPlayerOnMarker}
+                  onDropPlayerOnPitch={handleDropPlayerOnPitch}
+                  onDrawingSelect={setSelectedDrawingId}
+                />
+              </div>
+            </PitchFitContainer>
+          </Card>
+
+          <SubstituteBench
+            players={categoryPlayers}
+            benchPlayerIds={benchPlayerIds}
+            substitutions={activeBoard.substitutions ?? []}
+            playerMap={playerMap}
+            onDropToBench={handleDropToBench}
+            onRemoveFromBench={handleRemoveFromBoard}
+          />
+
+          {activeBoard.staffIds?.length > 0 && (
+            <Card>
+              <h3 className="mb-2 text-sm font-semibold text-text-primary">Staff seleccionado</h3>
+              <ul className="space-y-1 text-sm text-text-secondary">
+                {activeBoard.staffIds.map((staffId) => {
+                  const member = scopedStaff.find((item) => item.id === staffId)
+                  if (!member) return null
+                  return (
+                    <li key={staffId}>
+                      {member.name} · {activeBoard.staffRoles?.[staffId] ?? member.role}
+                    </li>
+                  )
+                })}
+              </ul>
+            </Card>
+          )}
         </div>
       </div>
 

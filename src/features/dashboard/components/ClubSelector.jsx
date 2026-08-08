@@ -15,7 +15,7 @@ export default function ClubSelector({ club, userClubs, roleLabel, onSwitchClub,
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+    <div className="rounded-2xl border border-border/60 bg-surface-card p-4 shadow-sm">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-subtle text-accent">
@@ -41,7 +41,7 @@ export default function ClubSelector({ club, userClubs, roleLabel, onSwitchClub,
                 disabled={switching}
                 onFocus={() => setOpen(true)}
                 onBlur={() => setOpen(false)}
-                className="appearance-none rounded-xl border border-slate-200/80 bg-white py-1.5 pl-3 pr-8 text-xs font-medium text-text-secondary focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+                className="appearance-none rounded-xl border border-border/60 bg-surface-muted py-1.5 pl-3 pr-8 text-xs font-medium text-text-secondary focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
               >
                 {clubs.map((entry) => (
                   <option key={entry.club.id} value={entry.club.id}>

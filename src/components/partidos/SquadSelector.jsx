@@ -20,7 +20,7 @@ function PlayerChip({ player, draggable = true }) {
         event.dataTransfer.setData('playerId', player.id)
         event.dataTransfer.effectAllowed = 'move'
       }}
-      className="flex cursor-grab items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm active:cursor-grabbing"
+      className="flex cursor-grab items-center gap-2 rounded-xl border border-border bg-surface-elevated px-3 py-2 text-sm shadow-sm active:cursor-grabbing"
     >
       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">
         {player.number}
@@ -50,7 +50,7 @@ function SquadColumn({ title, subtitle, playerIds, playersMap, onDrop, accent = 
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       className={`min-h-[280px] rounded-2xl border-2 border-dashed p-4 ${
-        accent ? 'border-accent/40 bg-accent/5' : 'border-slate-200 bg-slate-50/50'
+        accent ? 'border-accent/40 bg-accent/5' : 'border-border bg-surface-muted/50'
       }`}
     >
       <div className="mb-3">

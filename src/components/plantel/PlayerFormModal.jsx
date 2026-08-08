@@ -101,7 +101,7 @@ export default function PlayerFormModal({ isOpen, onClose, onSave, player, categ
       size="xl"
     >
       <form onSubmit={handleSubmit}>
-        <div className="mb-6 flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:flex-row sm:items-start">
+        <div className="mb-6 flex flex-col items-center gap-4 rounded-2xl border border-border bg-surface-muted p-5 sm:flex-row sm:items-start">
           <div className="relative">
             <PlayerAvatar player={previewPlayer} size="lg" />
             <label
@@ -129,7 +129,7 @@ export default function PlayerFormModal({ isOpen, onClose, onSave, player, categ
               <button
                 type="button"
                 onClick={() => updateField('photo', null)}
-                className="mt-2 text-xs font-medium text-red-600 hover:text-red-700"
+                className="mt-2 text-xs font-medium text-red-400 hover:text-red-700"
               >
                 Quitar foto
               </button>
@@ -303,7 +303,7 @@ export default function PlayerFormModal({ isOpen, onClose, onSave, player, categ
           <Textarea id="notes" value={form.notes} onChange={(e) => updateField('notes', e.target.value)} placeholder="Notas médicas, rendimiento, comentarios..." rows={4} />
         </FormField>
 
-        <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+        <div className="mt-6 flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
           <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
           <Button type="submit">
             <Save className="h-4 w-4" />

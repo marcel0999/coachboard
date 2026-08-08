@@ -18,7 +18,7 @@ import { formatMatchDateTime } from '../../utils/matches'
 
 function InfoRow({ label, value }) {
   return (
-    <div className="rounded-xl bg-slate-50 px-4 py-3">
+    <div className="rounded-xl bg-surface-muted px-4 py-3">
       <p className="text-xs font-medium uppercase tracking-wide text-text-muted">{label}</p>
       <p className="mt-1 text-sm font-medium text-text-primary">{value || '—'}</p>
     </div>
@@ -126,7 +126,7 @@ export default function StaffDetailModal({
                     type="button"
                     onClick={() => toggleCategory(category.id)}
                     className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
-                      selected ? 'border-transparent text-white' : 'border-slate-200 bg-white text-text-secondary'
+                      selected ? 'border-transparent text-white' : 'border-border bg-surface-elevated text-text-secondary'
                     }`}
                     style={selected ? { backgroundColor: category.color } : undefined}
                   >
@@ -146,7 +146,7 @@ export default function StaffDetailModal({
               participation
                 .filter((entry) => entry.type === 'match')
                 .map((entry) => (
-                  <div key={entry.id} className="rounded-xl border border-slate-200 px-4 py-3 text-sm">
+                  <div key={entry.id} className="rounded-xl border border-border px-4 py-3 text-sm">
                     <p className="font-medium text-text-primary">{entry.label}</p>
                     <p className="text-xs text-text-muted">
                       {formatMatchDateTime(entry.date, '')} · {entry.competition} ·{' '}
@@ -166,7 +166,7 @@ export default function StaffDetailModal({
               participation
                 .filter((entry) => entry.type === 'training')
                 .map((entry) => (
-                  <div key={entry.id} className="rounded-xl border border-slate-200 px-4 py-3 text-sm">
+                  <div key={entry.id} className="rounded-xl border border-border px-4 py-3 text-sm">
                     <p className="font-medium text-text-primary">{entry.label}</p>
                     <p className="text-xs text-text-muted">
                       {formatDate(entry.date)} · {getCategoryById(categories, entry.categoryId)?.name ?? '—'}

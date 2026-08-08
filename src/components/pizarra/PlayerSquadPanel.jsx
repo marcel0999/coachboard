@@ -36,7 +36,7 @@ function PlayerRow({ entry, onDragStart, onRemoveFromBoard }) {
 
       className={[
 
-        'group flex cursor-grab items-center gap-2.5 rounded-xl border bg-white px-2.5 py-2.5 text-sm shadow-sm transition',
+        'group flex cursor-grab items-center gap-2.5 rounded-xl border bg-surface-elevated px-2.5 py-2.5 text-sm shadow-sm transition',
 
         'hover:-translate-y-px hover:shadow-md active:cursor-grabbing active:scale-[0.98]',
 
@@ -48,7 +48,7 @@ function PlayerRow({ entry, onDragStart, onRemoveFromBoard }) {
 
             ? 'border-amber-200 bg-amber-50/40'
 
-            : 'border-slate-200/80 hover:border-accent/30',
+            : 'border-border/60 hover:border-accent/30',
 
       ].join(' ')}
 
@@ -110,7 +110,7 @@ function PlayerRow({ entry, onDragStart, onRemoveFromBoard }) {
 
           onClick={() => onRemoveFromBoard(player.id)}
 
-          className="rounded-lg px-1.5 py-0.5 text-[10px] font-medium text-text-muted opacity-0 transition hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+          className="rounded-lg px-1.5 py-0.5 text-[10px] font-medium text-text-muted opacity-0 transition hover:bg-danger-subtle hover:text-red-400 group-hover:opacity-100"
 
           title="Quitar de la pizarra"
 
@@ -214,9 +214,9 @@ export default function PlayerSquadPanel({
 
   return (
 
-    <div className="flex h-full max-h-[calc(100vh-12rem)] flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+    <div className="flex h-full max-h-[calc(100vh-12rem)] flex-col overflow-hidden rounded-2xl border border-border/60 bg-surface-elevated shadow-sm">
 
-      <div className="border-b border-slate-100 bg-gradient-to-r from-white to-slate-50/80 p-4">
+      <div className="border-b border-border-subtle bg-gradient-to-r from-white to-slate-50/80 p-4">
 
         <div className="flex items-center gap-2">
 
@@ -250,7 +250,7 @@ export default function PlayerSquadPanel({
 
             placeholder="Buscar jugador..."
 
-            className="w-full rounded-xl border border-slate-200/80 bg-white py-2 pl-9 pr-3 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
+            className="w-full rounded-xl border border-border/60 bg-surface-elevated py-2 pl-9 pr-3 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
 
           />
 
@@ -270,7 +270,7 @@ export default function PlayerSquadPanel({
 
           entries={groups.injured}
 
-          accent="text-red-600"
+          accent="text-red-400"
 
           onRemoveFromBoard={onRemoveFromBoard}
 
@@ -282,7 +282,7 @@ export default function PlayerSquadPanel({
 
           entries={groups.suspended}
 
-          accent="text-red-600"
+          accent="text-red-400"
 
           onRemoveFromBoard={onRemoveFromBoard}
 

@@ -30,7 +30,7 @@ function MiniTacticalBoard({ block, players, trainingId, onChange }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-text-primary hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-elevated px-3 py-2 text-sm font-medium text-text-primary hover:bg-surface-muted"
         >
           <ClipboardList className="h-4 w-4" />
           {block.tacticalBoard.lineup && Object.values(block.tacticalBoard.lineup).some(Boolean)
@@ -50,7 +50,7 @@ function MiniTacticalBoard({ block, players, trainingId, onChange }) {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+    <div className="rounded-2xl border border-border bg-surface-muted p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap gap-2">
           {FORMATION_OPTIONS.map((formation) => (
@@ -58,7 +58,7 @@ function MiniTacticalBoard({ block, players, trainingId, onChange }) {
               key={formation}
               type="button"
               onClick={() => onChange({ formation, lineup: createEmptyLineup(formation) })}
-              className={`rounded-lg px-3 py-1 text-xs font-medium ${block.tacticalBoard.formation === formation ? 'bg-accent text-white' : 'bg-white text-text-secondary'}`}
+              className={`rounded-lg px-3 py-1 text-xs font-medium ${block.tacticalBoard.formation === formation ? 'bg-accent text-white' : 'bg-surface-elevated text-text-secondary'}`}
             >
               {formation}
             </button>
@@ -100,7 +100,7 @@ function MiniTacticalBoard({ block, players, trainingId, onChange }) {
               key={player.id}
               draggable
               onDragStart={(e) => e.dataTransfer.setData('playerId', player.id)}
-              className="cursor-grab rounded-lg bg-white px-2 py-1.5 text-xs font-medium"
+              className="cursor-grab rounded-lg bg-surface-elevated px-2 py-1.5 text-xs font-medium"
             >
               {player.number} · {getFullName(player)}
             </div>
@@ -137,7 +137,7 @@ function BlockCard({ block, exercises, players, trainingId, activeBlockId, onSel
     <div
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className={`rounded-2xl border p-4 transition ${isActive ? 'border-accent bg-accent/5' : 'border-slate-200 bg-white'}`}
+      className={`rounded-2xl border p-4 transition ${isActive ? 'border-accent bg-accent/5' : 'border-border bg-surface-elevated'}`}
     >
       <button type="button" onClick={() => onSelect(block.id)} className="mb-3 w-full text-left">
         <div className="flex items-center justify-between">

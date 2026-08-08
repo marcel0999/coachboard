@@ -55,7 +55,7 @@ export default function DocumentsTab({ player, onUpdate }) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <div className="rounded-2xl border border-border bg-surface-muted p-4">
         <p className="mb-3 text-sm font-medium text-text-primary">Subir documento</p>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <div className="flex-1">
@@ -107,10 +107,10 @@ export default function DocumentsTab({ player, onUpdate }) {
                 {group.items.map((doc) => (
                   <div
                     key={doc.id}
-                    className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3"
+                    className="flex items-center justify-between rounded-xl border border-border bg-surface-elevated px-4 py-3"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-muted">
                         <FileText className="h-5 w-5 text-slate-600" />
                       </div>
                       <div className="min-w-0">
@@ -134,7 +134,7 @@ export default function DocumentsTab({ player, onUpdate }) {
                       <button
                         type="button"
                         onClick={() => setDeletingDoc(doc)}
-                        className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50"
+                        className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-red-400 hover:bg-danger-subtle"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         Eliminar
@@ -154,7 +154,7 @@ export default function DocumentsTab({ player, onUpdate }) {
               {documents
                 .filter((doc) => !DOCUMENT_TYPES.some((t) => t.value === doc.type))
                 .map((doc) => (
-                  <div key={doc.id} className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm">
+                  <div key={doc.id} className="rounded-xl border border-border bg-surface-elevated px-4 py-3 text-sm">
                     {doc.name} — {getDocumentTypeLabel(doc.type)}
                   </div>
                 ))}

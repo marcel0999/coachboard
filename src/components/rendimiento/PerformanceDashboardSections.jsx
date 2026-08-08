@@ -15,7 +15,7 @@ function TimelineItem({ item }) {
     red: 'border-red-200 bg-red-50 text-red-700',
     substitution: 'border-violet-200 bg-violet-50 text-violet-700',
     injury: 'border-orange-200 bg-orange-50 text-orange-700',
-    observation: 'border-slate-200 bg-slate-50 text-slate-700',
+    observation: 'border-border bg-surface-muted text-text-primary',
     assist: 'border-cyan-200 bg-cyan-50 text-cyan-700',
   }
 
@@ -24,7 +24,7 @@ function TimelineItem({ item }) {
   return (
     <div className="relative flex gap-4 pb-6 last:pb-0">
       <div className="flex flex-col items-center">
-        <div className={`h-3 w-3 rounded-full border-2 ${style.split(' ')[0]} bg-white`} />
+        <div className={`h-3 w-3 rounded-full border-2 ${style.split(' ')[0]} bg-surface-elevated`} />
         <div className="mt-1 w-px flex-1 bg-slate-200" />
       </div>
       <div className={`flex-1 rounded-xl border px-4 py-3 ${style}`}>
@@ -40,7 +40,7 @@ function TimelineItem({ item }) {
 
 export function PerformanceHeader({ player, profile }) {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:flex-row sm:items-start">
+    <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-surface-muted p-6 sm:flex-row sm:items-start">
       <PlayerAvatar player={player} size="lg" />
       <div className="flex-1 text-center sm:text-left">
         <h3 className="text-2xl font-bold text-text-primary">{profile.summary.name}</h3>
@@ -172,7 +172,7 @@ export default function PerformanceDashboardSections({ profile, activeSection })
           {evolution.coachNotes.length > 0 ? (
             <ul className="space-y-3">
               {evolution.coachNotes.map((note) => (
-                <li key={`${note.date}-${note.context}`} className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+                <li key={`${note.date}-${note.context}`} className="rounded-xl border border-border-subtle bg-surface-muted px-4 py-3">
                   <p className="text-xs text-text-muted">{note.date} · {note.context}</p>
                   <p className="mt-1 text-sm text-text-primary">{note.text}</p>
                 </li>

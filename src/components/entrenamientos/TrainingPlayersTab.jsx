@@ -3,7 +3,7 @@ import { FormField, Input, Textarea } from '../ui/FormField'
 
 function PlayerListColumn({ title, subtitle, playerIds, playersMap, onToggle, variant = 'default' }) {
   const variantClass = {
-    default: 'border-slate-200 bg-slate-50/50',
+    default: 'border-border bg-surface-muted/50',
     accent: 'border-accent/30 bg-accent/5',
     warning: 'border-amber-200 bg-amber-50/50',
     danger: 'border-red-200 bg-red-50/50',
@@ -22,7 +22,7 @@ function PlayerListColumn({ title, subtitle, playerIds, playersMap, onToggle, va
               key={id}
               type="button"
               onClick={() => onToggle(id)}
-              className="flex w-full items-center gap-2 rounded-lg bg-white px-3 py-2 text-left text-sm hover:bg-slate-50"
+              className="flex w-full items-center gap-2 rounded-lg bg-surface-elevated px-3 py-2 text-left text-sm hover:bg-surface-muted"
             >
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-white">
                 {player.number}
@@ -167,7 +167,7 @@ export default function TrainingPlayersTab({ training, players, onChange, matche
                 key={id}
                 type="button"
                 onClick={() => movePlayer(id, 'attendees')}
-                className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-text-primary hover:bg-accent/10"
+                className="rounded-full bg-surface-muted px-3 py-1 text-xs font-medium text-text-primary hover:bg-accent/10"
               >
                 + {getFullName(playersMap[id])}
               </button>
@@ -185,10 +185,10 @@ export default function TrainingPlayersTab({ training, players, onChange, matche
         </div>
         <div className="space-y-3">
           {training.players.differentiated.map((entry, index) => (
-            <div key={`${entry.playerId}-${index}`} className="grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-3">
+            <div key={`${entry.playerId}-${index}`} className="grid gap-3 rounded-xl border border-border bg-surface-muted p-4 sm:grid-cols-3">
               <FormField label="Jugador">
                 <select
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                  className="w-full rounded-xl border border-border bg-surface-elevated px-3 py-2 text-sm"
                   value={entry.playerId}
                   onChange={(e) => updateDifferentiated(index, 'playerId', e.target.value)}
                 >

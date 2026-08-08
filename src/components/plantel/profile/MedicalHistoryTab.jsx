@@ -53,7 +53,7 @@ function MedicalRecordForm({ record, onSave, onCancel }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-surface-muted p-4">
       <div className="grid gap-3 sm:grid-cols-2">
         <FormField label="Fecha" htmlFor="med-date" required error={errors.date}>
           <Input id="med-date" type="date" value={form.date} onChange={(e) => update('date', e.target.value)} />
@@ -151,7 +151,7 @@ export default function MedicalHistoryTab({ player, onUpdate }) {
       ) : (
         <div className="space-y-3">
           {[...records].sort((a, b) => new Date(b.date) - new Date(a.date)).map((record) => (
-            <div key={record.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div key={record.id} className="rounded-2xl border border-border bg-surface-elevated p-4 shadow-sm">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -177,7 +177,7 @@ export default function MedicalHistoryTab({ player, onUpdate }) {
                   <button
                     type="button"
                     onClick={() => setDeletingRecord(record)}
-                    className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50"
+                    className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-red-400 hover:bg-danger-subtle"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                     Eliminar

@@ -34,7 +34,7 @@ export default function FormationSelector({ value, customFormations, onChange, c
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+        className="rounded-xl border border-border/60 bg-surface-elevated px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
       >
         {allOptions.map((option) => (
           <option key={option.value} value={option.value}>
@@ -59,10 +59,10 @@ export default function FormationSelector({ value, customFormations, onChange, c
             type="button"
             onClick={() => onChange(option.value)}
             className={[
-              'formation-card flex flex-col items-center rounded-xl border bg-white px-2 py-2.5',
+              'formation-card flex flex-col items-center rounded-xl border bg-surface-elevated px-2 py-2.5',
               value === option.value
                 ? 'is-active border-accent bg-accent-subtle/50'
-                : 'border-slate-200/80 hover:border-accent/40',
+                : 'border-border/60 hover:border-accent/40',
             ].join(' ')}
           >
             <FormationMiniDiagram formationId={option.value} />
@@ -82,7 +82,7 @@ export default function FormationSelector({ value, customFormations, onChange, c
                 'formation-card rounded-lg border px-3 py-1.5 text-xs font-medium',
                 value === option.value
                   ? 'is-active border-accent bg-accent-subtle text-accent'
-                  : 'border-slate-200 bg-white text-text-secondary hover:border-accent/40',
+                  : 'border-border bg-surface-elevated text-text-secondary hover:border-accent/40',
               ].join(' ')}
             >
               {option.label}
@@ -112,7 +112,7 @@ export function FormationSelectorBar({ value, customFormations, onChange }) {
             'formation-card rounded-lg border px-3 py-1.5 text-xs font-bold',
             value === option.value
               ? 'is-active border-accent bg-accent text-white'
-              : 'border-slate-200 bg-white text-text-secondary hover:border-accent/60',
+              : 'border-border bg-surface-elevated text-text-secondary hover:border-accent/60',
           ].join(' ')}
         >
           {option.label}
@@ -124,7 +124,7 @@ export function FormationSelectorBar({ value, customFormations, onChange }) {
           onChange={(event) => {
             if (event.target.value) onChange(event.target.value)
           }}
-          className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs shadow-sm outline-none focus:border-accent"
+          className="rounded-lg border border-border bg-surface-elevated px-2 py-1.5 text-xs shadow-sm outline-none focus:border-accent"
         >
           <option value="">Más…</option>
           {rest.map((option) => (

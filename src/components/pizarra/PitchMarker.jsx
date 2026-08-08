@@ -45,7 +45,7 @@ export default function PitchMarker({
       >
         <div
           className={[
-            'flex w-[4.5rem] flex-col items-center overflow-hidden rounded-xl border-2 bg-white/95 p-1 shadow-lg backdrop-blur-sm',
+            'flex w-[4.5rem] flex-col items-center overflow-hidden rounded-xl border-2 bg-surface-elevated/95 p-1 shadow-lg backdrop-blur-sm',
             alertBorderClass(alert, isSelected),
             isSelected ? 'ring-4' : 'ring-1',
           ].join(' ')}

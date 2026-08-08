@@ -144,7 +144,7 @@ export default function CentroMedico() {
 
       <div className="mb-6 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <Card className="p-0">
-          <div className="border-b border-slate-100 p-4">
+          <div className="border-b border-border-subtle p-4">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
               <div className="flex-1">
                 <SearchInput

@@ -25,7 +25,7 @@ export default function PlayersSection({ players }) {
           }
         />
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-border-subtle">
           {recent.map((player) => (
             <li key={player.id} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
               <div className="flex items-center gap-3">

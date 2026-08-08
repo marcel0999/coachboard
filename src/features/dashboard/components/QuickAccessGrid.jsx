@@ -15,7 +15,7 @@ export default function QuickAccessGrid({ items }) {
             key={item.path}
             to={item.path}
             variant="ghost"
-            className="h-auto w-full justify-between rounded-xl border border-slate-200/60 px-4 py-3.5 hover:bg-surface-muted"
+            className="h-auto w-full justify-between rounded-xl border border-border/60 px-4 py-3 hover:bg-surface-muted"
           >
             <span className="text-left">
               <span className="block font-semibold text-text-primary">{item.label}</span>

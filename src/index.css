@@ -4,35 +4,39 @@
   /* Brand */
   --color-accent: #10b981;
   --color-accent-hover: #059669;
-  --color-accent-subtle: #ecfdf5;
-  --color-accent-muted: #d1fae5;
+  --color-accent-subtle: rgba(16, 185, 129, 0.12);
+  --color-accent-muted: rgba(16, 185, 129, 0.22);
 
-  /* Surfaces */
-  --color-surface: #f4f6f9;
-  --color-surface-elevated: #ffffff;
-  --color-surface-card: #ffffff;
-  --color-surface-muted: #f8fafc;
+  /* Surfaces — dark premium */
+  --color-surface: #0a0e14;
+  --color-surface-elevated: #111827;
+  --color-surface-card: #151b28;
+  --color-surface-muted: #1a2234;
+
+  /* Borders */
+  --color-border: #252d3d;
+  --color-border-subtle: #1e2738;
 
   /* Sidebar */
-  --color-sidebar: #0c1222;
-  --color-sidebar-hover: #151d32;
-  --color-sidebar-active: #1e293b;
+  --color-sidebar: #080c12;
+  --color-sidebar-hover: #121a28;
+  --color-sidebar-active: #1a2438;
   --color-sidebar-border: #1a2338;
 
   /* Text */
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #64748b;
-  --color-text-muted: #94a3b8;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
 
   /* Semantic */
   --color-danger: #ef4444;
-  --color-danger-subtle: #fef2f2;
+  --color-danger-subtle: rgba(239, 68, 68, 0.12);
   --color-warning: #f59e0b;
-  --color-warning-subtle: #fffbeb;
+  --color-warning-subtle: rgba(245, 158, 11, 0.12);
   --color-success: #10b981;
-  --color-success-subtle: #ecfdf5;
+  --color-success-subtle: rgba(16, 185, 129, 0.12);
   --color-info: #3b82f6;
-  --color-info-subtle: #eff6ff;
+  --color-info-subtle: rgba(59, 130, 246, 0.12);
 
   /* Typography */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -45,13 +49,13 @@
   --radius-xl: 1.25rem;
   --radius-2xl: 1.5rem;
 
-  /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.04);
-  --shadow-accent: 0 8px 24px rgba(16, 185, 129, 0.28);
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(15, 23, 42, 0.04);
+  /* Shadows — subtle for dark UI */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.45), 0 4px 8px rgba(0, 0, 0, 0.25);
+  --shadow-accent: 0 8px 24px rgba(16, 185, 129, 0.22);
+  --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 1px 3px rgba(0, 0, 0, 0.3);
 
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -62,7 +66,7 @@
 
 @layer base {
   * {
-    @apply border-slate-200/80;
+    @apply border-border/60;
   }
 
   html {
@@ -75,7 +79,7 @@
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--color-accent) 25%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 30%, transparent);
     color: var(--color-text-primary);
   }
 }
@@ -100,7 +104,7 @@
   }
 
   .cb-card {
-    @apply rounded-2xl border border-slate-200/70 bg-surface-card;
+    @apply rounded-2xl border border-border/70 bg-surface-card;
     box-shadow: var(--shadow-card);
   }
 
@@ -110,7 +114,7 @@
 
   .cb-card-hover:hover {
     box-shadow: var(--shadow-md);
-    @apply border-slate-200;
+    @apply border-border;
   }
 
   .cb-section-title {
@@ -118,15 +122,15 @@
   }
 
   .cb-input {
-    @apply w-full rounded-xl border border-slate-200/80 bg-surface-muted px-3.5 py-2.5 text-sm text-text-primary outline-none transition placeholder:text-text-muted;
+    @apply w-full rounded-xl border border-border/80 bg-surface-muted px-3.5 py-2.5 text-sm text-text-primary outline-none transition placeholder:text-text-muted;
   }
 
   .cb-input:focus {
-    @apply border-accent bg-white ring-2 ring-accent/15;
+    @apply border-accent bg-surface-elevated ring-2 ring-accent/20;
   }
 
   .cb-glass {
-    @apply border border-white/20 bg-white/80 backdrop-blur-xl;
+    @apply border border-white/10 bg-surface-card/90 backdrop-blur-xl;
   }
 
   .cb-animate-in {
@@ -171,8 +175,8 @@
 /* ── Pizarra Táctica ── */
 .pitch-surface {
   box-shadow:
-    0 8px 32px rgba(15, 23, 42, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .pitch-grass-base {

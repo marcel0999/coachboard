@@ -11,7 +11,7 @@ export default function TeamSettingsPanel({ teams, teamView, onChange, onViewCha
   const renderTeamFields = (teamKey, label) => {
     const team = teams[teamKey]
     return (
-      <div className="space-y-3 rounded-xl border border-slate-200 p-3">
+      <div className="space-y-3 rounded-xl border border-border p-3">
         <div className="flex items-center justify-between">
           <h4 className="text-sm font-semibold text-text-primary">{label}</h4>
           <label className="inline-flex items-center gap-2 text-xs text-text-secondary">
@@ -37,7 +37,7 @@ export default function TeamSettingsPanel({ teams, teamView, onChange, onViewCha
               type="color"
               value={team.primaryColor}
               onChange={(event) => updateTeam(teamKey, 'primaryColor', event.target.value)}
-              className="mt-1 h-9 w-full cursor-pointer rounded-lg border border-slate-200"
+              className="mt-1 h-9 w-full cursor-pointer rounded-lg border border-border"
             />
           </label>
           <label className="text-xs text-text-muted">
@@ -46,7 +46,7 @@ export default function TeamSettingsPanel({ teams, teamView, onChange, onViewCha
               type="color"
               value={team.secondaryColor}
               onChange={(event) => updateTeam(teamKey, 'secondaryColor', event.target.value)}
-              className="mt-1 h-9 w-full cursor-pointer rounded-lg border border-slate-200"
+              className="mt-1 h-9 w-full cursor-pointer rounded-lg border border-border"
             />
           </label>
           <label className="text-xs text-text-muted">
@@ -55,7 +55,7 @@ export default function TeamSettingsPanel({ teams, teamView, onChange, onViewCha
               type="color"
               value={team.numberColor}
               onChange={(event) => updateTeam(teamKey, 'numberColor', event.target.value)}
-              className="mt-1 h-9 w-full cursor-pointer rounded-lg border border-slate-200"
+              className="mt-1 h-9 w-full cursor-pointer rounded-lg border border-border"
             />
           </label>
         </div>
@@ -65,7 +65,7 @@ export default function TeamSettingsPanel({ teams, teamView, onChange, onViewCha
 
   return (
     <div className="space-y-4">
-      <div className="flex rounded-xl border border-slate-200 bg-slate-50 p-1">
+      <div className="flex rounded-xl border border-border bg-surface-muted p-1">
         {[
           { id: 'own', label: 'Propio' },
           { id: 'rival', label: 'Rival' },
@@ -76,7 +76,7 @@ export default function TeamSettingsPanel({ teams, teamView, onChange, onViewCha
             type="button"
             onClick={() => onViewChange(option.id)}
             className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium ${
-              teamView === option.id ? 'bg-white text-accent shadow-sm' : 'text-text-secondary'
+              teamView === option.id ? 'bg-surface-elevated text-accent shadow-sm' : 'text-text-secondary'
             }`}
           >
             {option.label}

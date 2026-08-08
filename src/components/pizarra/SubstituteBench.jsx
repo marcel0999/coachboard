@@ -32,7 +32,7 @@ function BenchPlayer({ player, index, onDragStart, onRemove }) {
 
       className={[
 
-        'group flex cursor-grab items-center gap-2.5 rounded-xl border bg-white px-2.5 py-2 text-sm shadow-sm transition',
+        'group flex cursor-grab items-center gap-2.5 rounded-xl border bg-surface-elevated px-2.5 py-2 text-sm shadow-sm transition',
 
         'hover:-translate-y-px hover:shadow-md active:cursor-grabbing',
 
@@ -44,13 +44,13 @@ function BenchPlayer({ player, index, onDragStart, onRemove }) {
 
             ? 'border-amber-200 bg-amber-50/30'
 
-            : 'border-slate-200/80 hover:border-accent/30',
+            : 'border-border/60 hover:border-accent/30',
 
       ].join(' ')}
 
     >
 
-      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-slate-100 text-[10px] font-bold text-text-muted">
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-surface-muted text-[10px] font-bold text-text-muted">
 
         {index + 1}
 
@@ -90,7 +90,7 @@ function BenchPlayer({ player, index, onDragStart, onRemove }) {
 
           onClick={() => onRemove(player.id)}
 
-          className="rounded-lg p-1 text-text-muted opacity-0 transition hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+          className="rounded-lg p-1 text-text-muted opacity-0 transition hover:bg-danger-subtle hover:text-red-400 group-hover:opacity-100"
 
         >
 
@@ -176,7 +176,7 @@ export default function SubstituteBench({
 
         <div className="flex items-center gap-2">
 
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-surface-muted">
 
             <Armchair className="h-3.5 w-3.5 text-slate-500" />
 
@@ -186,7 +186,7 @@ export default function SubstituteBench({
 
         </div>
 
-        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-text-muted">
+        <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs font-medium text-text-muted">
 
           {benchPlayers.length} suplentes
 
@@ -230,7 +230,7 @@ export default function SubstituteBench({
 
       {substitutions.length > 0 && (
 
-        <div className="mt-4 border-t border-slate-200/80 pt-3">
+        <div className="mt-4 border-t border-border/60 pt-3">
 
           <h4 className="mb-2 text-[10px] font-bold uppercase tracking-wider text-text-muted">Sustituciones</h4>
 
@@ -244,7 +244,7 @@ export default function SubstituteBench({
 
               return (
 
-                <li key={sub.id} className="rounded-lg bg-white px-2 py-1 shadow-sm">
+                <li key={sub.id} className="rounded-lg bg-surface-elevated px-2 py-1 shadow-sm">
 
                   {outPlayer ? `#${outPlayer.number} ${outPlayer.lastName}` : '—'} →{' '}
 
@@ -274,7 +274,7 @@ export function SquadPool({ players, onDragStart }) {
 
   return (
 
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="rounded-2xl border border-border bg-surface-elevated p-4 shadow-sm">
 
       <h3 className="mb-3 text-sm font-semibold text-text-primary">Plantel disponible</h3>
 

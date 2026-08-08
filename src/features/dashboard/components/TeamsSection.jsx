@@ -12,7 +12,7 @@ export default function TeamsSection({ teams, loading, error }) {
       {loading ? (
         <p className="text-sm text-text-muted">Cargando equipos…</p>
       ) : error ? (
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-sm text-red-400">{error}</p>
       ) : teams.length === 0 ? (
         <EmptyState
           icon={UsersRound}
@@ -26,7 +26,7 @@ export default function TeamsSection({ teams, loading, error }) {
           }
         />
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-border-subtle">
           {teams.map((team) => (
             <li key={team.id} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
               <div>

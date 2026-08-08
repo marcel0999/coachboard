@@ -1,16 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { X } from 'lucide-react'
 
 export default function Modal({ isOpen, onClose, title, description, children, size = 'lg' }) {
-  const [visible, setVisible] = useState(false)
-
   useEffect(() => {
-    if (isOpen) {
-      setVisible(true)
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+    if (!isOpen) return undefined
+    document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = ''
     }
@@ -27,7 +21,7 @@ export default function Modal({ isOpen, onClose, title, description, children, s
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose])
 
-  if (!isOpen && !visible) return null
+  if (!isOpen) return null
 
   const sizeClass = {
     md: 'max-w-lg',
@@ -39,7 +33,7 @@ export default function Modal({ isOpen, onClose, title, description, children, s
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
       <div
-        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         style={{ animation: 'cb-backdrop-in 200ms ease-out both' }}
         onClick={onClose}
         aria-hidden="true"
@@ -48,10 +42,10 @@ export default function Modal({ isOpen, onClose, title, description, children, s
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className={`relative flex max-h-[92vh] w-full ${sizeClass} flex-col overflow-hidden rounded-2xl bg-white shadow-2xl`}
+        className={`relative flex max-h-[92vh] w-full ${sizeClass} flex-col overflow-hidden rounded-2xl border border-border/70 bg-surface-card shadow-2xl`}
         style={{ animation: 'cb-slide-up 280ms cubic-bezier(0.16, 1, 0.3, 1) both' }}
       >
-        <div className="flex items-start justify-between border-b border-slate-100 px-6 py-5">
+        <div className="flex items-start justify-between border-b border-border-subtle px-6 py-5">
           <div>
             <h2 id="modal-title" className="font-display text-lg font-semibold text-text-primary">
               {title}

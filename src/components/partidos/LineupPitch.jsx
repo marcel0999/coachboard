@@ -89,7 +89,7 @@ export default function LineupPitch({ match, players, onChange }) {
                 'rounded-lg px-3 py-1.5 text-sm font-medium transition',
                 match.formation === formation
                   ? 'bg-accent text-white shadow-sm'
-                  : 'bg-slate-100 text-text-secondary hover:bg-slate-200',
+                  : 'bg-surface-muted text-text-secondary hover:bg-slate-200',
               ].join(' ')}
             >
               {formation}
@@ -119,7 +119,7 @@ export default function LineupPitch({ match, players, onChange }) {
       <div>
         <h4 className="mb-3 text-sm font-semibold text-text-primary">Convocados disponibles</h4>
         <p className="mb-3 text-xs text-text-muted">Arrastrá a la cancha para asignar posición.</p>
-        <div className="max-h-[420px] space-y-2 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 p-3">
+        <div className="max-h-[420px] space-y-2 overflow-y-auto rounded-2xl border border-border bg-surface-muted p-3">
           {availablePlayers.map((player) => (
             <div
               key={player.id}
@@ -127,7 +127,7 @@ export default function LineupPitch({ match, players, onChange }) {
               onDragStart={(event) => {
                 event.dataTransfer.setData('playerId', player.id)
               }}
-              className="flex cursor-grab items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm active:cursor-grabbing"
+              className="flex cursor-grab items-center gap-2 rounded-xl border border-border bg-surface-elevated px-3 py-2 text-sm active:cursor-grabbing"
             >
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-white">
                 {player.number}

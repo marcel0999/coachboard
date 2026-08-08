@@ -45,9 +45,9 @@ export default function AppLayout() {
         />
 
         <main className="relative flex-1 overflow-y-auto">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.04),transparent_50%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.06),transparent_55%)]" />
 
-          <div className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="relative mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
             {saveError && (
               <Alert
                 variant="danger"

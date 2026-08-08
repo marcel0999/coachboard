@@ -1,5 +1,5 @@
 const VARIANTS = {
-  default: 'bg-surface-muted border-slate-200/60',
+  default: 'bg-surface-muted border-border/60',
   success: 'bg-emerald-50/80 border-emerald-100',
   warning: 'bg-amber-50/80 border-amber-100',
   danger: 'bg-red-50/80 border-red-100',

@@ -233,7 +233,7 @@ export default function StaffFormModal({ isOpen, onClose, onSave, member, catego
                   className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                     selected
                       ? 'border-transparent text-white'
-                      : 'border-slate-200 bg-white text-text-secondary hover:bg-slate-50'
+                      : 'border-border bg-surface-elevated text-text-secondary hover:bg-surface-muted'
                   }`}
                   style={selected ? { backgroundColor: category.color } : undefined}
                 >
@@ -249,7 +249,7 @@ export default function StaffFormModal({ isOpen, onClose, onSave, member, catego
         </FormField>
       </div>
 
-      <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+      <div className="mt-6 flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
         <Button variant="secondary" onClick={onClose}>Cancelar</Button>
         <Button onClick={handleSubmit}>
           <Save className="h-4 w-4" />

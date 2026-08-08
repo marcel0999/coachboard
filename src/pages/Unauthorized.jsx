@@ -17,7 +17,7 @@ export default function Unauthorized() {
       }
     >
       <div className="flex flex-col items-center gap-4 py-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-400">
           <ShieldX className="h-7 w-7" />
         </div>
         <p className="text-center text-sm text-text-secondary">

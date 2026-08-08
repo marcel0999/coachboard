@@ -33,17 +33,17 @@ export default function TrainingLoadTab({ training, players, onChange }) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
+      <div className="rounded-xl border border-border bg-surface-muted px-4 py-3 text-sm">
         <span className="font-medium text-text-primary">Carga promedio del grupo:</span>{' '}
         <span className="font-bold text-accent">{Math.round(avgLoad * 10) / 10}</span>
         <span className="text-text-muted"> (RPE × minutos)</span>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <div className="overflow-hidden rounded-2xl border border-border bg-surface-elevated">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px] text-left text-sm">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50">
+              <tr className="border-b border-border bg-surface-muted">
                 <th className="px-4 py-3 font-semibold text-text-secondary">Jugador</th>
                 <th className="px-4 py-3 font-semibold text-text-secondary">RPE (1-10)</th>
                 <th className="px-4 py-3 font-semibold text-text-secondary">Minutos</th>
@@ -51,7 +51,7 @@ export default function TrainingLoadTab({ training, players, onChange }) {
                 <th className="px-4 py-3 font-semibold text-text-secondary">Observaciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-border-subtle">
               {entries.map((entry) => (
                 <tr key={entry.playerId}>
                   <td className="px-4 py-3 font-medium text-text-primary">

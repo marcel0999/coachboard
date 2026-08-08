@@ -135,7 +135,7 @@ export default function MedicalDocumentFormModal({
           <Textarea id="med-notes" value={form.notes} onChange={handleChange('notes')} rows={3} />
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <div className="rounded-2xl border border-border bg-surface-muted p-4">
           <p className="mb-2 text-sm font-medium text-text-primary">Archivo adjunto (PDF o imagen)</p>
           {form.fileName && (
             <p className="mb-3 text-sm text-text-secondary">{form.fileName}</p>
@@ -155,7 +155,7 @@ export default function MedicalDocumentFormModal({
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+      <div className="mt-6 flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
         <Button variant="secondary" onClick={onClose}>Cancelar</Button>
         <Button onClick={handleSubmit} disabled={!form.expiresAt}>
           Guardar documento

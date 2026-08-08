@@ -198,7 +198,7 @@ export default function MatchDetailModal({ isOpen, onClose, match, players, staf
               <div className="mb-4 flex justify-end">
                 <Link
                   to={`/pizarra?matchId=${form.id}`}
-                  className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-accent hover:bg-slate-50"
+                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-elevated px-3 py-2 text-sm font-medium text-accent hover:bg-surface-muted"
                   onClick={onClose}
                 >
                   <ClipboardList className="h-4 w-4" />
@@ -219,7 +219,7 @@ export default function MatchDetailModal({ isOpen, onClose, match, players, staf
 
 
 
-        <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+        <div className="mt-6 flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
 
           <Button variant="secondary" onClick={onClose}>Cancelar</Button>
 

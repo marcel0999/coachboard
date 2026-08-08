@@ -26,7 +26,7 @@ export default function TacticalBoardStaffPanel({ staff, selectedIds, staffRoles
           <div
             key={member.id}
             className={`rounded-xl border px-3 py-2 transition ${
-              checked ? 'border-accent bg-accent/5' : 'border-slate-200 bg-white'
+              checked ? 'border-accent bg-accent/5' : 'border-border bg-surface-elevated'
             }`}
           >
             <label className="flex cursor-pointer items-center gap-3">
@@ -46,7 +46,7 @@ export default function TacticalBoardStaffPanel({ staff, selectedIds, staffRoles
               <select
                 value={staffRoles[member.id] ?? member.role}
                 onChange={(event) => onRoleChange(member.id, event.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-200 px-2 py-1 text-xs"
+                className="mt-2 w-full rounded-lg border border-border px-2 py-1 text-xs"
               >
                 {STAFF_ROLES.map((role) => (
                   <option key={role} value={role}>

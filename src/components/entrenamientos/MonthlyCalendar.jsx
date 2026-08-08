@@ -39,7 +39,7 @@ export default function MonthlyCalendar({ referenceDate, trainings, onPrev, onNe
           return (
             <div
               key={toDateKey(day)}
-              className={`min-h-[100px] rounded-xl border p-2 ${isToday ? 'border-accent/40 bg-accent/5' : 'border-slate-200 bg-white'}`}
+              className={`min-h-[100px] rounded-xl border p-2 ${isToday ? 'border-accent/40 bg-accent/5' : 'border-border bg-surface-elevated'}`}
             >
               <div className="mb-1 flex items-center justify-between">
                 <span className="text-sm font-semibold text-text-primary">{day.getDate()}</span>
@@ -57,7 +57,7 @@ export default function MonthlyCalendar({ referenceDate, trainings, onPrev, onNe
                     key={training.id}
                     type="button"
                     onClick={() => onOpenTraining(training)}
-                    className="block w-full truncate rounded-lg bg-slate-100 px-2 py-1 text-left text-[10px] font-medium text-text-primary hover:bg-accent/10"
+                    className="block w-full truncate rounded-lg bg-surface-muted px-2 py-1 text-left text-[10px] font-medium text-text-primary hover:bg-accent/10"
                   >
                     {training.time} · {getTrainingDisplayName(training)}
                   </button>

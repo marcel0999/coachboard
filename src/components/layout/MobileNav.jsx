@@ -4,7 +4,7 @@ import Sidebar from './Sidebar'
 
 export default function MobileHeader({ isOpen, onToggle, title = 'CoachBoard' }) {
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200/70 bg-white/90 px-4 py-3 backdrop-blur-xl lg:hidden">
+    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border/70 bg-surface-elevated/95 px-4 py-3 backdrop-blur-xl lg:hidden">
       <button
         type="button"
         onClick={onToggle}
@@ -26,7 +26,7 @@ export function MobileSidebar({ isOpen, onClose }) {
     <>
       <div
         className={[
-          'fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden',
+          'fixed inset-0 z-40 bg-black/70 backdrop-blur-sm transition-opacity duration-300 lg:hidden',
           isOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
         ].join(' ')}
         onClick={onClose}

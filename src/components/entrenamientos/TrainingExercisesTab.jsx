@@ -49,7 +49,7 @@ function MiniTacticalBoard({ exercise, players, trainingId, onChange, isNew = fa
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-sm font-medium text-text-primary transition hover:bg-surface-muted"
+          className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-surface-elevated px-3 py-2 text-sm font-medium text-text-primary transition hover:bg-surface-muted"
         >
           <ClipboardList className="h-4 w-4" />
           {drawingCount > 0 || Object.values(lineup).some(Boolean)
@@ -75,7 +75,7 @@ function MiniTacticalBoard({ exercise, players, trainingId, onChange, isNew = fa
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200/80 bg-surface-muted/40 p-4">
+    <div className="rounded-2xl border border-border/60 bg-surface-muted/40 p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap gap-1.5">
           {FORMATION_OPTIONS.map((formation) => (
@@ -86,7 +86,7 @@ function MiniTacticalBoard({ exercise, players, trainingId, onChange, isNew = fa
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 board.formation === formation
                   ? 'bg-accent text-white shadow-sm'
-                  : 'bg-white text-text-secondary hover:text-text-primary'
+                  : 'bg-surface-elevated text-text-secondary hover:text-text-primary'
               }`}
             >
               {formation}
@@ -133,7 +133,7 @@ function MiniTacticalBoard({ exercise, players, trainingId, onChange, isNew = fa
               key={player.id}
               draggable
               onDragStart={(e) => e.dataTransfer.setData('playerId', player.id)}
-              className="cursor-grab rounded-lg bg-white px-2 py-1.5 text-xs font-medium shadow-sm active:cursor-grabbing"
+              className="cursor-grab rounded-lg bg-surface-elevated px-2 py-1.5 text-xs font-medium shadow-sm active:cursor-grabbing"
             >
               {player.number} · {getFullName(player)}
             </div>
@@ -166,7 +166,7 @@ function SessionExerciseCard({
       className={`rounded-2xl border transition ${
         isExpanded
           ? 'border-accent/40 bg-accent-subtle/20 shadow-sm'
-          : 'border-slate-200/80 bg-white hover:border-slate-300'
+          : 'border-border/60 bg-surface-elevated hover:border-slate-300'
       }`}
     >
       <button
@@ -195,7 +195,7 @@ function SessionExerciseCard({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onMoveUp() }}
-              className="rounded-lg p-1.5 text-text-muted hover:bg-white hover:text-text-primary"
+              className="rounded-lg p-1.5 text-text-muted hover:bg-surface-elevated hover:text-text-primary"
               aria-label="Subir"
             >
               <ChevronUp className="h-4 w-4" />
@@ -205,7 +205,7 @@ function SessionExerciseCard({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onMoveDown() }}
-              className="rounded-lg p-1.5 text-text-muted hover:bg-white hover:text-text-primary"
+              className="rounded-lg p-1.5 text-text-muted hover:bg-surface-elevated hover:text-text-primary"
               aria-label="Bajar"
             >
               <ChevronDown className="h-4 w-4" />
@@ -220,7 +220,7 @@ function SessionExerciseCard({
       </button>
 
       {isExpanded && (
-        <div className="space-y-4 border-t border-slate-200/60 px-4 pb-4 pt-4">
+        <div className="space-y-4 border-t border-border/60 px-4 pb-4 pt-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <FormField label="Nombre del ejercicio" className="sm:col-span-2">
               <Input
@@ -385,7 +385,7 @@ export default function TrainingExercisesTab({ training, players, onChange, isNe
       </div>
 
       {exercises.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200/80 bg-surface-muted/30 px-6 py-12 text-center">
+        <div className="rounded-2xl border border-dashed border-border/60 bg-surface-muted/30 px-6 py-12 text-center">
           <ClipboardList className="mx-auto mb-3 h-8 w-8 text-text-muted" />
           <p className="font-semibold text-text-primary">Sin ejercicios todavía</p>
           <p className="mt-1 text-sm text-text-secondary">

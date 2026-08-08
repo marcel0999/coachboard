@@ -17,10 +17,10 @@ export default function MedicalCenterTable({ players, categories = [], showCateg
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-border bg-surface-elevated shadow-sm">
       <div className="overflow-x-auto">
         <table className="min-w-[1200px] w-full text-left text-sm">
-          <thead className="bg-slate-50/80 text-xs uppercase tracking-wide text-text-secondary">
+          <thead className="bg-surface-muted/80 text-xs uppercase tracking-wide text-text-secondary">
             <tr>
               <th className="px-4 py-3 font-semibold">Jugador</th>
               {showCategory && <th className="px-4 py-3 font-semibold">Categoría</th>}
@@ -30,7 +30,7 @@ export default function MedicalCenterTable({ players, categories = [], showCateg
               <th className="px-4 py-3 font-semibold">Estado General</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-border-subtle">
             {players.map((player) => {
               const generalStatus = getPlayerGeneralMedicalStatus(player)
               const category = getCategoryById(categories, player.categoryId)
@@ -38,7 +38,7 @@ export default function MedicalCenterTable({ players, categories = [], showCateg
               return (
                 <tr
                   key={player.id}
-                  className="cursor-pointer transition hover:bg-slate-50/70"
+                  className="cursor-pointer transition hover:bg-surface-muted/70"
                   onClick={() => onSelectPlayer?.(player)}
                 >
                   <td className="px-4 py-4">

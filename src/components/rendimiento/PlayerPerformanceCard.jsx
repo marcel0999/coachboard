@@ -10,7 +10,7 @@ export default function PlayerPerformanceCard({ player, profile, onClick }) {
     <button
       type="button"
       onClick={() => onClick(player)}
-      className="flex w-full flex-col rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-accent/40 hover:shadow-md"
+      className="flex w-full flex-col rounded-2xl border border-border bg-surface-elevated p-5 text-left shadow-sm transition hover:border-accent/40 hover:shadow-md"
     >
       <div className="flex items-center gap-4">
         <PlayerAvatar player={player} />
@@ -23,7 +23,7 @@ export default function PlayerPerformanceCard({ player, profile, onClick }) {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4">
+      <div className="mt-4 grid grid-cols-3 gap-2 border-t border-border-subtle pt-4">
         <div className="text-center">
           <p className="text-lg font-bold text-text-primary">{stats.minutes}</p>
           <p className="text-[10px] text-text-muted">Min</p>

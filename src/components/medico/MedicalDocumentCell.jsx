@@ -11,7 +11,7 @@ export default function MedicalDocumentCell({ document, compact = false }) {
       <div className="min-w-[140px]">
         <div className="flex items-center gap-2">
           <MedicalStatusDot level="missing" />
-          <span className="text-xs font-medium text-red-600">Sin documento</span>
+          <span className="text-xs font-medium text-red-400">Sin documento</span>
         </div>
       </div>
     )
