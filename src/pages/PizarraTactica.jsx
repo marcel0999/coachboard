@@ -1,11 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
-  Download,
-  FileImage,
   FolderOpen,
   Plus,
-  RotateCcw,
   Save,
 } from 'lucide-react'
 import Button from '../components/ui/Button'
@@ -14,15 +11,14 @@ import { Input } from '../components/ui/FormField'
 import TacticalPitch from '../components/pizarra/TacticalPitch'
 import { createFreeMarkerAt } from '../utils/tacticalPitchUtils'
 import PitchFitContainer from '../components/pizarra/PitchFitContainer'
-import PitchViewportControls from '../components/pizarra/PitchViewportControls'
+import TacticalPitchToolbar from '../components/pizarra/TacticalPitchToolbar'
+import TacticalElementsPanel from '../components/pizarra/TacticalElementsPanel'
+import DisplayOptionsPanel from '../components/pizarra/DisplayOptionsPanel'
 import FormationSelector from '../components/pizarra/FormationSelector'
 import SubstituteBench from '../components/pizarra/SubstituteBench'
-import DrawingToolbar from '../components/pizarra/DrawingToolbar'
 import PlayerSquadPanel from '../components/pizarra/PlayerSquadPanel'
 import BoardLibraryPanel, { SaveBoardForm } from '../components/pizarra/BoardLibraryPanel'
-import ExportPreviewModal from '../components/pizarra/ExportPreviewModal'
 import { useAppData, useCategoryScope } from '../context/AppDataContext'
-import { BOARD_MODES, BOARD_TYPES, DEFAULT_DISPLAY_OPTIONS, PITCH_TYPES } from '../constants/tacticalBoard'
 import { getFullName } from '../utils/players'
 import { getSessionExercises, getTrainingDisplayName } from '../utils/trainings'
 import {
@@ -519,42 +515,25 @@ export default function PizarraTactica() {
     }))
   }
 
+  const handleBoardNameChange = (name) => {
+    updateBoard((board) => ({ ...board, name }))
+    updateTacticalBoard((state) => ({
+      ...state,
+      boards: state.boards.map((board) =>
+        board.id === activeBoard.id ? { ...board, name } : board,
+      ),
+    }))
+  }
+
+  const handleClearDrawings = () => {
+    if (!window.confirm('¿Limpiar todos los dibujos de esta pizarra?')) return
+    updateBoard((board) => ({ ...board, drawings: [], history: { past: [], future: [] } }))
+  }
+
   const savedBoards = tacticalBoard.savedBoards ?? tacticalBoard.savedLineups ?? []
 
   return (
     <div className="cb-animate-in -mx-4 flex min-h-[calc(100dvh-4.5rem)] flex-col lg:-mx-8">
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-border/60 px-3 py-2.5 lg:px-4">
-        <div className="min-w-0">
-          <h1 className="font-display text-lg font-bold text-text-primary">Pizarra Táctica</h1>
-          <p className="truncate text-xs text-text-muted">
-            {currentCategory?.name ?? 'Categoría'} · {activeBoard.name} · {activeBoard.formation}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button size="sm" variant="secondary" onClick={() => setSidebarTab('library')}>
-            <FolderOpen className="h-4 w-4" />
-            Cargar
-          </Button>
-          <Button size="sm" variant="secondary" onClick={() => setNewBoardModalOpen(true)}>
-            <Plus className="h-4 w-4" />
-            Nueva
-          </Button>
-          <Button size="sm" variant="secondary" onClick={() => setExportModalOpen(true)}>
-            <FileImage className="h-4 w-4" />
-          </Button>
-          {linkedMatch && (
-            <Button size="sm" variant="secondary" onClick={handleSaveToMatch}>Partido</Button>
-          )}
-          <Button size="sm" variant="secondary" onClick={handleReset}>
-            <RotateCcw className="h-4 w-4" />
-          </Button>
-          <Button size="sm" onClick={handleSave}>
-            <Save className="h-4 w-4" />
-            Guardar
-          </Button>
-        </div>
-      </div>
-
       {saveMessage && (
         <div className="shrink-0 border-b border-emerald-500/20 bg-success-subtle px-4 py-2 text-sm text-emerald-300">
           {saveMessage}
@@ -569,150 +548,93 @@ export default function PizarraTactica() {
         </div>
       )}
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
-        <aside className="flex max-h-[42vh] shrink-0 flex-col gap-3 overflow-y-auto border-b border-border/60 bg-surface-card p-3 lg:max-h-none lg:w-[340px] lg:border-b-0 lg:border-r">
-          <CategorySelector
-            categories={categories}
-            value={boardCategoryId}
-            onChange={persistCategory}
-            includeAll={false}
-          />
-
-          <div>
-            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-text-muted">Pizarras</p>
-            <div className="flex flex-wrap gap-1.5">
-              {tacticalBoard.boards.map((board) => (
-                <button
-                  key={board.id}
-                  type="button"
-                  onClick={() =>
-                    updateTacticalBoard((state) => ({
-                      ...state,
-                      activeBoardId: board.id,
-                      formation: board.formation,
-                    }))
-                  }
-                  className={[
-                    'rounded-lg px-2.5 py-1.5 text-xs font-semibold transition',
-                    board.id === tacticalBoard.activeBoardId
-                      ? 'bg-accent text-white'
-                      : 'bg-surface-muted text-text-secondary hover:text-text-primary',
-                  ].join(' ')}
-                >
-                  {board.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <FormationSelector
-            value={activeBoard.formation}
-            customFormations={tacticalBoard.customFormations}
-            onChange={handleFormationChange}
-          />
-
-          <PlayerSquadPanel
-            players={categoryPlayers}
-            usedPlayerIds={usedPlayerIds}
-            onRemoveFromBoard={handleRemoveFromBoard}
-          />
-
-          <DrawingToolbar
-            layout="sidebar"
-            activeTool={activeTool}
-            drawColor={drawColor}
-            onToolChange={setActiveTool}
-            onColorChange={setDrawColor}
-            onUndo={() => updateBoard((board) => undoDrawings(board))}
-            onRedo={() => updateBoard((board) => redoDrawings(board))}
-            onDuplicate={handleDuplicateDrawing}
-            onDeleteSelected={handleDeleteDrawing}
-            canDelete={Boolean(selectedDrawingId)}
-            canDuplicate={Boolean(selectedDrawingId)}
-            onClear={() => {
-              if (!window.confirm('¿Limpiar todos los dibujos de esta pizarra?')) return
-              updateBoard((board) => ({ ...board, drawings: [], history: { past: [], future: [] } }))
-            }}
-            canUndo={activeBoard.history.past.length > 0}
-            canRedo={activeBoard.history.future.length > 0}
-          />
-
-          <div className="space-y-2 rounded-xl border border-border/60 bg-surface-muted/30 p-3">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Ajustes</p>
-            <div className="flex rounded-lg bg-surface-muted p-0.5">
-              {[
-                { id: BOARD_MODES.SQUAD, label: 'Plantel' },
-                { id: BOARD_MODES.POSITIONS, label: 'Pos.' },
-                { id: BOARD_MODES.CHIPS, label: 'Fichas' },
-              ].map((option) => (
-                <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => handleModeChange(option.id)}
-                  className={
-                    activeBoard.mode === option.id
-                      ? 'flex-1 rounded-md bg-surface-elevated py-1.5 text-[10px] font-semibold text-accent'
-                      : 'flex-1 rounded-md py-1.5 text-[10px] font-medium text-text-muted'
-                  }
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-            <select
-              value={activeBoard.pitchType ?? 'full-vertical'}
-              onChange={(event) => updateBoard((board) => ({ ...board, pitchType: event.target.value }))}
-              className="w-full rounded-lg border border-border/60 bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent"
-            >
-              {PITCH_TYPES.map((type) => (
-                <option key={type.id} value={type.id}>{type.label}</option>
-              ))}
-            </select>
-            <select
-              value={activeBoard.boardType ?? 'lineup'}
-              onChange={(event) => updateBoard((board) => ({ ...board, boardType: event.target.value }))}
-              className="w-full rounded-lg border border-border/60 bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent"
-            >
-              {BOARD_TYPES.map((type) => (
-                <option key={type.id} value={type.id}>{type.label}</option>
-              ))}
-            </select>
-            <Button size="sm" variant="secondary" className="w-full" onClick={() => setSaveModalOpen(true)}>
-              <Download className="h-4 w-4" />
-              Guardar en biblioteca
-            </Button>
-          </div>
-
-          {sidebarTab === 'library' && (
-            <div className="rounded-xl border border-border/60 bg-surface-card p-3">
-              <BoardLibraryPanel
-                savedBoards={savedBoards}
-                categories={categories}
-                onOpen={handleOpenSavedBoard}
-                onDuplicate={handleDuplicateSavedBoard}
-                onRename={handleRenameSavedBoard}
-                onDelete={handleDeleteSavedBoard}
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        {/* Panel izquierdo — mockup reference */}
+        <aside className="flex w-full max-h-[38vh] shrink-0 flex-col border-b border-border/60 bg-surface-card lg:max-h-none lg:w-[300px] lg:border-b-0 lg:border-r xl:w-[320px]">
+          <div className="flex-1 space-y-3 overflow-y-auto p-3">
+            <div>
+              <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-text-muted">Pizarra táctica</p>
+              <input
+                type="text"
+                value={activeBoard.name}
+                onChange={(event) => handleBoardNameChange(event.target.value)}
+                className="w-full rounded-lg border border-border/60 bg-surface-muted px-3 py-2 text-sm font-semibold text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent/20"
               />
             </div>
-          )}
-        </aside>
 
-        <div
-          ref={workspaceRef}
-          className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-[#060a10]"
-        >
-          <div className="absolute left-3 right-3 top-3 z-20">
-            <PitchViewportControls
-              zoom={activeBoard.zoom ?? 1}
-              onZoomChange={handleZoomLevel}
-              isFullscreen={isFullscreen}
-              onToggleFullscreen={toggleFullscreen}
-              displayOptions={activeBoard.displayOptions ?? DEFAULT_DISPLAY_OPTIONS}
-              onDisplayChange={handleDisplayChange}
+            <CategorySelector
+              categories={categories}
+              value={boardCategoryId}
+              onChange={persistCategory}
+              includeAll={false}
             />
+
+            <div>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-text-muted">Formación</p>
+              <FormationSelector
+                value={activeBoard.formation}
+                customFormations={tacticalBoard.customFormations}
+                onChange={handleFormationChange}
+                compact
+              />
+            </div>
+
+            <PlayerSquadPanel
+              players={categoryPlayers}
+              usedPlayerIds={usedPlayerIds}
+              onRemoveFromBoard={handleRemoveFromBoard}
+            />
+
+            <DisplayOptionsPanel
+              displayOptions={activeBoard.displayOptions ?? DEFAULT_DISPLAY_OPTIONS}
+              onChange={handleDisplayChange}
+            />
+
+            {sidebarTab === 'library' && (
+              <div className="rounded-xl border border-border/60 bg-surface-muted/30 p-3">
+                <BoardLibraryPanel
+                  savedBoards={savedBoards}
+                  categories={categories}
+                  onOpen={(saved) => {
+                    handleOpenSavedBoard(saved)
+                    setSidebarTab('players')
+                  }}
+                  onDuplicate={handleDuplicateSavedBoard}
+                  onRename={handleRenameSavedBoard}
+                  onDelete={handleDeleteSavedBoard}
+                />
+              </div>
+            )}
           </div>
 
-          <div className="flex min-h-0 flex-1 flex-col p-2 pt-16">
+          <div className="shrink-0 space-y-2 border-t border-border/60 p-3">
+            <Button variant="secondary" className="w-full" size="sm" onClick={() => setNewBoardModalOpen(true)}>
+              <Plus className="h-4 w-4" />
+              Nueva pizarra
+            </Button>
+            <Button variant="secondary" className="w-full" size="sm" onClick={() => setSidebarTab('library')}>
+              <FolderOpen className="h-4 w-4" />
+              Cargar pizarra
+            </Button>
+            <Button className="w-full" size="sm" onClick={handleSave}>
+              <Save className="h-4 w-4" />
+              Guardar pizarra
+            </Button>
+          </div>
+        </aside>
+
+        {/* Centro — toolbar + cancha */}
+        <div ref={workspaceRef} className="flex min-h-0 min-w-0 flex-1 flex-col bg-[#060a10]">
+          <TacticalPitchToolbar
+            activeTool={activeTool}
+            onToolChange={setActiveTool}
+            zoom={activeBoard.zoom ?? 1}
+            onZoomChange={handleZoomLevel}
+            isFullscreen={isFullscreen}
+            onToggleFullscreen={toggleFullscreen}
+          />
+
+          <div className="relative flex min-h-0 flex-1 flex-col p-2">
             <div className="relative min-h-0 flex-1">
               <PitchFitContainer pitchType={activeBoard.pitchType ?? 'full-vertical'} className="h-full">
                 <div
@@ -739,6 +661,10 @@ export default function PizarraTactica() {
               </PitchFitContainer>
             </div>
 
+            <p className="shrink-0 py-2 text-center text-[11px] text-text-muted">
+              Arrastrá y soltá jugadores para posicionarlos en la cancha
+            </p>
+
             <SubstituteBench
               players={categoryPlayers}
               benchPlayerIds={benchPlayerIds}
@@ -749,6 +675,17 @@ export default function PizarraTactica() {
             />
           </div>
         </div>
+
+        {/* Panel derecho — herramientas y elementos */}
+        <TacticalElementsPanel
+          activeTool={activeTool}
+          onToolChange={setActiveTool}
+          onClear={handleClearDrawings}
+          onUndo={() => updateBoard((board) => undoDrawings(board))}
+          onRedo={() => updateBoard((board) => redoDrawings(board))}
+          canUndo={activeBoard.history.past.length > 0}
+          canRedo={activeBoard.history.future.length > 0}
+        />
       </div>
 
       <Modal isOpen={saveModalOpen} onClose={() => setSaveModalOpen(false)} title="Guardar en biblioteca" size="md">
@@ -779,15 +716,6 @@ export default function PizarraTactica() {
           <Button onClick={handleAddBoard}>Crear pizarra</Button>
         </div>
       </Modal>
-
-      <ExportPreviewModal
-        isOpen={exportModalOpen}
-        onClose={() => setExportModalOpen(false)}
-        exportElement={exportRef.current}
-        defaultTitle={activeBoard.name}
-        categoryName={currentCategory?.name}
-        formation={activeBoard.formation}
-      />
     </div>
   )
 }
