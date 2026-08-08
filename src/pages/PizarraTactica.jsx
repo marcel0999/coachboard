@@ -1,33 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
-  Copy,
   Download,
   FileImage,
+  FolderOpen,
   Plus,
   RotateCcw,
   Save,
-  ZoomIn,
-  ZoomOut,
 } from 'lucide-react'
-import { Card } from '../components/ui/Card'
-import PageHeader from '../components/ui/PageHeader'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { Input } from '../components/ui/FormField'
 import TacticalPitch from '../components/pizarra/TacticalPitch'
 import { createFreeMarkerAt } from '../utils/tacticalPitchUtils'
 import PitchFitContainer from '../components/pizarra/PitchFitContainer'
-import FormationSelector, { FormationSelectorBar } from '../components/pizarra/FormationSelector'
+import PitchViewportControls from '../components/pizarra/PitchViewportControls'
+import FormationSelector from '../components/pizarra/FormationSelector'
 import SubstituteBench from '../components/pizarra/SubstituteBench'
 import DrawingToolbar from '../components/pizarra/DrawingToolbar'
 import PlayerSquadPanel from '../components/pizarra/PlayerSquadPanel'
-import TeamSettingsPanel, { BoardNotesField } from '../components/pizarra/TeamSettingsPanel'
 import BoardLibraryPanel, { SaveBoardForm } from '../components/pizarra/BoardLibraryPanel'
 import ExportPreviewModal from '../components/pizarra/ExportPreviewModal'
-import TacticalBoardStaffPanel from '../components/pizarra/TacticalBoardStaffPanel'
 import { useAppData, useCategoryScope } from '../context/AppDataContext'
-import { BOARD_MODES, BOARD_TYPES, PITCH_TYPES } from '../constants/tacticalBoard'
+import { BOARD_MODES, BOARD_TYPES, DEFAULT_DISPLAY_OPTIONS, PITCH_TYPES } from '../constants/tacticalBoard'
 import { getFullName } from '../utils/players'
 import { getSessionExercises, getTrainingDisplayName } from '../utils/trainings'
 import {
@@ -63,7 +58,6 @@ export default function PizarraTactica() {
     setSelectedCategoryId,
     effectiveCategoryId,
     scopedPlayers,
-    scopedStaff,
   } = useCategoryScope()
   const [searchParams, setSearchParams] = useSearchParams()
   const matchIdParam = searchParams.get('matchId')
@@ -72,6 +66,7 @@ export default function PizarraTactica() {
   const exerciseIdParam = searchParams.get('exerciseId')
 
   const exportRef = useRef(null)
+  const workspaceRef = useRef(null)
   const matchLoadedRef = useRef(null)
 
   const activeBoard = useMemo(() => getActiveBoard(tacticalBoard), [tacticalBoard])
@@ -118,6 +113,7 @@ export default function PizarraTactica() {
   const [newBoardName, setNewBoardName] = useState('')
   const [exportModalOpen, setExportModalOpen] = useState(false)
   const [sidebarTab, setSidebarTab] = useState('players')
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   const currentCategory = categories.find((category) => category.id === boardCategoryId)
 
@@ -135,6 +131,12 @@ export default function PizarraTactica() {
     const explicitBench = activeBoard.benchPlayerIds.filter((id) => !onPitch.has(id))
     return [...new Set(explicitBench)]
   }, [activeBoard])
+
+  useEffect(() => {
+    const onFullscreenChange = () => setIsFullscreen(Boolean(document.fullscreenElement))
+    document.addEventListener('fullscreenchange', onFullscreenChange)
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange)
+  }, [])
 
   useEffect(() => {
     if (tacticalBoard.lastCategoryId && selectedCategoryId === CATEGORY_FILTER_ALL) {
@@ -480,11 +482,23 @@ export default function PizarraTactica() {
     showSaveMessage('Pizarra guardada en el entrenamiento')
   }
 
-  const handleZoom = (delta) => {
+  const handleZoomLevel = (level) => {
+    updateBoard((board) => ({ ...board, zoom: level }))
+  }
+
+  const handleDisplayChange = (key, value) => {
     updateBoard((board) => ({
       ...board,
-      zoom: Math.max(0.6, Math.min(1.8, (board.zoom ?? 1) + delta)),
+      displayOptions: { ...DEFAULT_DISPLAY_OPTIONS, ...board.displayOptions, [key]: value },
     }))
+  }
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      workspaceRef.current?.requestFullscreen?.()
+    } else {
+      document.exitFullscreen?.()
+    }
   }
 
   const handleDeleteDrawing = () => {
@@ -508,258 +522,169 @@ export default function PizarraTactica() {
   const savedBoards = tacticalBoard.savedBoards ?? tacticalBoard.savedLineups ?? []
 
   return (
-    <div className="cb-animate-in">
-      <PageHeader
-        title="Pizarra Táctica"
-        description="Formaciones, alineaciones, ejercicios y movimientos tácticos con jugadores reales"
-        action={
-          <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" onClick={() => setExportModalOpen(true)}>
-              <FileImage className="h-4 w-4" />
-              Exportar
-            </Button>
-            <Button variant="secondary" onClick={() => setSaveModalOpen(true)}>
-              <Download className="h-4 w-4" />
-              Biblioteca
-            </Button>
-            {linkedMatch && (
-              <Button variant="secondary" onClick={handleSaveToMatch}>
-                Guardar en partido
-              </Button>
-            )}
-            {linkedTraining && (linkedBlock || linkedExercise) && (
-              <Button variant="secondary" onClick={handleSaveToTraining}>
-                Guardar en entrenamiento
-              </Button>
-            )}
-            <Button variant="secondary" onClick={handleReset}>
-              <RotateCcw className="h-4 w-4" />
-              Reiniciar
-            </Button>
-            <Button onClick={handleSave}>
-              <Save className="h-4 w-4" />
-              Guardar
-            </Button>
-          </div>
-        }
-      />
-
-      <Card className="mb-6">
-        <CategorySelector
-          categories={categories}
-          value={boardCategoryId}
-          onChange={persistCategory}
-          includeAll={false}
-        />
-        {linkedMatch && (
-          <p className="mt-3 text-sm text-accent">
-            Vinculado al partido vs {linkedMatch.opponent} · {linkedMatch.competition}
+    <div className="cb-animate-in -mx-4 flex min-h-[calc(100dvh-4.5rem)] flex-col lg:-mx-8">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-border/60 px-3 py-2.5 lg:px-4">
+        <div className="min-w-0">
+          <h1 className="font-display text-lg font-bold text-text-primary">Pizarra Táctica</h1>
+          <p className="truncate text-xs text-text-muted">
+            {currentCategory?.name ?? 'Categoría'} · {activeBoard.name} · {activeBoard.formation}
           </p>
-        )}
-        {linkedTraining && linkedExercise && (
-          <p className="mt-3 text-sm text-accent">
-            Vinculado al entrenamiento · ejercicio {linkedExercise.name || 'sin nombre'}
-          </p>
-        )}
-        {linkedTraining && linkedBlock && !linkedExercise && (
-          <p className="mt-3 text-sm text-accent">
-            Vinculado al entrenamiento · bloque {linkedBlock.label}
-          </p>
-        )}
-      </Card>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="secondary" onClick={() => setSidebarTab('library')}>
+            <FolderOpen className="h-4 w-4" />
+            Cargar
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => setNewBoardModalOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Nueva
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => setExportModalOpen(true)}>
+            <FileImage className="h-4 w-4" />
+          </Button>
+          {linkedMatch && (
+            <Button size="sm" variant="secondary" onClick={handleSaveToMatch}>Partido</Button>
+          )}
+          <Button size="sm" variant="secondary" onClick={handleReset}>
+            <RotateCcw className="h-4 w-4" />
+          </Button>
+          <Button size="sm" onClick={handleSave}>
+            <Save className="h-4 w-4" />
+            Guardar
+          </Button>
+        </div>
+      </div>
 
       {saveMessage && (
-        <div className="mb-4 rounded-xl border border-emerald-500/20 bg-success-subtle px-4 py-3 text-sm text-emerald-300">
+        <div className="shrink-0 border-b border-emerald-500/20 bg-success-subtle px-4 py-2 text-sm text-emerald-300">
           {saveMessage}
         </div>
       )}
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        {tacticalBoard.boards.map((board) => (
-          <button
-            key={board.id}
-            type="button"
-            onClick={() =>
-              updateTacticalBoard((state) => ({
-                ...state,
-                activeBoardId: board.id,
-                formation: board.formation,
-              }))
-            }
-            className={[
-              'rounded-xl px-3.5 py-2 text-sm font-semibold shadow-sm transition-all',
-              board.id === tacticalBoard.activeBoardId
-                ? 'bg-accent text-white shadow-accent/25'
-                : 'bg-surface-elevated text-text-secondary ring-1 ring-border/60 hover:bg-surface-muted hover:ring-accent/30',
-            ].join(' ')}
-          >
-            {board.name}
-          </button>
-        ))}
-        <button
-          type="button"
-          onClick={() => setNewBoardModalOpen(true)}
-          className="inline-flex items-center gap-1 rounded-xl bg-surface-elevated px-3.5 py-2 text-sm font-semibold text-accent shadow-sm ring-1 ring-border/60 transition hover:bg-accent-subtle hover:ring-accent/40"
-        >
-          <Plus className="h-4 w-4" />
-          Nueva pizarra
-        </button>
-      </div>
-
-      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-border/60 bg-surface-card p-3 shadow-sm">
-        <div className="flex rounded-xl bg-surface-muted p-1">
-          {[
-            { id: BOARD_MODES.SQUAD, label: 'Plantel' },
-            { id: BOARD_MODES.POSITIONS, label: 'Posiciones' },
-            { id: BOARD_MODES.CHIPS, label: 'Fichas' },
-          ].map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              onClick={() => handleModeChange(option.id)}
-              className={
-                activeBoard.mode === option.id
-                  ? 'rounded-lg bg-surface-elevated px-4 py-2 text-sm font-semibold text-accent shadow-sm'
-                  : 'rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition hover:text-text-primary'
-              }
-            >
-              {option.label}
-            </button>
-          ))}
+      {(linkedMatch || linkedTraining) && (
+        <div className="shrink-0 border-b border-border/40 bg-surface-muted/30 px-4 py-1.5 text-xs text-accent">
+          {linkedMatch && `Vinculado: vs ${linkedMatch.opponent}`}
+          {linkedTraining && linkedExercise && ` · Entrenamiento: ${linkedExercise.name || 'ejercicio'}`}
+          {linkedTraining && linkedBlock && !linkedExercise && ` · Bloque: ${linkedBlock.label}`}
         </div>
+      )}
 
-        <FormationSelectorBar
-          value={activeBoard.formation}
-          customFormations={tacticalBoard.customFormations}
-          onChange={handleFormationChange}
-        />
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
+        <aside className="flex max-h-[42vh] shrink-0 flex-col gap-3 overflow-y-auto border-b border-border/60 bg-surface-card p-3 lg:max-h-none lg:w-[340px] lg:border-b-0 lg:border-r">
+          <CategorySelector
+            categories={categories}
+            value={boardCategoryId}
+            onChange={persistCategory}
+            includeAll={false}
+          />
 
-        <div className="lg:hidden">
+          <div>
+            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-text-muted">Pizarras</p>
+            <div className="flex flex-wrap gap-1.5">
+              {tacticalBoard.boards.map((board) => (
+                <button
+                  key={board.id}
+                  type="button"
+                  onClick={() =>
+                    updateTacticalBoard((state) => ({
+                      ...state,
+                      activeBoardId: board.id,
+                      formation: board.formation,
+                    }))
+                  }
+                  className={[
+                    'rounded-lg px-2.5 py-1.5 text-xs font-semibold transition',
+                    board.id === tacticalBoard.activeBoardId
+                      ? 'bg-accent text-white'
+                      : 'bg-surface-muted text-text-secondary hover:text-text-primary',
+                  ].join(' ')}
+                >
+                  {board.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <FormationSelector
             value={activeBoard.formation}
             customFormations={tacticalBoard.customFormations}
             onChange={handleFormationChange}
-            compact
           />
-        </div>
 
-        <select
-          value={activeBoard.pitchType ?? 'full-vertical'}
-          onChange={(event) => updateBoard((board) => ({ ...board, pitchType: event.target.value }))}
-          className="rounded-xl border border-border/60 bg-surface-muted px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-        >
-          {PITCH_TYPES.map((type) => (
-            <option key={type.id} value={type.id}>
-              {type.label}
-            </option>
-          ))}
-        </select>
+          <PlayerSquadPanel
+            players={categoryPlayers}
+            usedPlayerIds={usedPlayerIds}
+            onRemoveFromBoard={handleRemoveFromBoard}
+          />
 
-        <select
-          value={activeBoard.boardType ?? 'lineup'}
-          onChange={(event) => updateBoard((board) => ({ ...board, boardType: event.target.value }))}
-          className="rounded-xl border border-border/60 bg-surface-muted px-3 py-2 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-        >
-          {BOARD_TYPES.map((type) => (
-            <option key={type.id} value={type.id}>
-              {type.label}
-            </option>
-          ))}
-        </select>
+          <DrawingToolbar
+            layout="sidebar"
+            activeTool={activeTool}
+            drawColor={drawColor}
+            onToolChange={setActiveTool}
+            onColorChange={setDrawColor}
+            onUndo={() => updateBoard((board) => undoDrawings(board))}
+            onRedo={() => updateBoard((board) => redoDrawings(board))}
+            onDuplicate={handleDuplicateDrawing}
+            onDeleteSelected={handleDeleteDrawing}
+            canDelete={Boolean(selectedDrawingId)}
+            canDuplicate={Boolean(selectedDrawingId)}
+            onClear={() => {
+              if (!window.confirm('¿Limpiar todos los dibujos de esta pizarra?')) return
+              updateBoard((board) => ({ ...board, drawings: [], history: { past: [], future: [] } }))
+            }}
+            canUndo={activeBoard.history.past.length > 0}
+            canRedo={activeBoard.history.future.length > 0}
+          />
 
-        <div className="flex items-center gap-1 rounded-xl bg-surface-muted p-1">
-          <button type="button" onClick={() => handleZoom(-0.1)} className="rounded-lg p-2 transition hover:bg-surface-elevated" title="Alejar">
-            <ZoomOut className="h-4 w-4 text-text-secondary" />
-          </button>
-          <span className="min-w-[3rem] text-center text-xs font-medium text-text-muted">
-            {Math.round((activeBoard.zoom ?? 1) * 100)}%
-          </span>
-          <button type="button" onClick={() => handleZoom(0.1)} className="rounded-lg p-2 transition hover:bg-surface-elevated" title="Acercar">
-            <ZoomIn className="h-4 w-4 text-text-secondary" />
-          </button>
-        </div>
-      </div>
-
-      <DrawingToolbar
-        activeTool={activeTool}
-        drawColor={drawColor}
-        onToolChange={setActiveTool}
-        onColorChange={setDrawColor}
-        onUndo={() => updateBoard((board) => undoDrawings(board))}
-        onRedo={() => updateBoard((board) => redoDrawings(board))}
-        onDuplicate={handleDuplicateDrawing}
-        onDeleteSelected={handleDeleteDrawing}
-        canDelete={Boolean(selectedDrawingId)}
-        canDuplicate={Boolean(selectedDrawingId)}
-        onClear={() => {
-          if (!window.confirm('¿Limpiar todos los dibujos de esta pizarra?')) return
-          updateBoard((board) => ({ ...board, drawings: [], history: { past: [], future: [] } }))
-        }}
-        canUndo={activeBoard.history.past.length > 0}
-        canRedo={activeBoard.history.future.length > 0}
-      />
-
-      <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(280px,320px)_minmax(0,1fr)] xl:gap-5">
-        <aside className="space-y-3 lg:max-h-[calc(100vh-14rem)] lg:overflow-y-auto">
-        <PlayerSquadPanel
-          players={categoryPlayers}
-          usedPlayerIds={usedPlayerIds}
-          onRemoveFromBoard={handleRemoveFromBoard}
-        />
-
-          <Card className="overflow-hidden border-border/60 shadow-sm">
-            <div className="flex gap-1 overflow-x-auto border-b border-border-subtle bg-surface-muted/50 p-2">
-              {['players', 'teams', 'staff', 'library', 'formations'].map((tab) => (
+          <div className="space-y-2 rounded-xl border border-border/60 bg-surface-muted/30 p-3">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Ajustes</p>
+            <div className="flex rounded-lg bg-surface-muted p-0.5">
+              {[
+                { id: BOARD_MODES.SQUAD, label: 'Plantel' },
+                { id: BOARD_MODES.POSITIONS, label: 'Pos.' },
+                { id: BOARD_MODES.CHIPS, label: 'Fichas' },
+              ].map((option) => (
                 <button
-                  key={tab}
+                  key={option.id}
                   type="button"
-                  onClick={() => setSidebarTab(tab)}
-                  className={[
-                    'shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition',
-                    sidebarTab === tab
-                      ? 'bg-surface-elevated text-accent shadow-sm ring-1 ring-border/60'
-                      : 'text-text-muted hover:bg-surface-elevated/60 hover:text-text-primary',
-                  ].join(' ')}
+                  onClick={() => handleModeChange(option.id)}
+                  className={
+                    activeBoard.mode === option.id
+                      ? 'flex-1 rounded-md bg-surface-elevated py-1.5 text-[10px] font-semibold text-accent'
+                      : 'flex-1 rounded-md py-1.5 text-[10px] font-medium text-text-muted'
+                  }
                 >
-                  {tab === 'players' ? 'Info' : tab === 'library' ? 'Biblioteca' : tab === 'formations' ? 'Formaciones' : tab === 'teams' ? 'Equipos' : 'Staff'}
+                  {option.label}
                 </button>
               ))}
             </div>
+            <select
+              value={activeBoard.pitchType ?? 'full-vertical'}
+              onChange={(event) => updateBoard((board) => ({ ...board, pitchType: event.target.value }))}
+              className="w-full rounded-lg border border-border/60 bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent"
+            >
+              {PITCH_TYPES.map((type) => (
+                <option key={type.id} value={type.id}>{type.label}</option>
+              ))}
+            </select>
+            <select
+              value={activeBoard.boardType ?? 'lineup'}
+              onChange={(event) => updateBoard((board) => ({ ...board, boardType: event.target.value }))}
+              className="w-full rounded-lg border border-border/60 bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent"
+            >
+              {BOARD_TYPES.map((type) => (
+                <option key={type.id} value={type.id}>{type.label}</option>
+              ))}
+            </select>
+            <Button size="sm" variant="secondary" className="w-full" onClick={() => setSaveModalOpen(true)}>
+              <Download className="h-4 w-4" />
+              Guardar en biblioteca
+            </Button>
+          </div>
 
-            <div className="p-4">
-            {sidebarTab === 'teams' && (
-              <>
-                <TeamSettingsPanel
-                  teams={activeBoard.teams}
-                  teamView={activeBoard.teamView ?? 'own'}
-                  onChange={(teams) => updateBoard((board) => ({ ...board, teams }))}
-                  onViewChange={(teamView) => updateBoard((board) => ({ ...board, teamView }))}
-                />
-                <div className="mt-4">
-                  <BoardNotesField
-                    value={activeBoard.notes ?? ''}
-                    onChange={(notes) => updateBoard((board) => ({ ...board, notes }))}
-                  />
-                </div>
-              </>
-            )}
-
-            {sidebarTab === 'staff' && (
-              <TacticalBoardStaffPanel
-                staff={scopedStaff}
-                selectedIds={activeBoard.staffIds ?? []}
-                staffRoles={activeBoard.staffRoles ?? {}}
-                onChange={(staffIds) => updateBoard((board) => ({ ...board, staffIds }))}
-                onRoleChange={(staffId, role) =>
-                  updateBoard((board) => ({
-                    ...board,
-                    staffRoles: { ...board.staffRoles, [staffId]: role },
-                  }))
-                }
-              />
-            )}
-
-            {sidebarTab === 'library' && (
+          {sidebarTab === 'library' && (
+            <div className="rounded-xl border border-border/60 bg-surface-card p-3">
               <BoardLibraryPanel
                 savedBoards={savedBoards}
                 categories={categories}
@@ -768,155 +693,61 @@ export default function PizarraTactica() {
                 onRename={handleRenameSavedBoard}
                 onDelete={handleDeleteSavedBoard}
               />
-            )}
-
-            {sidebarTab === 'formations' && (
-              <div className="space-y-4">
-                <FormationSelector
-                  value={activeBoard.formation}
-                  customFormations={tacticalBoard.customFormations}
-                  onChange={handleFormationChange}
-                />
-                <Button size="sm" variant="secondary" onClick={() => setFormationModalOpen(true)}>
-                  Guardar formación personalizada
-                </Button>
-                {Object.keys(tacticalBoard.customFormations).length > 0 && (
-                  <ul className="space-y-2">
-                    {Object.values(tacticalBoard.customFormations).map((formation) => (
-                      <li
-                        key={formation.id}
-                        className="flex items-center justify-between rounded-xl border border-border/60 bg-surface-muted/50 px-3 py-2 text-sm"
-                      >
-                        <button
-                          type="button"
-                          className="font-semibold text-text-primary hover:text-accent"
-                          onClick={() => handleFormationChange(formation.id)}
-                        >
-                          {formation.name}
-                        </button>
-                        <div className="flex gap-2">
-                          <button type="button" className="text-xs text-accent hover:underline" onClick={() => handleRenameFormation(formation.id)}>
-                            Renombrar
-                          </button>
-                          <button type="button" className="text-xs text-accent hover:underline" onClick={() => handleDuplicateFormation(formation.id)}>
-                            <Copy className="inline h-3 w-3" /> Duplicar
-                          </button>
-                          <button type="button" className="text-xs text-red-400 hover:underline" onClick={() => handleDeleteCustomFormation(formation.id)}>
-                            Eliminar
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
-
-            {sidebarTab === 'players' && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-xl border border-border/60 bg-accent-subtle/50 p-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Categoría</p>
-                    <p className="mt-1 text-sm font-semibold text-text-primary">{currentCategory?.name ?? '—'}</p>
-                  </div>
-                  <div className="rounded-xl border border-border/60 bg-surface-muted/50 p-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted">En pizarra</p>
-                    <p className="mt-1 text-sm font-semibold text-accent">{usedPlayerIds.size} / {categoryPlayers.length}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="mb-2 text-[10px] font-bold uppercase tracking-wider text-text-muted">Titulares en campo</h4>
-                  <ul className="max-h-40 space-y-1.5 overflow-y-auto">
-                    {activeBoard.markers
-                      .filter((marker) => marker.playerId)
-                      .map((marker) => (
-                        <li key={marker.id} className="flex items-center justify-between rounded-xl border border-border/60 bg-surface-elevated px-2.5 py-2 text-sm shadow-sm">
-                          <span className="truncate font-medium">{getFullName(playerMap[marker.playerId])}</span>
-                          <button type="button" className="shrink-0 text-xs font-medium text-accent hover:underline" onClick={() => handleDropToBench(marker.playerId)}>
-                            Al banco
-                          </button>
-                        </li>
-                      ))}
-                    {activeBoard.markers.filter((m) => m.playerId).length === 0 && (
-                      <li className="py-4 text-center text-xs text-text-muted">Sin jugadores asignados</li>
-                    )}
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="mb-2 text-[10px] font-bold uppercase tracking-wider text-text-muted">Pizarras abiertas</h4>
-                  <ul className="space-y-1.5">
-                    {tacticalBoard.boards.map((board) => (
-                      <li key={board.id} className="flex items-center justify-between rounded-xl border border-border/60 bg-surface-muted/50 px-3 py-2 text-sm">
-                        <span className="font-medium">{board.name}</span>
-                        {tacticalBoard.boards.length > 1 && (
-                          <button type="button" className="text-xs text-red-400 hover:underline" onClick={() => handleDeleteBoard(board.id)}>
-                            Eliminar
-                          </button>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
             </div>
-          </Card>
+          )}
         </aside>
 
-        <div className="flex min-w-0 flex-col gap-3">
-          <Card className="overflow-hidden border-border/60 p-2 shadow-sm sm:p-3 lg:min-h-[min(72vh,720px)]">
-            <PitchFitContainer pitchType={activeBoard.pitchType ?? 'full-vertical'}>
-              <div
-                ref={exportRef}
-                className="h-full w-full"
-                style={{
-                  transform: `scale(${activeBoard.zoom ?? 1})`,
-                  transformOrigin: 'center center',
-                  transition: 'transform 0.15s ease-out',
-                }}
-              >
-                <TacticalPitch
-                  board={activeBoard}
-                  mode={activeBoard.mode}
-                  playerMap={playerMap}
-                  activeTool={activeTool}
-                  drawColor={drawColor}
-                  onBoardChange={updateBoard}
-                  onDropPlayerOnMarker={handleDropPlayerOnMarker}
-                  onDropPlayerOnPitch={handleDropPlayerOnPitch}
-                  onDrawingSelect={setSelectedDrawingId}
-                />
-              </div>
-            </PitchFitContainer>
-          </Card>
+        <div
+          ref={workspaceRef}
+          className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-[#060a10]"
+        >
+          <div className="absolute left-3 right-3 top-3 z-20">
+            <PitchViewportControls
+              zoom={activeBoard.zoom ?? 1}
+              onZoomChange={handleZoomLevel}
+              isFullscreen={isFullscreen}
+              onToggleFullscreen={toggleFullscreen}
+              displayOptions={activeBoard.displayOptions ?? DEFAULT_DISPLAY_OPTIONS}
+              onDisplayChange={handleDisplayChange}
+            />
+          </div>
 
-          <SubstituteBench
-            players={categoryPlayers}
-            benchPlayerIds={benchPlayerIds}
-            substitutions={activeBoard.substitutions ?? []}
-            playerMap={playerMap}
-            onDropToBench={handleDropToBench}
-            onRemoveFromBench={handleRemoveFromBoard}
-          />
+          <div className="flex min-h-0 flex-1 flex-col p-2 pt-16">
+            <div className="relative min-h-0 flex-1">
+              <PitchFitContainer pitchType={activeBoard.pitchType ?? 'full-vertical'} className="h-full">
+                <div
+                  ref={exportRef}
+                  className="h-full w-full"
+                  style={{
+                    transform: `scale(${activeBoard.zoom ?? 1})`,
+                    transformOrigin: 'center center',
+                    transition: 'transform 0.15s ease-out',
+                  }}
+                >
+                  <TacticalPitch
+                    board={activeBoard}
+                    mode={activeBoard.mode}
+                    playerMap={playerMap}
+                    activeTool={activeTool}
+                    drawColor={drawColor}
+                    onBoardChange={updateBoard}
+                    onDropPlayerOnMarker={handleDropPlayerOnMarker}
+                    onDropPlayerOnPitch={handleDropPlayerOnPitch}
+                    onDrawingSelect={setSelectedDrawingId}
+                  />
+                </div>
+              </PitchFitContainer>
+            </div>
 
-          {activeBoard.staffIds?.length > 0 && (
-            <Card>
-              <h3 className="mb-2 text-sm font-semibold text-text-primary">Staff seleccionado</h3>
-              <ul className="space-y-1 text-sm text-text-secondary">
-                {activeBoard.staffIds.map((staffId) => {
-                  const member = scopedStaff.find((item) => item.id === staffId)
-                  if (!member) return null
-                  return (
-                    <li key={staffId}>
-                      {member.name} · {activeBoard.staffRoles?.[staffId] ?? member.role}
-                    </li>
-                  )
-                })}
-              </ul>
-            </Card>
-          )}
+            <SubstituteBench
+              players={categoryPlayers}
+              benchPlayerIds={benchPlayerIds}
+              substitutions={activeBoard.substitutions ?? []}
+              playerMap={playerMap}
+              onDropToBench={handleDropToBench}
+              onRemoveFromBench={handleRemoveFromBoard}
+            />
+          </div>
         </div>
       </div>
 

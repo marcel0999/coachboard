@@ -1,3 +1,11 @@
+export const ZOOM_LEVELS = [0.8, 0.9, 1.0, 1.1, 1.2, 1.3]
+
+export const DEFAULT_DISPLAY_OPTIONS = {
+  showNames: true,
+  showNumbers: true,
+  showPositions: true,
+}
+
 export const BOARD_MODES = {
   POSITIONS: 'positions',
   SQUAD: 'squad',

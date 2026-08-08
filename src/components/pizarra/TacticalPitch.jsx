@@ -463,6 +463,7 @@ export default function TacticalPitch({
               isSelected={selectedMarkerId === marker.id}
               isDragging={draggingMarkerId === marker.id}
               onPointerDown={handleMarkerPointerDown}
+              displayOptions={board.displayOptions}
             />
           ))}
         </div>

@@ -185,11 +185,11 @@
 
 .pitch-grass-stripes {
   background: repeating-linear-gradient(
-    90deg,
+    0deg,
     rgba(255, 255, 255, 0.045) 0px,
-    rgba(255, 255, 255, 0.045) 28px,
-    rgba(0, 0, 0, 0.035) 28px,
-    rgba(0, 0, 0, 0.035) 56px
+    rgba(255, 255, 255, 0.045) 32px,
+    rgba(0, 0, 0, 0.035) 32px,
+    rgba(0, 0, 0, 0.035) 64px
   );
 }
 

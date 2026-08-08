@@ -45,9 +45,10 @@ const PITCH_STYLES = {
 }
 
 function PitchFieldSvg({ horizontal, whiteboard }) {
-  const stroke = whiteboard ? '#cbd5e1' : 'rgba(255,255,255,0.92)'
-  const strokeWidth = whiteboard ? 0.18 : 0.22
+  const stroke = whiteboard ? '#cbd5e1' : 'rgba(255,255,255,0.95)'
+  const strokeWidth = whiteboard ? 0.2 : 0.24
   const fill = whiteboard ? '#f8fafc' : 'none'
+  const goalStroke = whiteboard ? '#94a3b8' : 'rgba(255,255,255,0.85)'
 
   if (horizontal) {
     return (
@@ -58,17 +59,20 @@ function PitchFieldSvg({ horizontal, whiteboard }) {
         aria-hidden
       >
         <rect x="2" y="2" width="101" height="64" fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
-        <line x1="52.5" y1="2" x2="52.5" y2="66" stroke={stroke} strokeWidth={strokeWidth * 0.9} />
+        <line x1="52.5" y1="2" x2="52.5" y2="66" stroke={stroke} strokeWidth={strokeWidth * 0.85} />
         <circle cx="52.5" cy="34" r="9.15" fill="none" stroke={stroke} strokeWidth={strokeWidth} />
-        <circle cx="52.5" cy="34" r="0.45" fill={stroke} />
+        <circle cx="52.5" cy="34" r="0.5" fill={stroke} />
         <rect x="2" y="13.84" width="16.5" height="40.32" fill="none" stroke={stroke} strokeWidth={strokeWidth} />
         <rect x="2" y="24.84" width="5.5" height="18.32" fill="none" stroke={stroke} strokeWidth={strokeWidth} />
-        <circle cx="11" cy="34" r="0.45" fill={stroke} />
+        <circle cx="11" cy="34" r="0.5" fill={stroke} />
         <rect x="86.5" y="13.84" width="16.5" height="40.32" fill="none" stroke={stroke} strokeWidth={strokeWidth} />
         <rect x="97.5" y="24.84" width="5.5" height="18.32" fill="none" stroke={stroke} strokeWidth={strokeWidth} />
-        <circle cx="94" cy="34" r="0.45" fill={stroke} />
+        <circle cx="94" cy="34" r="0.5" fill={stroke} />
         <path d="M 18.5 13.84 A 9.15 9.15 0 0 1 18.5 58.16" fill="none" stroke={stroke} strokeWidth={strokeWidth * 0.85} />
         <path d="M 86.5 13.84 A 9.15 9.15 0 0 0 86.5 58.16" fill="none" stroke={stroke} strokeWidth={strokeWidth * 0.85} />
+        <rect x="2" y="30" width="1.2" height="8" fill="none" stroke={goalStroke} strokeWidth={0.15} />
+        <rect x="101.8" y="30" width="1.2" height="8" fill="none" stroke={goalStroke} strokeWidth={0.15} />
+        <path d="M 2 2 L 2.8 2.8 M 103 2 L 102.2 2.8 M 2 66 L 2.8 65.2 M 103 66 L 102.2 65.2" stroke={stroke} strokeWidth={0.12} fill="none" />
       </svg>
     )
   }
@@ -81,22 +85,27 @@ function PitchFieldSvg({ horizontal, whiteboard }) {
       aria-hidden
     >
       <rect x="2" y="2" width="64" height="101" fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
-      <line x1="2" y1="52.5" x2="66" y2="52.5" stroke={stroke} strokeWidth={strokeWidth * 0.9} />
+      <line x1="2" y1="52.5" x2="66" y2="52.5" stroke={stroke} strokeWidth={strokeWidth * 0.85} />
       <circle cx="34" cy="52.5" r="9.15" fill="none" stroke={stroke} strokeWidth={strokeWidth} />
-      <circle cx="34" cy="52.5" r="0.45" fill={stroke} />
+      <circle cx="34" cy="52.5" r="0.5" fill={stroke} />
       {/* Área propia (abajo) */}
       <rect x="13.84" y="86.5" width="40.32" height="16.5" fill="none" stroke={stroke} strokeWidth={strokeWidth} />
       <rect x="24.84" y="95.5" width="18.32" height="5.5" fill="none" stroke={stroke} strokeWidth={strokeWidth} />
-      <circle cx="34" cy="94" r="0.45" fill={stroke} />
+      <circle cx="34" cy="94" r="0.5" fill={stroke} />
       <path d="M 13.84 90.35 A 9.15 9.15 0 0 0 54.16 90.35" fill="none" stroke={stroke} strokeWidth={strokeWidth * 0.85} />
       {/* Área rival (arriba) */}
       <rect x="13.84" y="2" width="40.32" height="16.5" fill="none" stroke={stroke} strokeWidth={strokeWidth} />
       <rect x="24.84" y="2" width="18.32" height="5.5" fill="none" stroke={stroke} strokeWidth={strokeWidth} />
-      <circle cx="34" cy="11" r="0.45" fill={stroke} />
+      <circle cx="34" cy="11" r="0.5" fill={stroke} />
       <path d="M 13.84 14.65 A 9.15 9.15 0 0 1 54.16 14.65" fill="none" stroke={stroke} strokeWidth={strokeWidth * 0.85} />
-      {/* Arcos simplificados */}
-      <path d="M 30 2 L 30 0.5 M 38 2 L 38 0.5" stroke={stroke} strokeWidth={strokeWidth * 0.7} />
-      <path d="M 30 103 L 30 104.5 M 38 103 L 38 104.5" stroke={stroke} strokeWidth={strokeWidth * 0.7} />
+      {/* Arcos */}
+      <rect x="30.5" y="103.2" width="7" height="1.5" fill="none" stroke={goalStroke} strokeWidth={0.18} rx="0.2" />
+      <rect x="30.5" y="0.3" width="7" height="1.5" fill="none" stroke={goalStroke} strokeWidth={0.18} rx="0.2" />
+      {/* Esquinas */}
+      <path d="M 2 2 Q 2 5 5 2" fill="none" stroke={stroke} strokeWidth={0.14} />
+      <path d="M 66 2 Q 63 2 66 5" fill="none" stroke={stroke} strokeWidth={0.14} />
+      <path d="M 2 103 Q 2 100 5 103" fill="none" stroke={stroke} strokeWidth={0.14} />
+      <path d="M 66 103 Q 63 103 66 100" fill="none" stroke={stroke} strokeWidth={0.14} />
     </svg>
   )
 }
@@ -118,7 +127,7 @@ export default function PitchSurface({ pitchType = 'full-vertical', children, cl
   return (
     <div
       className={[
-        'pitch-surface relative h-full w-full touch-none overflow-hidden rounded-xl',
+        'pitch-surface relative h-full w-full touch-none overflow-hidden rounded-lg',
         whiteboard ? 'bg-surface-muted' : '',
         className,
       ].join(' ')}

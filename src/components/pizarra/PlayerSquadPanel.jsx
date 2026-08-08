@@ -1,323 +1,121 @@
 import { useMemo, useState } from 'react'
-
 import { AlertTriangle, GripVertical, Search, Users } from 'lucide-react'
-
-import PlayerAvatar from '../plantel/PlayerAvatar'
-
 import Badge from '../ui/Badge'
-
 import { getFullName } from '../../utils/players'
-
 import { groupPlayersForPizarra } from '../../utils/tacticalBoardPlayers'
 
-
-
-function PlayerRow({ entry, onDragStart, onRemoveFromBoard }) {
-
+function PlayerRow({ entry, onRemoveFromBoard }) {
   const { player, alert } = entry
 
-
-
   return (
-
     <div
-
       draggable
-
       onDragStart={(event) => {
-
         event.dataTransfer.setData('playerId', player.id)
-
         event.dataTransfer.effectAllowed = 'move'
-
-        onDragStart?.(player.id)
-
       }}
-
       className={[
-
-        'group flex cursor-grab items-center gap-2.5 rounded-xl border bg-surface-elevated px-2.5 py-2.5 text-sm shadow-sm transition',
-
-        'hover:-translate-y-px hover:shadow-md active:cursor-grabbing active:scale-[0.98]',
-
+        'group flex cursor-grab items-center gap-2 rounded-lg border bg-surface-muted/50 px-2 py-2 text-sm transition',
+        'hover:border-accent/40 active:cursor-grabbing',
         alert.level === 'red'
-
-          ? 'border-red-200 bg-red-50/40'
-
+          ? 'border-red-500/30'
           : alert.level === 'yellow'
-
-            ? 'border-amber-200 bg-amber-50/40'
-
-            : 'border-border/60 hover:border-accent/30',
-
+            ? 'border-amber-500/30'
+            : 'border-border/50',
       ].join(' ')}
-
     >
-
-      <GripVertical className="h-4 w-4 shrink-0 text-slate-300 transition group-hover:text-accent/70" />
-
-      <PlayerAvatar player={player} size="sm" />
-
+      <GripVertical className="h-3.5 w-3.5 shrink-0 text-text-muted" />
+      <span
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white shadow-sm"
+        style={{ backgroundColor: 'var(--color-accent)' }}
+      >
+        {player.number}
+      </span>
       <div className="min-w-0 flex-1">
-
-        <div className="flex items-center gap-1.5">
-
-          <span className="rounded-md bg-accent-subtle px-1.5 py-0.5 text-xs font-bold text-accent">
-
-            #{player.number}
-
-          </span>
-
-          <span className="truncate font-semibold text-text-primary">{getFullName(player)}</span>
-
-        </div>
-
-        <div className="mt-0.5 flex flex-wrap items-center gap-1">
-
-          <span className="text-xs text-text-muted">{player.primaryPosition}</span>
-
-          <Badge variant="default">{player.physicalStatus}</Badge>
-
-        </div>
-
+        <p className="truncate text-[10px] font-bold uppercase text-text-muted">{player.primaryPosition}</p>
+        <p className="truncate text-xs font-semibold text-text-primary">{getFullName(player)}</p>
       </div>
-
       {alert.level !== 'ok' && (
-
-        <span
-
-          className={`inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-
-            alert.level === 'red' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800'
-
-          }`}
-
+        <AlertTriangle
+          className={`h-3.5 w-3.5 shrink-0 ${alert.level === 'red' ? 'text-red-400' : 'text-amber-400'}`}
           title={alert.message}
-
-        >
-
-          <AlertTriangle className="h-3 w-3" />
-
-        </span>
-
+        />
       )}
-
       {onRemoveFromBoard && (
-
         <button
-
           type="button"
-
           onClick={() => onRemoveFromBoard(player.id)}
-
-          className="rounded-lg px-1.5 py-0.5 text-[10px] font-medium text-text-muted opacity-0 transition hover:bg-danger-subtle hover:text-red-400 group-hover:opacity-100"
-
-          title="Quitar de la pizarra"
-
+          className="rounded px-1 text-[10px] text-text-muted opacity-0 transition hover:text-red-400 group-hover:opacity-100"
         >
-
-          Quitar
-
+          ×
         </button>
-
       )}
-
     </div>
-
   )
-
 }
 
-
-
-function PlayerGroup({ title, entries, accent, onDragStart, onRemoveFromBoard }) {
-
+function PlayerGroup({ title, entries, accent, onRemoveFromBoard }) {
   if (entries.length === 0) return null
-
-
-
   return (
-
     <div>
-
-      <h4 className={`mb-2 text-[10px] font-bold uppercase tracking-wider ${accent ?? 'text-text-muted'}`}>
-
+      <h4 className={`mb-1.5 text-[10px] font-bold uppercase tracking-wider ${accent ?? 'text-text-muted'}`}>
         {title} · {entries.length}
-
       </h4>
-
-      <div className="space-y-2">
-
+      <div className="space-y-1.5">
         {entries.map((entry) => (
-
-          <PlayerRow
-
-            key={entry.player.id}
-
-            entry={entry}
-
-            onDragStart={onDragStart}
-
-            onRemoveFromBoard={onRemoveFromBoard}
-
-          />
-
+          <PlayerRow key={entry.player.id} entry={entry} onRemoveFromBoard={onRemoveFromBoard} />
         ))}
-
       </div>
-
     </div>
-
   )
-
 }
 
-
-
-export default function PlayerSquadPanel({
-
-  players,
-
-  usedPlayerIds = new Set(),
-
-  onRemoveFromBoard,
-
-}) {
-
+export default function PlayerSquadPanel({ players, usedPlayerIds = new Set(), onRemoveFromBoard }) {
   const [search, setSearch] = useState('')
 
-
-
   const availablePlayers = useMemo(
-
     () => players.filter((player) => !usedPlayerIds.has(player.id)),
-
     [players, usedPlayerIds],
-
   )
-
-
 
   const groups = useMemo(
-
     () => groupPlayersForPizarra(availablePlayers, search),
-
     [availablePlayers, search],
-
   )
-
-
-
-  const totalAvailable = availablePlayers.length
-
-
 
   return (
-
-    <div className="flex h-full max-h-[calc(100vh-12rem)] flex-col overflow-hidden rounded-2xl border border-border/60 bg-surface-elevated shadow-sm">
-
-      <div className="border-b border-border-subtle bg-gradient-to-r from-white to-slate-50/80 p-4">
-
+    <div className="flex flex-col overflow-hidden rounded-xl border border-border/60 bg-surface-card">
+      <div className="border-b border-border-subtle p-3">
         <div className="flex items-center gap-2">
-
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-subtle">
-
-            <Users className="h-4 w-4 text-accent" />
-
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-subtle">
+            <Users className="h-3.5 w-3.5 text-accent" />
           </div>
-
           <div>
-
-            <h3 className="text-sm font-semibold text-text-primary">Plantel</h3>
-
-            <p className="text-[11px] text-text-muted">{totalAvailable} disponibles</p>
-
+            <h3 className="text-xs font-semibold text-text-primary">Jugadores disponibles</h3>
+            <p className="text-[10px] text-text-muted">{availablePlayers.length} para arrastrar</p>
           </div>
-
         </div>
-
-        <div className="relative mt-3">
-
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-
+        <div className="relative mt-2">
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-text-muted" />
           <input
-
             type="search"
-
             value={search}
-
             onChange={(event) => setSearch(event.target.value)}
-
-            placeholder="Buscar jugador..."
-
-            className="w-full rounded-xl border border-border/60 bg-surface-elevated py-2 pl-9 pr-3 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
-
+            placeholder="Buscar..."
+            className="w-full rounded-lg border border-border/60 bg-surface-muted py-1.5 pl-8 pr-2 text-xs outline-none focus:border-accent focus:ring-1 focus:ring-accent/20"
           />
-
         </div>
-
       </div>
 
-
-
-      <div className="flex-1 space-y-4 overflow-y-auto p-4">
-
+      <div className="max-h-52 space-y-3 overflow-y-auto p-3 lg:max-h-64">
         <PlayerGroup title="Disponibles" entries={groups.available} onRemoveFromBoard={onRemoveFromBoard} />
-
-        <PlayerGroup
-
-          title="Lesionados"
-
-          entries={groups.injured}
-
-          accent="text-red-400"
-
-          onRemoveFromBoard={onRemoveFromBoard}
-
-        />
-
-        <PlayerGroup
-
-          title="Suspendidos"
-
-          entries={groups.suspended}
-
-          accent="text-red-400"
-
-          onRemoveFromBoard={onRemoveFromBoard}
-
-        />
-
-        <PlayerGroup
-
-          title="Documentación"
-
-          entries={groups.medical}
-
-          accent="text-amber-600"
-
-          onRemoveFromBoard={onRemoveFromBoard}
-
-        />
-
-
-
-        {totalAvailable === 0 && (
-
-          <p className="py-8 text-center text-sm text-text-muted">
-
-            Todos los jugadores están en la cancha o en el banco.
-
-          </p>
-
+        <PlayerGroup title="Lesionados" entries={groups.injured} accent="text-red-400" onRemoveFromBoard={onRemoveFromBoard} />
+        <PlayerGroup title="Suspendidos" entries={groups.suspended} accent="text-red-400" onRemoveFromBoard={onRemoveFromBoard} />
+        <PlayerGroup title="Documentación" entries={groups.medical} accent="text-amber-400" onRemoveFromBoard={onRemoveFromBoard} />
+        {availablePlayers.length === 0 && (
+          <p className="py-4 text-center text-xs text-text-muted">Todos en cancha o banco</p>
         )}
-
       </div>
-
     </div>
-
   )
-
 }
-
-

@@ -4,6 +4,8 @@ import {
 
   DEFAULT_BOARD_TEMPLATES,
 
+  DEFAULT_DISPLAY_OPTIONS,
+
   DEFAULT_RIVAL_TEAM,
 
   DEFAULT_TEAM,
@@ -132,6 +134,8 @@ export function createBoard(name, formation = '4-3-3', customFormations = {}, ex
 
     panY: 0,
 
+    displayOptions: { ...DEFAULT_DISPLAY_OPTIONS },
+
     meta: { createdAt: timestamp, updatedAt: timestamp },
 
   }
@@ -203,6 +207,8 @@ export function migrateBoard(board, customFormations = {}) {
     panX: board.panX ?? 0,
 
     panY: board.panY ?? 0,
+
+    displayOptions: { ...DEFAULT_DISPLAY_OPTIONS, ...board.displayOptions },
 
     meta: {
 
@@ -916,6 +922,10 @@ export function createSavedBoardFromBoard(board, name, extras = {}) {
 
     notes: board.notes ?? '',
 
+    zoom: board.zoom ?? 1,
+
+    displayOptions: board.displayOptions ?? { ...DEFAULT_DISPLAY_OPTIONS },
+
     linkedMatchId: board.linkedMatchId ?? null,
 
     createdAt: timestamp,
@@ -969,6 +979,10 @@ export function applySavedBoardToBoard(board, saved) {
     teams: saved.teams ?? board.teams,
 
     notes: saved.notes ?? '',
+
+    zoom: saved.zoom ?? board.zoom ?? 1,
+
+    displayOptions: saved.displayOptions ?? board.displayOptions ?? { ...DEFAULT_DISPLAY_OPTIONS },
 
     linkedMatchId: saved.linkedMatchId ?? board.linkedMatchId,
 

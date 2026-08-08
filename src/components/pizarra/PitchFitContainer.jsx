@@ -10,7 +10,7 @@ const PITCH_ASPECT = {
   whiteboard: 68 / 105,
 }
 
-/** Escala el campo para que quepa completo en pantalla (~12 % más grande que antes). */
+/** Escala la cancha para ocupar todo el espacio del contenedor padre manteniendo aspect ratio. */
 export default function PitchFitContainer({ pitchType = 'full-vertical', children, className = '' }) {
   const wrapperRef = useRef(null)
   const [size, setSize] = useState({ width: 0, height: 0 })
@@ -25,20 +25,19 @@ export default function PitchFitContainer({ pitchType = 'full-vertical', childre
       const parent = wrapper.parentElement
       if (!parent) return
 
-      const parentW = parent.clientWidth
-      const viewportH = window.innerHeight
-      const maxH = Math.min(viewportH * 0.58, 552)
-      const maxW = parentW * 0.92
+      const availW = parent.clientWidth
+      const availH = parent.clientHeight
+      if (availW <= 0 || availH <= 0) return
 
-      let width = maxW
+      let width = availW
       let height = width / ratio
 
-      if (height > maxH) {
-        height = maxH
+      if (height > availH) {
+        height = availH
         width = height * ratio
       }
 
-      setSize({ width: Math.round(width), height: Math.round(height) })
+      setSize({ width: Math.floor(width), height: Math.floor(height) })
     }
 
     update()
@@ -52,13 +51,14 @@ export default function PitchFitContainer({ pitchType = 'full-vertical', childre
   }, [pitchType])
 
   return (
-    <div ref={wrapperRef} className={`flex w-full justify-center ${className}`}>
+    <div ref={wrapperRef} className={`flex h-full w-full items-center justify-center ${className}`}>
       <div
         className="pitch-fit-inner transition-[width,height] duration-200 ease-out"
         style={{
           width: size.width > 0 ? size.width : '100%',
-          height: size.height > 0 ? size.height : undefined,
+          height: size.height > 0 ? size.height : '100%',
           maxWidth: '100%',
+          maxHeight: '100%',
         }}
       >
         {children}
