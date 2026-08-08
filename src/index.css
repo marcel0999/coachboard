@@ -232,8 +232,83 @@
   .cb-animate-in,
   .cb-animate-slide-up,
   .pitch-marker-token,
-  .formation-card {
+  .formation-card,
+  .landing-float,
+  .landing-fade-up {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* ── Landing pública ── */
+.landing-hero-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(16, 185, 129, 0.08), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 70%, rgba(59, 130, 246, 0.06), transparent 50%),
+    linear-gradient(180deg, #060a12 0%, #0a0e14 45%, #080c12 100%);
+}
+
+.landing-pitch-pattern {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+}
+
+.landing-window {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 24px 48px rgba(0, 0, 0, 0.55),
+    0 0 80px rgba(16, 185, 129, 0.06);
+}
+
+.landing-window-glow {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 32px 64px rgba(0, 0, 0, 0.6),
+    0 0 100px rgba(16, 185, 129, 0.1);
+}
+
+@keyframes landing-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes landing-float-delayed {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-6px) rotate(-3deg); }
+}
+
+@keyframes landing-float-delayed-2 {
+  0%, 100% { transform: translateY(0) rotate(4deg); }
+  50% { transform: translateY(-5px) rotate(4deg); }
+}
+
+.landing-float {
+  animation: landing-float 6s ease-in-out infinite;
+}
+
+.landing-float-delayed {
+  animation: landing-float-delayed 7s ease-in-out infinite;
+}
+
+.landing-float-delayed-2 {
+  animation: landing-float-delayed-2 8s ease-in-out infinite;
+}
+
+.landing-fade-up {
+  animation: cb-slide-up 0.7s var(--ease-out-expo) both;
+}
+
+.landing-card-hover {
+  @apply transition-all duration-300;
+}
+
+.landing-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px rgba(16, 185, 129, 0.15),
+    0 16px 40px rgba(0, 0, 0, 0.4);
+  @apply border-accent/25;
 }
